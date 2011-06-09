@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2011 Jul 01     J. Carter          V1.1--Finalize may be called multiple times
 -- 2005 Jul 01     J. Carter          V1.0--Initial release
 --
 with Ada.Unchecked_Deallocation;
@@ -11,7 +12,7 @@ package body PragmARC.Safe_Pointers is
       Data  : Object;
       Count : Natural := 1;
    end record;
-   
+
    function "=" (Left : Safe_Pointer; Right : Safe_Pointer) return Boolean is
       -- null;
    begin -- "="
@@ -45,10 +46,12 @@ package body PragmARC.Safe_Pointers is
          if Item.Ptr.Count > 0 then
             Item.Ptr.Count := Item.Ptr.Count - 1;
          end if;
-         
+
          if Item.Ptr.Count = 0 then
             Free (Item.Ptr);
          end if;
+
+         Item.Ptr := null;
       end if;
    end Finalize;
 

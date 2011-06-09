@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2011 Jul 01     J. Carter          V1.4--Finalize may be called multiple times
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.2--Added Assign
 -- 2001 May 01     J. Carter          V1.1--Added Is_Empty; eliminated some duplicated code
@@ -235,8 +236,10 @@ package body PragmARC.List_Unbounded_Unprotected is
    procedure Finalize (Object : in out Handle) is
       -- null;
    begin -- Finalize
-      Clear (List => Object);
-      Dispose (X => Object.Off_List);
+      if Object.Off_List /= null then
+         Clear (List => Object);
+         Dispose (X => Object.Off_List);
+      end if;
    end Finalize;
 
    procedure Iterate (Over : in out Handle; Context : in out Context_Data) is
