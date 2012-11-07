@@ -30,7 +30,7 @@ package body PragmARC.Deck_Handler is
 
    procedure Shuffle (Item : in out Handle) is
       type Big is digits System.Max_Digits;
-      
+
       package Random is new Universal_Random (Supplied_Real => Big);
 
       Temp  : Card;
@@ -62,6 +62,24 @@ package body PragmARC.Deck_Handler is
       To.Count := To.Count + 1;
       To.Value (To.Count) := Item;
    end Add;
+
+   procedure Insert (Item : in Card; Into : in out Handle; Before : in Positive) is
+      -- null;
+   begin -- Insert
+      if Into.Count >= Into.Max_Cards then
+         raise Full;
+      end if;
+
+      if Before > Into.Count then
+         Add (Item => Item, To => Into);
+
+         return;
+      end if;
+
+      Into.Value (Before + 1 .. Into.Count + 1) := Into.Value (Before .. Into.Count);
+      Into.Value (Before) := Item;
+      Into.Count := Into.Count + 1;
+   end Insert;
 
    procedure Deal (From : in out Handle; To : out Card) is
       -- null;

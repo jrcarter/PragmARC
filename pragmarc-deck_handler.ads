@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2012 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- A simplified cross between a list and a queue to be used as a deck of cards in card games
 --
 -- History:
+-- 2012 Dec 01     J. Carter          V1.2--Added Insert
 -- 2002 Feb 01     J. Carter          V1.1--Removed pragma Pure
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -45,6 +46,18 @@ package PragmARC.Deck_Handler is
    -- Precondition:  not Is_Full (To)     raise Full if violated
    --
    -- Postcondition: not Is_Empty (To)
+
+   procedure Insert (Item : in Card; Into : in out Handle; Before : in Positive); -- raise Full
+   -- Inserts Item into Into before position Before. Item becomes the Card in Into at position Before
+   -- If Before > Size (Into), Insert is the same as Add (Item => Item, To => Into)
+   -- Raises Full if Into is full
+   -- Into is unchanged if Full is raised
+   --
+   -- Time: O(N)
+   --
+   -- Precondition:  not Is_Full (To)     raise Full if violated
+   --
+   -- Postcondition: not Is_Empty (To) and Value (Into, Before) = Item
 
    procedure Deal (From : in out Handle; To : out Card); -- raise Empty
    -- Removes the top card from From and assigns it to To
