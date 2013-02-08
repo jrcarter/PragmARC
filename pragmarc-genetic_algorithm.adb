@@ -22,78 +22,79 @@ is
       Individual : Gene;
       Fitness    : Float;
    end record;
-   
+
    type Population_List is array (Positive range <>) of Member;
-   
+
    type Best_State is record
       Individual : Gene;
       Count      : Natural := 0;
    end record;
-   
+
    procedure Assign is new PragmARC.Assignment (Member);
-   
+
    function "<" (Left : Member; Right : Member) return Boolean is
       -- null;
    begin -- "<"
       return Left.Fitness > Right.Fitness; -- Sort in descending order of fitness.
    end "<";
-   
-   procedure Sort is new PragmARC.Sort_Quick_In_Place (Element => Member, Index => Positive, Sort_Set => Population_List);
-   
+
+   package Quick_Sort is new PragmARC.Sort_Quick_In_Place (Element => Member, Index => Positive, Sort_Set => Population_List);
+   procedure Sort (Set : in out Population_List) renames Quick_Sort.Sort_Sequential;
+
    procedure Reproduce (List : in out Population_List) is
       New_Pop : Population_List (List'range);
-      
+
       subtype Index is Positive range List'First .. List'First + List'Length / 2 - 1;
       -- Only the top half of the population get to mate.
-      
+
       Prob_Gen  : Ada.Numerics.Float_Random.Generator;
-      
+
       function Choose_Index return Index is
       -- Pick an Index based on probability of mating.
-      
+
          function Probability (I : Index) return Float is
             Total_Chances : constant Float := Float ( (Index'Last * (Index'Last + 1) ) / 2);
             Chances       : constant Float := Float (Index'Last - I + 1);
          begin -- Probability
             return Chances / Total_Chances;
          end Probability;
-         
+
          Prob      : Float := Ada.Numerics.Float_Random.Random (Prob_Gen);
          Cum_Prob  : Float := 0.0;
       begin -- Choose_Index
          Find : for I in Index loop
             Cum_Prob := Cum_Prob + Probability (I);
-            
+
             if Prob < Cum_Prob then
                return I;
             end if;
          end loop Find;
-         
+
          return Index'Last; -- If Random returns 1.0, which means use the last value.
       end Choose_Index;
-      
+
       Left      : Index;
       Right     : Index;
    begin -- Reproduce
       Ada.Numerics.Float_Random.Reset (Gen => Prob_Gen);
-      
+
       All_Pairs : for I in New_Pop'First .. New_Pop'Last - Num_Elite_Saved loop
          Left  := Choose_Index;
          Right := Choose_Index;
          New_Pop (I).Individual := Mate (List (Left).Individual, List (Right).Individual);
-         
+
          if Ada.Numerics.Float_Random.Random (Prob_Gen) < Mutation_Probability then
             Mutate (Individual => New_Pop (I).Individual);
          end if;
-         
+
          New_Pop (I).Fitness := Fitness (New_Pop (I).Individual);
       end loop All_Pairs;
-      
+
       New_Pop (New_Pop'Last - Num_Elite_Saved + 1 .. New_Pop'Last) := List (List'First .. List'First + Num_Elite_Saved - 1);
       Sort (New_Pop);
       List := New_Pop;
    end Reproduce;
-   
+
    List    : Population_List (1 .. Population_Size);
    Current : Best_State;
 begin -- PragmARC.Genetic_Algorithm
@@ -101,22 +102,22 @@ begin -- PragmARC.Genetic_Algorithm
       List (I).Individual := Random;
       List (I).Fitness    := Fitness (List (I).Individual);
    end loop Fill;
-   
+
    Sort (List);
    Current := Best_State'(Individual => List (List'First).Individual, Count => 1);
-   
+
    All_Generations : for I in 1 .. Max_Generations loop
       Reproduce (List => List);
-      
+
       if Current.Individual = List (List'First).Individual then
          Current.Count := Current.Count + 1;
       else
          Current := Best_State'(Individual => List (List'First).Individual, Count => 1);
       end if;
-      
+
       exit All_Generations when Current.Count >= Num_No_Change_Generations;
    end loop All_Generations;
-   
+
    Best := List (List'First).Individual;
    Fit  := List (List'First).Fitness;
 end PragmARC.Genetic_Algorithm;
@@ -135,4 +136,4 @@ end PragmARC.Genetic_Algorithm;
 -- this unit does not by itself cause the resulting executable to be
 -- covered by the GNU General Public License. This exception does not
 -- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License. 
+-- covered by the GNU Public License.

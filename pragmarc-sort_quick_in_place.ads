@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic quick sort
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V2.0--Package with sequential and parallel sorts
 -- 2002 Oct 01     J. Carter          V1.1--Use mode out to allow scalars
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -15,12 +16,17 @@ generic -- PragmARC.Sort_Quick_In_Place
 
    with procedure Assign (To : out Element; From : in Element) is <>;
    with function "<" (Left : Element; Right : Element) return Boolean is <>;
-procedure PragmARC.Sort_Quick_In_Place (Set : in out Sort_Set);
-pragma Pure (PragmARC.Sort_Quick_In_Place);
--- Input:  Set to sort
--- Output: Sorted set
---
--- Time: O(N log N)
+package PragmARC.Sort_Quick_In_Place is
+   procedure Sort_Sequential (Set : in out Sort_Set);
+   -- Sorts Set.
+   --
+   -- Time: O(N log N)
+
+   procedure Sort_Parallel (Set : in out Sort_Set; Max_Tasks : in Natural := 1);
+   -- Sorts Set using up to Max_Tasks additional tasks.
+   --
+   -- Time: O(N log N)
+end PragmARC.Sort_Quick_In_Place;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software
