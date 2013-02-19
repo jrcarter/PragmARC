@@ -1,11 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Bounded queue ADT for sequential use only
 -- Each queue has a preset maximum size
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V2.1--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V2.0--Added Assign; implemented using PragmARC.List_Bounded_Unprotected
 -- 2001 Jun 01     J. Carter          V1.1--Added Peek
@@ -13,13 +15,11 @@
 --
 with PragmARC.List_Bounded_Unprotected;
 generic -- PragmARC.Queue_Bounded_Unprotected
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.Queue_Bounded_Unprotected is
    pragma Preelaborate;
 
-   type Handle (Max_Size : Positive) is limited private; -- Initial value: emtpy
+   type Handle (Max_Size : Positive) is tagged limited private; -- Initial value: emtpy
 
    procedure Clear (Queue : in out Handle);
    -- Makes Queue empty
@@ -87,16 +87,14 @@ package PragmARC.Queue_Bounded_Unprotected is
    -- Precondition: not Is_Empty (Queue)     raise Empty if violated
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in out Element; Context : in out Context_Data; Continue : out Boolean);
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data);
+      with procedure Action (Item : in out Element; Continue : out Boolean);
+   procedure Iterate (Over : in out Handle);
    -- Applies Action to each Element in Over, from head to tail
    -- Iterate terminates immediately if Continue is set to False (remainder of Over is not processed)
 private -- PragmARC.Queue_Bounded_Unprotected
    package Implementation is new PragmARC.List_Bounded_Unprotected (Element => Element);
 
-   type Handle (Max_Size : Positive) is record
+   type Handle (Max_Size : Positive) is tagged limited record
       List : Implementation.Handle (Max_Size => Max_Size);
    end record;
 end PragmARC.Queue_Bounded_Unprotected;

@@ -1,19 +1,21 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2004 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic heap sort
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+------------------------------------------------------------------
 -- 2004 Sep 01     J. Carter          V1.0--Initial release
 --
 procedure PragmARC.Sort_Heap (Set : in out Sort_Set) is
    procedure Swap (Left : in out Element; Right : in out Element) is
       Temp : Element;
    begin -- Swap
-      Assign (To => Temp,  From => Left);
-      Assign (To => Left,  From => Right);
-      Assign (To => Right, From => Temp);
+      Temp := Left;
+      Left := Right;
+      Right := Temp;
    end Swap;
    pragma Inline (Swap);
 

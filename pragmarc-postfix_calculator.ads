@@ -1,10 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Provides a postfix (reverse Polish notation) calculator with many features
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with System;

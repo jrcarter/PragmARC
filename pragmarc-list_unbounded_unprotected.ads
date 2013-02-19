@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for sequential use
@@ -7,6 +7,8 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.2--Added Assign
 -- 2001 May 01     J. Carter          V1.1--Added Is_Empty
@@ -16,13 +18,11 @@ with Ada.Finalization;
 
 use Ada;
 generic -- PragmARC.List_Unbounded_Unprotected
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.List_Unbounded_Unprotected is
    pragma Preelaborate;
 
-   type Handle is limited private; -- Initial value: empty
+   type Handle is tagged limited private; -- Initial value: empty
 
    type Position is private;
    -- A position is initially invalid until assigned a value by First, Last, or Off_List
@@ -122,10 +122,8 @@ package PragmARC.List_Unbounded_Unprotected is
    -- Time: O(N)
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in out Element; Context : in out Context_Data; Pos : in Position; Continue : out Boolean);
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data);
+      with procedure Action (Item : in out Element; Pos : in Position; Continue : out Boolean);
+   procedure Iterate (Over : in out Handle);
    -- Calls Action with each Element in Over, & its Position, in turn
    -- Returns immediately if Continue is set to False (remainder of Over is not processed)
 

@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------
 -- 2011 Jul 01     J. Carter          V1.4--Finalize may be called multiple times
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.2--Added Assign
@@ -145,7 +147,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Check_Valid (List => Into, Pos => Before);
 
       Temp := Get;
-      Assign (To => Temp.Value, From => Item);
+      Temp.Value := Item;
       Temp.List_Id := Into.Off_List;
       Temp.Next := Before.Ptr; -- Link node into list
       Temp.Prev := Before.Ptr.Prev;
@@ -160,7 +162,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Check_Valid (List => Into, Pos => After);
 
       Temp := Get;
-      Assign (To => Temp.Value, From => Item);
+      Temp.Value := Item;
       Temp.List_Id := Into.Off_List;
       Temp.Next := After.Ptr.Next; -- Link node into list
       Temp.Prev := After.Ptr;
@@ -210,7 +212,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    begin -- Put
       Check_Valid_And_Not_Off (List => Into, Pos => Pos);
 
-      Assign (To => Pos.Ptr.Value, From => Item);
+      Pos.Ptr.Value := Item;
    end Put;
 
    function Is_Empty (List : Handle) return Boolean is
@@ -242,7 +244,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       end if;
    end Finalize;
 
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data) is
+   procedure Iterate (Over : in out Handle) is
       Pos      : Position := First (Over);
       Continue : Boolean;
       Item     : Element;
@@ -250,8 +252,8 @@ package body PragmARC.List_Unbounded_Unprotected is
       All_Nodes : loop
          exit All_Nodes when Pos = Off_List (Over);
 
-         Assign (To => Item, From => Get (Over, Pos) );
-         Action (Item => Item, Context => Context, Pos => Pos, Continue => Continue);
+         Item := Get (Over, Pos);
+         Action (Item => Item, Pos => Pos, Continue => Continue);
          Put (Into => Over, Pos => Pos, Item => Item);
 
          exit All_Nodes when not Continue;

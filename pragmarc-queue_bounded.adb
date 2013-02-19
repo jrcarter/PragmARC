@@ -1,7 +1,9 @@
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2001 Jun 01     J. Carter          V1.2--Added Peek
 -- 2000 Dec 01     J. Carter          V1.1--Revised implementation of Iterate
@@ -51,10 +53,10 @@ package body PragmARC.Queue_Bounded is
          return Implementation.Peek (Queue);
       end Peek;
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class) is
-         procedure Local is new Implementation.Iterate (Context_Data => Context_Data'Class, Action => Action.all);
+      procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) ) is
+         procedure Local is new Implementation.Iterate (Action => Action.all);
       begin -- Iterate
-         Local (Over => Queue, Context => Context);
+         Local (Over => Queue);
       end Iterate;
    end Handle;
 end PragmARC.Queue_Bounded;

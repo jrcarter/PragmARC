@@ -3,6 +3,8 @@
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+--------------------------------------------------------------------------------------
 -- 2013 Mar 01     J. Carter          V2.0--Package with sequential and parallel sorts
 -- 2004 Sep 01     J. Carter          V1.3--Extracted insertion sort
 -- 2002 Oct 01     J. Carter          V1.2--Use mode out to allow scalars
@@ -14,9 +16,9 @@ package body PragmARC.Sort_Quick_In_Place is
    procedure Exchange (Left : in out Element; Right : in out Element) is
       Temp : Element;
    begin -- Exchange
-      Assign (To => Temp,  From => Left);
-      Assign (To => Left,  From => Right);
-      Assign (To => Right, From => Temp);
+      Temp := Left;
+      Left := Right;
+      Right := Temp;
    end Exchange;
    pragma Inline (Exchange);
 
@@ -27,9 +29,9 @@ package body PragmARC.Sort_Quick_In_Place is
       Left_Value  : Element;
       Right_Value : Element;
    begin -- Get_Pivot
-      Assign (To => Left_Value,  From => Set (Set'First) );
-      Assign (To => Pivot,       From => Set (Mid_Index) );
-      Assign (To => Right_Value, From => Set (Set'Last) );
+      Left_Value  := Set (Set'First);
+      Pivot       := Set (Mid_Index);
+      Right_Value := Set (Set'Last);
 
       if Pivot < Left_Value then
          Exchange (Left => Left_Value, Right => Pivot);
@@ -43,11 +45,11 @@ package body PragmARC.Sort_Quick_In_Place is
          Exchange (Left => Left_Value, Right => Pivot);
       end if; -- Now pivot is median
 
-      Assign (To => Set (Set'First),  From => Left_Value);  -- Set (Set'First) gets value known <= Pivot
-      Assign (To => Set (Set'Last),   From => Right_Value); -- Set (Set'Last)  gets value known >= Pivot
+      Set (Set'First) := Left_Value;  -- Set (Set'First) gets value known <= Pivot
+      Set (Set'Last)  := Right_Value; -- Set (Set'Last)  gets value known >= Pivot
 
-      Assign (To => Set (Mid_Index),              From => Set (Index'Pred (Set'Last) ) );
-      Assign (To => Set (Index'Pred (Set'Last) ), From => Pivot);
+      Set (Mid_Index)              := Set (Index'Pred (Set'Last) );
+      Set (Index'Pred (Set'Last) ) := Pivot;
       -- Last 2 assigns put Pivot in Set (Set'Last - 1); previous value there put in center of Set
    end Get_Pivot;
 

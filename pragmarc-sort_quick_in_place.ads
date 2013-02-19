@@ -5,16 +5,17 @@
 -- Generic quick sort
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+--------------------------------------------------------------------------------------
 -- 2013 Mar 01     J. Carter          V2.0--Package with sequential and parallel sorts
 -- 2002 Oct 01     J. Carter          V1.1--Use mode out to allow scalars
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 generic -- PragmARC.Sort_Quick_In_Place
-   type Element  is limited private;
+   type Element  is private;
    type Index    is (<>);
    type Sort_Set is array (Index range <>) of Element;
 
-   with procedure Assign (To : out Element; From : in Element) is <>;
    with function "<" (Left : Element; Right : Element) return Boolean is <>;
 package PragmARC.Sort_Quick_In_Place is
    procedure Sort_Sequential (Set : in out Sort_Set);

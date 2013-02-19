@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for general use
@@ -7,6 +7,8 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2001 Dec 01     J. Carter          V1.2--Added Ceiling_Priority to Handle
 -- 2001 May 01     J. Carter          V1.1--Added Is_Empty
@@ -16,30 +18,17 @@ with PragmARC.List_Unbounded_Unprotected;
 
 with System;
 generic -- PragmARC.List_Unbounded
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.List_Unbounded is
    pragma Preelaborate;
 
-   package Implementation is new PragmARC.List_Unbounded_Unprotected (Element => Element, Assign => Assign);
+   package Implementation is new PragmARC.List_Unbounded_Unprotected (Element => Element);
 
    type Position is private;
    -- A position is initially invalid until assigned a value by First, Last, or Off_List
    -- Other positions accessible via Next and Prev
 
    Invalid_Position : exception; -- Raised if a position is invalid or if the Off_List position is used for Delete, Get, or Put
-
-   -- Since we can't have generic protected subprograms, we'll implement Iterate and Sort with the
-   -- access-to-subprogram types Action_Ptr & Less_Ptr. This means that the actual subprograms
-   -- passed to Iterate and Sort must be declared at the library level to pass accessibility checks.
-
-   type Context_Data is tagged null record; -- Used to provide context data to the Action procedure during Iteration.
-
-   type Action_Ptr is access procedure
-      (Item : in out Element; Context : in out Context_Data'Class; Pos : in Position; Continue : out Boolean);
-
-   type Less_Ptr is access function (Left : Element; Right : Element) return Boolean;
 
    protected type Handle (Ceiling_Priority : System.Any_Priority := System.Default_Priority) is -- Initial value: Empty
       pragma Priority (Ceiling_Priority);
@@ -127,11 +116,11 @@ package PragmARC.List_Unbounded is
       --
       -- Time: O(N)
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class);
+      procedure Iterate (Action : access procedure (Item : in out Element; Pos : in Position; Continue : out Boolean) );
       -- Calls Action with each Element in the list, & its Position, in turn from First to Last
       -- Returns immediately if Continue is set to False (remainder of the list is not processed)
 
-      procedure Sort (Less_Than : in Less_Ptr);
+      procedure Sort (Less_Than : access function (Left : Element; Right : Element) return Boolean);
       -- Sorts the list into ascending order as defined by Less_Than
       -- Requires one additional list node
       -- Raises Storage_Exhausted if no more storage is available for this extra node

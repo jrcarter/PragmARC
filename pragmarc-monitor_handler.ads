@@ -1,25 +1,25 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Monitor for concurrent use
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+-------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.2--Use mode out to allow scalars
 -- 2001 Dec 01     J. Carter          V1.1--Added Ceiling_Priority to Monitor
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with System;
 generic -- PragmARC.Monitor_Handler
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.Monitor_Handler is
    pragma Pure;
 
    protected type Monitor (Ceiling_Priority : System.Any_Priority := System.Default_Priority) is
       pragma Priority (Ceiling_Priority);
-      
+
       procedure Put (Item : in Element); -- Change the value stored in the monitor
 
       function Get return Element; -- Obtain the value stored in the monitor

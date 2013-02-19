@@ -1,7 +1,5 @@
 with PragmARC;
 with PragmARC.Ansi_Tty_Control;
-with PragmARC.Assertion_Handler;
-with PragmARC.Assignment;
 with PragmARC.Bag_Unbounded;
 with PragmARC.Bag_Unbounded_Unprotected;
 with PragmARC.Binary_Searcher;

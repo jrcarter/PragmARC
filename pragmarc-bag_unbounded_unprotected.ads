@@ -1,16 +1,17 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for sequential use only.
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.2--Added Assign
 -- 2001 May 01     J. Carter          V1.1--Improved time complexity of Empty
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
-with PragmARC.Assignment;
 with PragmARC.List_Unbounded_Unprotected;
 generic -- PragmARC.Bag_Unbounded_Unprotected
    type Element is private;
@@ -21,7 +22,7 @@ generic -- PragmARC.Bag_Unbounded_Unprotected
 package PragmARC.Bag_Unbounded_Unprotected is
    pragma Preelaborate;
 
-   type Handle is limited private; -- Intial value: Empty
+   type Handle is tagged limited private; -- Intial value: Empty
 
    procedure Assign (To : out Handle; From : in Handle);
    -- Makes To a copy of From
@@ -89,19 +90,15 @@ package PragmARC.Bag_Unbounded_Unprotected is
    -- Time: O(N)
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in out Element; Context : in out Context_Data; Continue : out Boolean);
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data);
+      with procedure Action (Item : in out Element; Continue : out Boolean);
+   procedure Iterate (Over : in out Handle);
    -- Applies Action to each Element in the bag in some unspecified order, until either
    -- 1.  Action sets Continue to False, or
    -- 2.  Every Element in the bag has been processed
 private -- PragmARC.Bag_Unbounded_Unprotected
-   procedure Assign is new PragmARC.Assignment (Element => Element);
-
    package Implementation is new PragmARC.List_Unbounded_Unprotected (Element => Element);
 
-   type Handle is record
+   type Handle is tagged limited record
       List : Implementation.Handle;
    end record;
 end PragmARC.Bag_Unbounded_Unprotected;

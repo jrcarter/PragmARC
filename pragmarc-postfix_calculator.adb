@@ -1,13 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Use Real for Element of stack
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Ansi_Tty_Control;
-with PragmARC.Assignment;
 with PragmARC.Math.Functions;
 with PragmARC.Stack_Unbounded;
 with PragmARC.Word_Input;
@@ -18,9 +19,7 @@ use Ada;
 package body PragmARC.Postfix_Calculator is
    package Input is new Word_Input (Max_Word => System.Max_Digits + System.Max_Digits / 2);
 
-   procedure Assign is new Assignment (Real);
-
-   package Real_Stack is new Stack_Unbounded (Element => Real, Assign => Assign);
+   package Real_Stack is new Stack_Unbounded (Element => Real);
 
    package Real_Math is new Math.Functions (Supplied_Real => Real);
 
@@ -28,7 +27,7 @@ package body PragmARC.Postfix_Calculator is
       Display_Line : constant Positive :=  5;
       Input_Line   : constant Positive :=  8;
       Error_Line   : constant Positive := 11;
-      
+
       Stack        : Real_Stack.Handle;
       Left         : Real;
       Right        : Real;

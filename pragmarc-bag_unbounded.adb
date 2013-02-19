@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+--------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate
 -- 2001 May 01     J. Carter          V1.2--Improved time complexity of Empty
 -- 2000 Dec 01     J. Carter          V1.1--Revised implementation of Iterate
@@ -46,10 +48,10 @@ package body PragmARC.Bag_Unbounded is
          end if;
       end Find;
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class) is
-         procedure Local is new Implementation.Iterate (Context_Data => Context_Data'Class, Action => Action.all);
+      procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) ) is
+         procedure Local is new Implementation.Iterate (Action => Action.all);
       begin -- Iterate
-         Local (Over => Bag, Context => Context);
+         Local (Over => Bag);
       end Iterate;
 
       function Size return Natural is

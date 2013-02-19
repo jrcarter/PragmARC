@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+-----------------------------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; protected list IDs; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.0--Initial release
 --
@@ -27,7 +29,7 @@ package body PragmARC.List_Bounded_Unprotected is
       Copy : loop
          exit Copy when From_Pos = Null_Position;
 
-         Assign (To => To.Storage (To_Pos).Value, From => From.Storage (From_Pos).Value );
+         To.Storage (To_Pos).Value := From.Storage (From_Pos).Value;
          To.Storage (To_Pos).Prev := To_Pos - 1;
          To.Storage (To_Pos).ID := To.ID;
 
@@ -139,7 +141,7 @@ package body PragmARC.List_Bounded_Unprotected is
 
          New_Pos := (ID => Into.ID, Pos => Into.Free);
          Into.Free := Into.Storage (Into.Free).Next;
-         Assign (To => Into.Storage (New_Pos.Pos).Value, From => Item);
+         Into.Storage (New_Pos.Pos).Value := Item;
          Into.Head := New_Pos.Pos;
          Into.Tail := New_Pos.Pos;
          Into.Storage (New_Pos.Pos).Prev := Null_Position;
@@ -162,7 +164,7 @@ package body PragmARC.List_Bounded_Unprotected is
       New_Pos := (ID => Into.ID, Pos => Into.Free);
       Into.Free := Into.Storage (Into.Free).Next;
 
-      Assign (To => Into.Storage (New_Pos.Pos).Value, From => Item);
+      Into.Storage (New_Pos.Pos).Value := Item;
 
       Into.Storage (New_Pos.Pos).Next := Before.Pos;
       Into.Storage (New_Pos.Pos).Prev := Into.Storage (Before.Pos).Prev;
@@ -210,7 +212,7 @@ package body PragmARC.List_Bounded_Unprotected is
       New_Pos := (ID => Into.ID, Pos => Into.Free);
       Into.Free := Into.Storage (Into.Free).Next;
 
-      Assign (To => Into.Storage (New_Pos.Pos).Value, From => Item);
+      Into.Storage (New_Pos.Pos).Value := Item;
 
       Into.Storage (New_Pos.Pos).Prev := After.Pos;
       Into.Storage (New_Pos.Pos).Next := Into.Storage (After.Pos).Next;
@@ -286,7 +288,7 @@ package body PragmARC.List_Bounded_Unprotected is
          raise Invalid_Position;
       end if;
 
-      Assign (To => Into.Storage (Pos.Pos).Value, From => Item);
+      Into.Storage (Pos.Pos).Value := Item;
    end Put;
 
    function Is_Empty (List : Handle) return Boolean is
@@ -315,14 +317,14 @@ package body PragmARC.List_Bounded_Unprotected is
       return Result;
    end Length;
 
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data) is
+   procedure Iterate (Over : in out Handle) is
       Pos      : Natural := Over.Head;
       Continue : Boolean;
    begin
       All_Nodes : loop
          exit All_Nodes when Pos = Null_Position;
 
-         Action (Item => Over.Storage (Pos).Value, Context => Context, Pos => (ID => Over.ID, Pos => Pos), Continue => Continue);
+         Action (Item => Over.Storage (Pos).Value, Pos => (ID => Over.ID, Pos => Pos), Continue => Continue);
 
          exit All_Nodes when not Continue;
 

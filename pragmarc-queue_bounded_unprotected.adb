@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V2.1--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V2.0--Added Assign; implemented using PragmARC.List_Bounded_Unprotected
 -- 2001 Jun 01     J. Carter          V1.1--Added Peek
@@ -30,7 +32,7 @@ package body PragmARC.Queue_Bounded_Unprotected is
    procedure Get (From : in out Handle; Item : out Element) is
       Pos : Implementation.Position := Implementation.First (From.List);
    begin -- Get
-      Assign (To => Item, From => Implementation.Get (From.List, Pos) );
+      Item := Implementation.Get (From.List, Pos);
       Implementation.Delete (From => From.List, Pos => Pos);
    end Get;
 
@@ -58,18 +60,16 @@ package body PragmARC.Queue_Bounded_Unprotected is
       return Implementation.Get (Queue.List, Implementation.First (Queue.List) );
    end Peek;
 
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data) is
-      procedure Action
-         (Item : in out Element; Context : in out Context_Data; Pos : in Implementation.Position; Continue : out Boolean)
-      is
+   procedure Iterate (Over : in out Handle) is
+      procedure Action (Item : in out Element; Pos : in Implementation.Position; Continue : out Boolean) is
          -- null;
       begin -- Action
-         Action (Item => Item, Context => Context, Continue => Continue);
+         Action (Item => Item, Continue => Continue);
       end Action;
 
-      procedure Iterate is new Implementation.Iterate (Context_Data => Context_Data, Action => Action);
+      procedure Iterate is new Implementation.Iterate (Action => Action);
    begin -- Interate
-      Iterate (Over => Over.List, Context => Context);
+      Iterate (Over => Over.List);
    end Iterate;
 end PragmARC.Queue_Bounded_Unprotected;
 --

@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for sequential use only
@@ -8,19 +8,19 @@
 -- Each list has a maximum length
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; protect list IDs; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.0--Initial release
 --
 with Ada.Finalization;
 
 generic -- PragmARC.List_Bounded_Unprotected
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.List_Bounded_Unprotected is
    pragma Preelaborate;
 
-   type Handle (Max_Size : Positive) is limited private;
+   type Handle (Max_Size : Positive) is tagged limited private;
    -- Initial value: empty
 
    type Position is private;
@@ -38,7 +38,7 @@ package PragmARC.List_Bounded_Unprotected is
    -- Precondition: To.Max_Size <= Length (From)     raises Too_Short if violated
 
    procedure Clear (List : in out Handle);
-   -- Makes List empty; all lists are initially empty   --
+   -- Makes List empty; all lists are initially empty
    -- Time: O(N)
    --
    -- Postcondition: Is_Empty (List)
@@ -135,10 +135,8 @@ package PragmARC.List_Bounded_Unprotected is
    -- Time: O(N)
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in out Element; Context : in out Context_Data; Pos : in Position; Continue : out Boolean);
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data);
+      with procedure Action (Item : in out Element; Pos : in Position; Continue : out Boolean);
+   procedure Iterate (Over : in out Handle);
    -- Calls Action with each Element in Over, & its Position, in turn
    -- Returns immediately if Continue is set to False (remainder of Over is not processed)
 private -- PragmARC.List_Bounded_Unprotected

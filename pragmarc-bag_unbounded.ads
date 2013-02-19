@@ -1,10 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for general use.
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+--------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate
 -- 2001 Dec 01     J. Carter          V1.2--Added Ceiling_Priority to Handle
 -- 2001 May 01     J. Carter          V1.1--Improved time complexity of Empty
@@ -32,12 +34,6 @@ package PragmARC.Bag_Unbounded is
          Item : Element;
       end case;
    end record;
-
-   type Context_Data is tagged null record; -- Provides context data to Iterate
-
-   type Action_Ptr is access procedure (Item : in out Element; Context : in out Context_Data'Class; Continue : out Boolean);
-   -- We can't have a generic protected subprogram, so we use this type to implement Iterate. This means that
-   -- the actual procedure passed to Iterate must be declared at the library level to pass accessibility checks
 
    protected type Handle (Ceiling_Priority : System.Any_Priority := System.Default_Priority) is
       pragma Priority (Ceiling_Priority);
@@ -92,7 +88,7 @@ package PragmARC.Bag_Unbounded is
       --
       -- Time: O(N)
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class);
+      procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) );
       -- Applies Action to each Element in the bag in some unspecified order, until either
       -- 1.  Action sets Continue to False, or
       -- 2.  Every Element in the bag has been processed

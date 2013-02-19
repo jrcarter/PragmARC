@@ -1,10 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose stack for general use
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
 -- 2001 Dec 01     J. Carter          V1.3--Added Ceiling_Priority to Handle
 -- 2001 Jun 01     J. Carter          V1.2--Added Peek
@@ -15,13 +17,11 @@ with PragmARC.Stack_Unbounded_Unprotected;
 
 with System;
 generic -- PragmARC.Stack_Unbounded
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.Stack_Unbounded is
    pragma Preelaborate;
 
-   package Implementation is new Stack_Unbounded_Unprotected (Element => Element, Assign => Assign);
+   package Implementation is new Stack_Unbounded_Unprotected (Element => Element);
 
    type Context_Data is tagged null record; -- Provides context data to Iterate
 
@@ -78,7 +78,7 @@ package PragmARC.Stack_Unbounded is
       --
       -- Precondition:  not Is_Empty     raises Empty if violated
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class);
+      procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) );
       -- Applies Action to each Element in the stack in turn, from top to bottom
       -- Iterate returns immediately if Action sets Continue to False
    private -- Handle

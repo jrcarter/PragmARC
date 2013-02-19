@@ -1,18 +1,19 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2004 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic insertion sort
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+------------------------------------------------------------------
 -- 2004 Sep 01     J. Carter          V1.0--Initial release
 --
 generic -- PragmARC.Sort_Insertion
-   type Element  is limited private;
+   type Element  is private;
    type Index    is (<>);
    type Sort_Set is array (Index range <>) of Element;
 
-   with procedure Assign (To : out Element; From : in Element) is <>;
    with function "<" (Left : Element; Right : Element) return Boolean is <>;
 procedure PragmARC.Sort_Insertion (Set : in out Sort_Set);
 pragma Pure (PragmARC.Sort_Insertion);

@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.3--Added Assign
 -- 2001 Jun 01     J. Carter          V1.2--Added Peek
@@ -34,7 +36,7 @@ package body PragmARC.Queue_Unbounded_Unprotected is
          raise Empty;
       end if;
 
-      Assign (To => Item, From => Implementation.Get (From.List, Pos) );
+      Item := Implementation.Get (From.List, Pos);
       Implementation.Delete (From => From.List, Pos => Pos);
    end Get;
 
@@ -44,18 +46,16 @@ package body PragmARC.Queue_Unbounded_Unprotected is
       return Implementation.Is_Empty (Queue.List);
    end Is_Empty;
 
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data) is
-      procedure Action
-         (Item : in out Element; Context : in out Context_Data; Pos : in Implementation.Position; Continue : out Boolean)
-      is
+   procedure Iterate (Over : in out Handle) is
+      procedure Action (Item : in out Element; Pos : in Implementation.Position; Continue : out Boolean) is
          -- null;
       begin -- Action
-         Action (Item => Item, Context => Context, Continue => Continue);
+         Action (Item => Item, Continue => Continue);
       end Action;
 
-      procedure Local is new Implementation.Iterate (Context_Data => Context_Data, Action => Action);
+      procedure Local is new Implementation.Iterate (Action => Action);
    begin -- Iterate
-      Local (Over => Over.List, Context => Context);
+      Local (Over => Over.List);
    end Iterate;
 
    function Length (Queue : Handle) return Natural is

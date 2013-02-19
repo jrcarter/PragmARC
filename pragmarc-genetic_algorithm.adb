@@ -1,14 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2006 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2006 May 01     J. Carter          V1.0--Initial version
 --
 with Ada.Numerics.Float_Random;
-with PragmARC.Assignment;
 with PragmARC.Sort_Quick_In_Place;
 procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positive :=   100;
                                       Max_Generations           : in     Positive := 1_000;
@@ -29,8 +30,6 @@ is
       Individual : Gene;
       Count      : Natural := 0;
    end record;
-
-   procedure Assign is new PragmARC.Assignment (Member);
 
    function "<" (Left : Member; Right : Member) return Boolean is
       -- null;

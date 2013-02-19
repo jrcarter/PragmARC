@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for general use
@@ -7,6 +7,8 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.0--Initial release
 --
@@ -14,13 +16,11 @@ with PragmARC.List_Bounded_Unprotected;
 
 with System;
 generic -- PragmARC.List_Bounded
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.List_Bounded is
    pragma Preelaborate;
 
-   package Implementation is new PragmARC.List_Bounded_Unprotected (Element => Element, Assign => Assign);
+   package Implementation is new PragmARC.List_Bounded_Unprotected (Element => Element);
 
    type Position is private;
    -- A position is initially invalid until assigned a value by First, Last, or Off_List
@@ -130,7 +130,7 @@ package PragmARC.List_Bounded is
       --
       -- Time: O(N)
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class);
+      procedure Iterate (Action : access procedure (Item : in out Element; Pos : In Position; Continue : out Boolean) );
       -- Calls Action with each Element in the list, & its Position, in turn from First to Last
       -- Returns immediately if Continue is set to False (remainder of the list is not processed)
    private -- Handle

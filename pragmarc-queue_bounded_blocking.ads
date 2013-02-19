@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Bounded queue ADT for concurrent use only
@@ -8,6 +8,8 @@
 -- A call to Get when the queue is empty blocks the caller until another task calls Put
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
 -- 2001 Dec 01     J. Carter          V1.2--Added Ceiling_Priority to Handle
 -- 2001 Jun 01     J. Carter          V1.1--Added Peek
@@ -17,19 +19,11 @@ with PragmARC.Queue_Bounded_Unprotected;
 
 with System;
 generic -- PragmARC.Queue_Bounded_Blocking
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.Queue_Bounded_Blocking is
    pragma Preelaborate;
 
-   package Implementation is new PragmARC.Queue_Bounded_Unprotected (Element => Element, Assign => Assign);
-
-   type Context_Data is tagged null record; -- Used to provide context data to iterate.
-
-   type Action_Ptr is access procedure (Item : in out Element; Context : in out Context_Data'Class; Continue : out Boolean);
-   -- Since we can't have generic protected subprograms, we use this type for Iterate.
-   -- This means the actual procedure passed to Iterate must be declared at the library level to pass accessibility checks
+   package Implementation is new PragmARC.Queue_Bounded_Unprotected (Element => Element);
 
    protected type Handle (Max_Size : Positive; Ceiling_Priority : System.Any_Priority) is
       pragma Priority (Ceiling_Priority);
@@ -82,7 +76,7 @@ package PragmARC.Queue_Bounded_Blocking is
       --
       -- Precondition:  not Is_Empty     raise Empty if violated
 
-      procedure Iterate (Action : in Action_Ptr; Context : in out Context_Data'Class);
+      procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) );
       -- Applies Action to each Element in the queue in turn, from head to tail.
       -- Iterate returns immediately if Action sets Continue to False (remainder of the queue is not processed)
    private -- Handle

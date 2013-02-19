@@ -1,10 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose stack for sequential use
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.3--Added Assign
 -- 2001 Jun 01     J. Carter          V1.2--Added Peek
@@ -13,13 +15,11 @@
 --
 with PragmARC.List_Unbounded_Unprotected;
 generic -- PragmARC.Stack_Unbounded_Unprotected
-   type Element is limited private;
-
-   with procedure Assign (To : out Element; From : in Element) is <>;
+   type Element is private;
 package PragmARC.Stack_Unbounded_Unprotected is
    pragma Preelaborate;
 
-   type Handle is limited private; -- Initial value: empty
+   type Handle is tagged limited private; -- Initial value: empty
 
    procedure Clear (Stack : in out Handle);
    -- Makes Stack empty
@@ -73,16 +73,14 @@ package PragmARC.Stack_Unbounded_Unprotected is
    -- Precondition:  not Is_Empty (Stack)     raise Empty if violated
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in out Element; Context : in out Context_Data; Continue : out Boolean);
-   procedure Iterate (Over : in out Handle; Context : in out Context_Data);
+      with procedure Action (Item : in out Element; Continue : out Boolean);
+   procedure Iterate (Over : in out Handle);
    -- Calls Action with each Element in Over in turn, from top to bottom
    -- Returns immediately if Continue is set to False (remainder of Over is not processed)
 private -- PragmARC.Stack_Unbounded_Unprotected
-   package Implementation is new List_Unbounded_Unprotected (Element => Element, Assign => Assign);
+   package Implementation is new List_Unbounded_Unprotected (Element => Element);
 
-   type Handle is record
+   type Handle is tagged limited record
       List : Implementation.Handle;
    end record;
 end PragmARC.Stack_Unbounded_Unprotected;
