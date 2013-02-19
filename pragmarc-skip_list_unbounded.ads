@@ -1,11 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Implements a skip list, a probabilistically-balanced structure similar to a balanced tree in use and in search time
 -- Described by W. Pugh in "Skip Lists:  A Probabilistic Alternative to Balanced Trees," CACM 1990 Jun
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------
 -- 2002 Dec 01     J. Carter          V1.5--Iterate should not allow modification
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.3--Added Assign
@@ -26,7 +28,7 @@ generic -- PragmARC.Skip_List_Unbounded
    with function "=" (Left : Element; Right : Element) return Boolean is <>;
    -- Usually operates on part (the key) of an Element
 package PragmARC.Skip_List_Unbounded is
-   type Skip_List is limited private; -- Initial value: empty
+   type Skip_List is tagged limited private; -- Initial value: empty
 
    procedure Clear (List : in out Skip_List);
    -- Makes List empty
@@ -57,12 +59,10 @@ package PragmARC.Skip_List_Unbounded is
    --
    -- Time: approximately O(log N)
 
-   procedure Insert (List : in out Skip_List; Item : in Element; Duplicates_Allowed : in Boolean := False);
+   procedure Insert (List : in out Skip_List; Item : in Element);
    -- raise Storage_Exhausted
    -- Adds Item to List in the order specified by "<"
-   -- If Duplicates_Allowed, adds Item after any values in List which are = Item
-   -- If not Duplicates_Allowed and there is a value in List which is = Item, replaces the value with Item
-   -- It is recommended that Duplicates_Allowed always be False (see comments for Delete)
+   -- If there is a value in List which is = Item, replaces the value with Item
    -- Raises Storage_Exhausted if there is insufficient memory available for a list node
    -- List is unchanged if Storage_Exhausted is raised
    --
@@ -73,8 +73,6 @@ package PragmARC.Skip_List_Unbounded is
    -- If there is no such value in List, this procedure has no effect
    -- The user is expected to have checked for the existence of such a value before calling this procedure, using Search,
    -- Get_First, or Get_Last
-   -- Note that, if duplicates are allowed, Delete may delete a different node than the one found through Search,
-   -- Get_First, or Get_Last, with possible unexpected results
    --
    -- Time : approximately O(log N)
 
@@ -105,10 +103,8 @@ package PragmARC.Skip_List_Unbounded is
    -- Time : O(N)
 
    generic -- Iterate
-      type Context_Data (<>) is limited private;
-
-      with procedure Action (Item : in Element; Context : in out Context_Data; Continue : out Boolean);
-   procedure Iterate (List : in out Skip_List; Context : in out Context_Data);
+      with procedure Action (Item : in Element; Continue : out Boolean);
+   procedure Iterate (List : in out Skip_List);
    -- Applies Action to each value in List in order
    -- Returns immediately if Action sets Continue to False
 private -- PragmARC.Skip_List_Unbounded

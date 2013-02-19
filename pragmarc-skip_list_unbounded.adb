@@ -1,8 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
+---------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
 -- 2002 May 01     J. Carter          V1.3--Added Assign
 -- 2001 May 01     J. Carter          V1.2--Added Is_Empty; improved memory usage
@@ -36,8 +38,7 @@ package body PragmARC.Skip_List_Unbounded is
    end Clear;
 
    procedure Assign (To : out Skip_List; From : in Skip_List) is
-      Dups : Boolean := False;
-      Ptr  : Link    := From.Header.Forward (Level_Id'First);
+      Ptr : Link := From.Header.Forward (Level_Id'First);
    begin -- Assign
       if To.Header = From.Header then
          return; -- These are the same lists
@@ -49,24 +50,10 @@ package body PragmARC.Skip_List_Unbounded is
          return;
       end if;
 
-      Check_For_Duplicates : loop
-         exit Check_For_Duplicates when Ptr.Forward (Level_Id'First) = null;
-
-         if Ptr.Value = Ptr.Forward (Level_Id'First).Value then
-            Dups := True;
-
-            exit Check_For_Duplicates;
-         end if;
-
-         Ptr := Ptr.Forward (Level_Id'First);
-      end loop Check_For_Duplicates;
-
-      Ptr := From.Header.Forward (Level_Id'First);
-
       Copy : loop
          exit Copy when Ptr = null;
 
-         Insert (List => To, Item => Ptr.Value, Duplicates_Allowed => Dups);
+         Insert (List => To, Item => Ptr.Value);
          Ptr := Ptr.Forward (Level_Id'First);
       end loop Copy;
    end Assign;
@@ -91,7 +78,7 @@ package body PragmARC.Skip_List_Unbounded is
       return Result'(Found => True, Item => Ptr.Value);
    end Search;
 
-   procedure Insert (List : in out Skip_List; Item : in Element; Duplicates_Allowed : in Boolean := False) is
+   procedure Insert (List : in out Skip_List; Item : in Element) is
       New_Level : Level_Id;
       Update    : Forward_Set (Level_Id) := Forward_Set'(Level_Id => List.Header);
       Ptr       : Link                   := List.Header;
@@ -122,16 +109,9 @@ package body PragmARC.Skip_List_Unbounded is
 
       Ptr := Ptr.Forward (Level_Id'First);
 
-      if Ptr /= null and then (Ptr.Value = Item and not Duplicates_Allowed) then
+      if Ptr /= null and then Ptr.Value = Item then
          Ptr.Value := Item;
       else
-         After_Dups : loop
-            exit After_Dups when Ptr = null or else Ptr.Value /= Item;
-
-            Update (Level_Id'First) := Ptr;
-            Ptr := Ptr.Forward (Level_Id'First);
-         end loop After_Dups;
-
          New_Level := Random_Level (List.Level);
          Ptr := new Node (Has_Data => True, Level => New_Level);
 
@@ -247,14 +227,14 @@ package body PragmARC.Skip_List_Unbounded is
       Object.Last := null;
    end Finalize;
 
-   procedure Iterate (List : in out Skip_List; Context : in out Context_Data) is
+   procedure Iterate (List : in out Skip_List) is
       Ptr      : Link := List.Header.Forward (Level_Id'First);
       Continue : Boolean;
    begin -- iterate
       All_Nodes : loop
          exit All_Nodes when Ptr = null;
 
-         Action (Item => Ptr.Value, Context => Context, Continue => Continue);
+         Action (Item => Ptr.Value, Continue => Continue);
 
          exit All_Nodes when not Continue;
 
