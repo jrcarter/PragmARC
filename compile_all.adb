@@ -12,6 +12,7 @@ with PragmARC.Genetic_Algorithm;
 with PragmARC.Get_Line;
 with PragmARC.Hash_Fast_Variable_Length;
 with PragmARC.Images.Image;
+with PragmARC.Kiss_Random;
 with PragmARC.Least_Squares_Fitting;
 with PragmARC.Linear_Equation_Solver;
 with PragmARC.List_Bounded;
