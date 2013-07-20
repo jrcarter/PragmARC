@@ -4,6 +4,7 @@ with PragmARC.Bag_Unbounded;
 with PragmARC.Bag_Unbounded_Unprotected;
 with PragmARC.Binary_Searcher;
 with PragmARC.Binary_Semaphore_Handler;
+with PragmARC.Combined_Random;
 with PragmARC.Complex;
 with PragmARC.Date_Handler;
 with PragmARC.Deck_Handler;

@@ -66,7 +66,7 @@ package body PragmARC.KISS_Random is
       -- Returns Value xor Shift_Left (Value, Shift)
 
       function MR (Value : in Raw_Value; Shift : in Natural) return Raw_Value;
-      -- Returns Value xor Shift_Right (Value_Shift
+      -- Returns Value xor Shift_Right (Value, Shift)
 
       function ML (Value : in Raw_Value; Shift : in Natural) return Raw_Value is
          -- null;
@@ -94,6 +94,10 @@ package body PragmARC.KISS_Random is
 
       Spread : constant Raw_Value := Max_Work - Min_Work + 1;
    begin -- Random_Range
+      if Spread = 0 then
+         return Raw;
+      end if;
+
       return Min_Work + Raw rem Spread;
    end Random_Range;
 
