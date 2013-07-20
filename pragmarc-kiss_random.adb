@@ -46,6 +46,11 @@ package body PragmARC.KISS_Random is
       Hour := Integer'Max (Hour, 1);
       Minute := Integer'Max (Minute, 1);
       Seconds := Integer (Day_Seconds);
+
+      if Duration (Seconds) > Day_Seconds then
+         Seconds := Seconds - 1;
+      end if;
+
       Day_Seconds := Day_Seconds - Duration (Seconds);
       Seconds := Integer'Max (Seconds, 1);
       Hundredths := Integer'Max (Integer (100.0 * Day_Seconds), 1);
