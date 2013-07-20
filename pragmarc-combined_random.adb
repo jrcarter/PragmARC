@@ -10,7 +10,8 @@ package body PragmARC.Combined_Random is
 
    type Number_List is array (List_Index) of Real;
 
-   List : Number_List := (others => Universal.Random);
+   List       : Number_List := (others => Universal.Random);
+   KISS_State : PragmARC.KISS_Random.Generator;
 
    procedure Set_Seed (New_I : in Seed_Range_1                      := Default_I;
                        New_J : in Seed_Range_1                      := Default_J;
@@ -24,7 +25,7 @@ package body PragmARC.Combined_Random is
       -- null;
    begin -- Set_Seed
       Universal.Set_Seed (New_I => New_I, New_J => New_J, New_K => New_K, New_L => New_L);
-      PragmARC.KISS_Random.Set_Seed (New_W => New_W, New_X => New_X, New_Y => New_Y, New_Z => New_Z);
+      PragmARC.KISS_Random.Set_Seed (State => KISS_State, New_W => New_W, New_X => New_X, New_Y => New_Y, New_Z => New_Z);
       List := (others => Universal.Random);
    end Set_Seed;
 
@@ -32,14 +33,14 @@ package body PragmARC.Combined_Random is
       -- null;
    begin -- Randomize
       Universal.Randomize;
-      PragmARC.KISS_Random.Randomize;
+      PragmARC.KISS_Random.Randomize (State => KISS_State);
       List := (others => Universal.Random);
    end Randomize;
 
    function Random return Real is
       use type PragmARC.KISS_Random.Raw_Value;
 
-      Index  : constant List_Index := PragmARC.KISS_Random.Raw rem 256;
+      Index  : constant List_Index := PragmARC.KISS_Random.Raw (KISS_State) rem 256;
       Result : constant Real       := List (Index);
    begin -- Random
       List (Index) := Universal.Random;
