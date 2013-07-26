@@ -1,4 +1,5 @@
 -- Marsaglia'S KISS Random Number Generator
+-- Alogirithm taken from www.fortran.com/kiss.f90
 
 -- History:
 -- 2013 Aug 01     J. Carter     v1.0--Initial release
