@@ -1,3 +1,7 @@
+-- PragmAda Reusable Component (PragmARC)
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- **************************************************************************
+--
 -- History:
 -- 2013 Aug 01     J. Carter     v1.0--Initial release
 
@@ -25,7 +29,7 @@ package body PragmARC.Combined_Random is
       -- null;
    begin -- Set_Seed
       Universal.Set_Seed (New_I => New_I, New_J => New_J, New_K => New_K, New_L => New_L);
-      PragmARC.KISS_Random.Set_Seed (State => KISS_State, New_W => New_W, New_X => New_X, New_Y => New_Y, New_Z => New_Z);
+      KISS_State.Set_Seed (New_W => New_W, New_X => New_X, New_Y => New_Y, New_Z => New_Z);
       List := (others => Universal.Random);
    end Set_Seed;
 
@@ -33,14 +37,14 @@ package body PragmARC.Combined_Random is
       -- null;
    begin -- Randomize
       Universal.Randomize;
-      PragmARC.KISS_Random.Randomize (State => KISS_State);
+      KISS_State.Randomize;
       List := (others => Universal.Random);
    end Randomize;
 
    function Random return Real is
       use type PragmARC.KISS_Random.Raw_Value;
 
-      Index  : constant List_Index := PragmARC.KISS_Random.Raw (KISS_State) rem 256;
+      Index  : constant List_Index := KISS_State.Raw rem 256;
       Result : constant Real       := List (Index);
    begin -- Random
       List (Index) := Universal.Random;
@@ -79,3 +83,19 @@ package body PragmARC.Combined_Random is
       return Sigma * (Sum - 6.0) + Mean;
    end Normal;
 end PragmARC.Combined_Random;
+--
+-- This is free software; you can redistribute it and/or modify it under
+-- terms of the GNU General Public License as published by the Free Software
+-- Foundation; either version 2, or (at your option) any later version.
+-- This software is distributed in the hope that it will be useful, but WITH
+-- OUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+-- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+-- for more details. Free Software Foundation, 59 Temple Place - Suite
+-- 330, Boston, MA 02111-1307, USA.
+--
+-- As a special exception, if other files instantiate generics from this
+-- unit, or you link this unit with other files to produce an executable,
+-- this unit does not by itself cause the resulting executable to be
+-- covered by the GNU General Public License. This exception does not
+-- however invalidate any other reasons why the executable file might be
+-- covered by the GNU Public License.
