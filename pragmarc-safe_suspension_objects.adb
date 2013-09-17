@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2005 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2005 Jul 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Safe_Suspension_Objects is
@@ -13,6 +14,9 @@ package body PragmARC.Safe_Suspension_Objects is
          Ada.Synchronous_Task_Control.Set_True (Object.Unsafe.all);
          Object.Needs_Finalization := False;
       end if;
+   exception -- Finalize
+   when others =>
+      null;
    end Finalize;
 
    procedure Initialize (Object : in out Safe_Suspension_Object) is

@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------
 -- 2011 Jul 01     J. Carter          V1.4--Finalize may be called multiple times
@@ -242,6 +243,9 @@ package body PragmARC.List_Unbounded_Unprotected is
          Clear (List => Object);
          Dispose (X => Object.Off_List);
       end if;
+   exception -- Finalize
+   when others =>
+      null;
    end Finalize;
 
    procedure Iterate (Over : in out Handle) is

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2005 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Oct 01     J. Carter          V1.2--Added exception handler to Finalize
 -- 2011 Jul 01     J. Carter          V1.1--Finalize may be called multiple times
 -- 2005 Jul 01     J. Carter          V1.0--Initial release
 --
@@ -53,6 +54,9 @@ package body PragmARC.Safe_Pointers is
 
          Item.Ptr := null;
       end if;
+   exception -- Finalize
+   when others =>
+      null;
    end Finalize;
 
    function Get (Pointer : Safe_Pointer) return Object is

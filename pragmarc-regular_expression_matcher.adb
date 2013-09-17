@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2001 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2013 Oct 01     J. Carter          V1.2--Added exception handler to Destroy
 -- 2001 Feb 01     J. Carter          V1.1--Improve robustness and return length of pattern matched
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -23,6 +24,9 @@ package body PragmARC.Regular_Expression_Matcher is
       end loop Free_Classes;
 
       Free (X => Pattern.Ptr);
+   exception -- Destroy
+   when others =>
+      null;
    end Destroy;
 
    procedure Finalize (Object : in out Processed_Pattern) renames Destroy;
@@ -184,10 +188,10 @@ package body PragmARC.Regular_Expression_Matcher is
                      Total_Matches := Total_Matches - 1;
                   end if;
                end if;
-               
+
                Reduce_Matches : loop
                   exit Reduce_Matches when Total_Matches <= 0;
-                  
+
                   Temp_Index := Index'Val (Index'Pos (Source_Index) + Total_Matches);
                   Location := Locate (Expanded_Index + 1, P_Last, Temp_Index, S_Last);
 
@@ -199,7 +203,7 @@ package body PragmARC.Regular_Expression_Matcher is
                end loop Reduce_Matches;
             elsif Match (P_Index => Expanded_Index, S_Index => Source_Index) then
                Match_Length := Match_Length + 1;
-               
+
                if Source_Index < S_Last then
                   Source_Index := Index'Succ (Source_Index);
                else

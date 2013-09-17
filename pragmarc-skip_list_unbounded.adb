@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
@@ -225,6 +226,9 @@ package body PragmARC.Skip_List_Unbounded is
 
       Dispose (X => Object.Header);
       Object.Last := null;
+   exception -- Finalize
+   when others =>
+      null;
    end Finalize;
 
    procedure Iterate (List : in out Skip_List) is
