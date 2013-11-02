@@ -50,7 +50,7 @@ package PragmARC.KISS_Random is
       -- Returns a random value in the given range
 
       function Normal (State : in Generator; Mean : in Real; Sigma : in Real) return Real;
-      -- Uses 12 random values to approximate a normally distributed random value with the give mean and standard deviation
+      -- Uses 12 random values to approximate a normally distributed random value with the given mean and standard deviation
    end Real_Values;
 private -- PragmARC.KISS_Random
    type Generator_Ptr is access all Generator;

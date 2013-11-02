@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2013 Nov 01     J. Carter     v1.1--Eliminated an impossible case
 -- 2013 Aug 01     J. Carter     v1.0--Initial release
 
 with Ada.Calendar;
@@ -97,10 +98,6 @@ package body PragmARC.KISS_Random is
 
       Spread : constant Raw_Value := Max_Work - Min_Work + 1;
    begin -- Random_Range
-      if Spread = 0 then
-         return Raw (State);
-      end if;
-
       return Min_Work + Raw (State) rem Spread;
    end Random_Range;
 
