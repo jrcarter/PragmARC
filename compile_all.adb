@@ -52,6 +52,7 @@ with PragmARC.Sort_Radix;
 with PragmARC.Stack_Unbounded;
 with PragmARC.Stack_Unbounded_Unprotected;
 with PragmARC.Three_Way;
+with PragmARC.Threefry_Random;
 with PragmARC.Transporter_Handler;
 with PragmARC.Universal_Random;
 with PragmARC.Us_Card;
