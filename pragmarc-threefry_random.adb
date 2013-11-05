@@ -42,7 +42,7 @@ package body  PragmARC.Threefry_Random is
       Minute      : Natural;
       Seconds     : Natural;
       Hundredths  : Natural;
-      Seed        : Unsigned_32;
+      Key         : Unsigned_256;
    begin -- Randomize
       PragmARC.Date_Handler.Split (Date    => Ada.Calendar.Clock,
                                    Year    => Year,
@@ -64,15 +64,12 @@ package body  PragmARC.Threefry_Random is
       Seconds := Integer'Max (Seconds, 1);
       Hundredths := Integer'Max (Integer (100.0 * Day_Seconds), 1);
 
-      Seed := Unsigned_32 (Year)    *
-              Unsigned_32 (Month)   *
-              Unsigned_32 (Day)     *
-              Unsigned_32 (Hour)    *
-              Unsigned_32 (Minute)  *
-              Unsigned_32 (Seconds) *
-              Unsigned_32 (Hundredths);
+      Key (1) := Unsigned_64 (Year) * Unsigned_64 (Month) * Unsigned_64 (Day) * Unsigned_64 (Hour);
+      Key (2) := Key (1) * Unsigned_64 (Minute);
+      Key (3) := Key (2) * Unsigned_64 (Seconds);
+      Key (4) := Key (3) * Unsigned_64 (Hundredths);
 
-      State.Set_Seed (Seed => Seed);
+      State.Set_Key (Key => Key);
    end Randomize;
 
    procedure Set_Key (State : in out Generator; Key : in Unsigned_256) is
