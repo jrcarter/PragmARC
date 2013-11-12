@@ -37,6 +37,7 @@ with PragmARC.Queue_Unbounded;
 with PragmARC.Queue_Unbounded_Blocking;
 with PragmARC.Queue_Unbounded_Unprotected;
 with PragmARC.Quick_Searcher;
+with PragmARC.Real_Random_Values;
 with PragmARC.Reflection;
 with PragmARC.Regular_Expression_Matcher;
 with PragmARC.Rem_Nn_Wrapper;

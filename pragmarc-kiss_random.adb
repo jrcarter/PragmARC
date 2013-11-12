@@ -100,30 +100,6 @@ package body PragmARC.KISS_Random is
    begin -- Random_Range
       return Min_Work + Raw (State) rem Spread;
    end Random_Range;
-
-   package body Real_Values is
-      function Random (State : in Generator) return Real is
-         -- null;
-      begin -- Random
-         return Real (Raw (State) ) / Real (Raw_Value'Modulus);
-      end Random;
-
-      function Random_Range (State : in Generator; Min : in Real; Max : in Real) return Real is
-         -- null;
-      begin -- Random_Range
-         return Random (State) * (Max - Min) + Min;
-      end Random_Range;
-
-      function Normal (State : in Generator; Mean : in Real; Sigma : in Real) return Real is
-         Sum : Real := 0.0;
-      begin -- Normal
-         Add : for I in 1 .. 12 loop
-            Sum := Sum + Random (State);
-         end loop Add;
-
-         return Sigma * (Sum - 6.0) + Mean;
-      end Normal;
-   end Real_Values;
 end PragmARC.KISS_Random;
 --
 -- This is free software; you can redistribute it and/or modify it under

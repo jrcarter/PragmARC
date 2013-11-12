@@ -43,21 +43,6 @@ package PragmARC.Threefry_Random is
 
    function Random_Range (State : in Generator; Min : in Unsigned_32; Max : in Unsigned_32) return Unsigned_32;
    -- Returns a random value in the given range
-
-   generic -- Real_Values
-      type Supplied_Real is digits <>;
-   package Real_Values is
-      subtype Real is Supplied_Real'Base;
-
-      function Random (State : in Generator) return Real;
-      -- Returns a uniformly distributed random value in 0.0 .. 1.0 - Epsilon
-
-      function Random_Range (State : in Generator; Min : in Real; Max : in Real) return Real;
-      -- Returns a random value in the given range
-
-      function Normal (State : in Generator; Mean : in Real; Sigma : in Real) return Real;
-      -- Uses 12 random values to approximate a normally distributed random value with the given mean and standard deviation
-   end Real_Values;
 private -- PragmARC.Threefry_Random
    type Generator_Ptr is access all Generator;
 

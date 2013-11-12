@@ -127,30 +127,6 @@ package body  PragmARC.Threefry_Random is
       return Min_Work + State.Random rem Spread;
    end Random_Range;
 
-   package body Real_Values is
-      function Random (State : in Generator) return Real is
-         -- Empty declarative part
-      begin -- Random
-         return Real (State.Random) / Real (Unsigned_32'Modulus);
-      end Random;
-
-      function Random_Range (State : in Generator; Min : in Real; Max : in Real) return Real is
-         -- Empty declarative part
-      begin -- Random_Range
-         return Random (State) * (Max - Min) + Min;
-      end Random_Range;
-
-      function Normal (State : in Generator; Mean : in Real; Sigma : in Real) return Real is
-         Sum : Real := 0.0;
-      begin -- Normal
-         Add : for I in 1 .. 12 loop
-            Sum := Sum + Random (State);
-         end loop Add;
-
-         return Sigma * (Sum - 6.0) + Mean;
-      end Normal;
-   end Real_Values;
-
    procedure Initialize (Object : in out Generator) is
       -- Empty declarative part
    begin -- Initialize
