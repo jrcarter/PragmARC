@@ -267,7 +267,7 @@ package body PragmARC.Unbounded_Integers is
                      		Right     : in     Unbounded_Integer;
                      		Quotient  :    out Unbounded_Integer;
                      		Remainder :    out Unbounded_Integer);
-      -- For the case where Left.Digit.Last_Index = Right.Digit.Last_Index + 1
+      -- For the case where Left.Digit.Last_Index in Right.Digit.Last_Index .. Right.Digit.Last_Index + 1
 
       procedure Shift_Left (Value : in out Unbounded_Integer; Places : in Natural);
       -- Deletes the first Places elements of Value.Digit
@@ -300,8 +300,13 @@ package body PragmARC.Unbounded_Integers is
             return;
          end if;
 
-         Left_Digit := Radix * Calculation_Value (Left.Digit.Last_Element) +
-                       Calculation_Value (Left.Digit.Element (Left.Digit.Last_Index - 1) );
+         if Left.Digit.Last_Index = Right.Digit.Last_Index then
+            Left_Digit := Calculation_Value (Left.Digit.Last_Element);
+         else
+            Left_Digit := Radix * Calculation_Value (Left.Digit.Last_Element) +
+                          Calculation_Value (Left.Digit.Element (Left.Digit.Last_Index - 1) );
+         end if;
+
          Right_Digit := Calculation_Value (Right.Digit.Last_Element);
          Q := Left_Digit / Right_Digit;
 
@@ -316,8 +321,8 @@ package body PragmARC.Unbounded_Integers is
          Reduce : loop -- Max 2 iterations
             exit Reduce when Remainder <= Left;
 
-            Quotient := Quotient - One;
-            Remainder := Remainder - Big_Radix;
+            Quotient  := Quotient - One;
+            Remainder := Remainder - Right;
          end loop Reduce;
 
          Remainder := Left - Remainder;
@@ -446,7 +451,7 @@ package body PragmARC.Unbounded_Integers is
          end Adjust;
       end if;
 
-      if Abs_Left.Digit.Last_Index = Abs_Right.Digit.Last_Index + 1 then
+      if Abs_Left.Digit.Last_Index in Abs_Right.Digit.Last_Index .. Abs_Right.Digit.Last_Index + 1 then
          Divide_Special (Left => Abs_Left, Right => Abs_Right, Quotient => Quotient, Remainder => Remainder);
 
          return;
