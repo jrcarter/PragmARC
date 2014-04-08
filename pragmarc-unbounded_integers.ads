@@ -16,9 +16,11 @@ package PragmARC.Unbounded_Integers is
 
    function To_Unbounded_Integer (Value : Integer) return Unbounded_Integer;
    -- With some compilers Integer'First will cause Constraint_Error
+   function "+" (Right : Integer) return Unbounded_Integer renames To_Unbounded_Integer;
 
    function To_Integer (Value : Unbounded_Integer) return Integer;
    -- Raises Constraint_Error if Value is not convertible to Integer (which is usually the case if you need unbounded integers)
+   function "+" (Right : Unbounded_Integer) return Integer renames To_Integer;
 
    function "+" (Right : Unbounded_Integer) return Unbounded_Integer;
    function "-" (Right : Unbounded_Integer) return Unbounded_Integer;

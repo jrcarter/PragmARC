@@ -73,22 +73,19 @@ package body PragmARC.Rational_Numbers is
    end "abs";
 
    function "+" (Left : Rational; Right : Rational) return Rational is
-      M      : Unbounded_Integer;
-      LN     : Unbounded_Integer;
-      RN     : Unbounded_Integer;
-      Result : Rational;
+      M  : Unbounded_Integer;
+      LN : Unbounded_Integer;
+      RN : Unbounded_Integer;
    begin -- "+"
       if Left.Denominator = Right.Denominator then
-         return (Numerator => Left.Numerator + Right.Numerator, Denominator => Left.Denominator);
+         return Compose (Left.Numerator + Right.Numerator, Left.Denominator);
       end if;
 
       M := LCM (Left.Denominator, Right.Denominator);
       LN := Left.Numerator  * M / Left.Denominator;
       RN := Right.Numerator * M / Right.Denominator;
-      Result := (Numerator => LN + RN, Denominator => M);
-      Simplify (Value => Result);
 
-      return Result;
+      return Compose (LN + RN, M);
    end "+";
 
    function "-" (Left : Rational; Right : Rational) return Rational is
@@ -98,29 +95,23 @@ package body PragmARC.Rational_Numbers is
    end "-";
 
    function "*" (Left : Rational; Right : Rational) return Rational is
-      Result : Rational := (Numerator => Left.Numerator * Right.Numerator, Denominator => Left.Denominator * Right.Denominator);
+      -- Empty declarative part
    begin -- "*"
-      Simplify (Value => Result);
-
-      return Result;
+      return Compose (Left.Numerator * Right.Numerator, Left.Denominator * Right.Denominator);
    end "*";
 
    function "/" (Left : Rational; Right : Rational) return Rational is
-      Result : Rational;
+      -- Empty declarative part
    begin -- "/"
       if Right = Zero then
          raise Constraint_Error with "Division by zero";
       end if;
 
       if Right < Zero then
-         Result := (Numerator => Left.Numerator * (-Right.Denominator), Denominator => Left.Denominator * (abs Right.Numerator) );
-      else
-         Result := (Numerator => Left.Numerator * Right.Denominator, Denominator => Left.Denominator * Right.Numerator);
+         return Compose (Left.Numerator * (-Right.Denominator), Left.Denominator * (abs Right.Numerator) );
       end if;
 
-      Simplify (Value => Result);
-
-      return Result;
+      return Compose (Left.Numerator * Right.Denominator, Left.Denominator * Right.Numerator);
    end "/";
 
    function "**" (Left : Rational; Right : Natural) return Rational is
@@ -160,8 +151,6 @@ package body PragmARC.Rational_Numbers is
 
    function ">"  (Left : Rational; Right : Rational) return Boolean is
       M : Unbounded_Integer;
-      L : Rational;
-      R : Rational;
    begin -- ">"
       if Left.Denominator = Right.Denominator then
          return Left.Numerator > Right.Numerator;
@@ -180,10 +169,8 @@ package body PragmARC.Rational_Numbers is
        -- Signs are the same
 
       M := LCM (Left.Denominator, Right.Denominator);
-      L := (Numerator => Left.Numerator  * M / Left.Denominator,  Denominator => M);
-      R := (Numerator => Right.Numerator * M / Right.Denominator, Denominator => M);
 
-      return L.Numerator > R.Numerator;
+      return Unbounded_Integer'(Left.Numerator * M / Left.Denominator) > Right.Numerator * M / Right.Denominator;
    end ">";
 
    function "<"  (Left : Rational; Right : Rational) return Boolean is
@@ -219,11 +206,7 @@ package body PragmARC.Rational_Numbers is
       Result : Rational;
    begin -- Value
       if Slash > 0 then
-         Result := (Numerator   => Value (Image (Image'First .. Slash - 1) ),
-                    Denominator => Value (Image (Slash + 1 .. Image'Last) ) );
-         Simplify (Value => Result);
-
-         return Result;
+         return Compose (Value (Image (Image'First .. Slash - 1) ), Value (Image (Slash + 1 .. Image'Last) ) );
       end if;
 
       if Dot = 0 then
@@ -235,16 +218,12 @@ package body PragmARC.Rational_Numbers is
       end if;
 
       if Hash = 0 then
-         Result := (Numerator   => Value (Image (Image'First .. Dot - 1) & Image (Dot + 1 .. Image'Last) ),
-                    Denominator => Value ('1' & (1 .. Image'Last - Dot => '0') ) );
-      else
-         Result := (Numerator   => Value (Image (Image'First .. Dot - 1) & Image (Dot + 1 .. Image'Last) ),
-                    Denominator => Value (Image (Image'First .. Hash) & '1' & (1 .. Image'Last - Dot - 1 => '0') & '#') );
+         return Compose (Value (Image (Image'First .. Dot - 1) & Image (Dot + 1 .. Image'Last) ),
+                         Value ('1' & (1 .. Image'Last - Dot => '0') ) );
       end if;
 
-      Simplify (Value => Result);
-
-      return Result;
+      return Compose (Value (Image (Image'First .. Dot - 1) & Image (Dot + 1 .. Image'Last) ),
+                      Value (Image (Image'First .. Hash) & '1' & (1 .. Image'Last - Dot - 1 => '0') & '#') );
    end Value;
 
    function GCD (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is

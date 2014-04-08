@@ -20,6 +20,8 @@ package PragmARC.Rational_Numbers is
       (Numerator : PragmARC.Unbounded_Integers.Unbounded_Integer; Denominator : PragmARC.Unbounded_Integers.Unbounded_Integer)
    return Rational;
    -- Creates the value Numerator / Denominator
+   function "/" (Left : PragmARC.Unbounded_Integers.Unbounded_Integer; Right : PragmARC.Unbounded_Integers.Unbounded_Integer)
+   return Rational renames Compose;
 
    procedure Decompose (Value       : in     Rational;
                         Numerator   :    out PragmARC.Unbounded_Integers.Unbounded_Integer;
