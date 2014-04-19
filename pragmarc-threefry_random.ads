@@ -2,7 +2,7 @@
 -- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
--- The Threefly Random Number Generator
+-- The Threefry Random Number Generator
 -- Based on the Threefish encryption algorithm, this is a fast, high-quality, long-period generator
 -- Passes all of the Crush suite of tests (Big Crush), and said to be fastest generator that does so
 
