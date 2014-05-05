@@ -8,6 +8,7 @@
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
 --
 with Ada.Strings.Fixed;
+with Ada.Strings.Unbounded;
 
 package body PragmARC.Rational_Numbers is
    function GCD (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer;
@@ -191,11 +192,54 @@ package body PragmARC.Rational_Numbers is
       return not (Left > Right);
    end "<=";
 
-   function Image (Value : Rational; Base : Base_Number := 10; Decorated : Boolean := False) return String is
-      -- Empty declarative part
+   function Image (Value : Rational; As_Fraction : Boolean := False; Base : Base_Number := 10; Decorated : Boolean := False)
+   return String is
+      Ten : constant Unbounded_Integer := To_Unbounded_Integer (10);
+
+      Work   : Unbounded_Integer := abs Value.Numerator;
+      Q      : Unbounded_Integer;
+      Result : Ada.Strings.Unbounded.Unbounded_String;
+
+      use Ada.Strings.Unbounded;
    begin -- Image
-      return Image (Value.Numerator,   Unbounded_Integers.Base_Number (Base), Decorated) & '/' &
-             Image (Value.Denominator, Unbounded_Integers.Base_Number (Base), Decorated);
+      if As_Fraction then
+         return Image (Value.Numerator,   Unbounded_Integers.Base_Number (Base), Decorated) & '/' &
+                Image (Value.Denominator, Unbounded_Integers.Base_Number (Base), Decorated);
+      end if;
+
+      if Value.Numerator < UI0 then
+         Append (Source => Result, New_Item => '-');
+      end if;
+
+      Q := Work / Value.Denominator;
+
+      Append (Source => Result, New_Item => Image (Q) & '.');
+
+      Work := Work - Q * Value.Denominator;
+
+      if Work = UI0 then
+         return To_String (Result) & '0';
+      end if;
+
+      Zeros : loop
+         exit Zeros when Q /= UI0;
+
+         Work := Ten * Work;
+         Q := Work / Value.Denominator;
+         Append (Source => Result, New_Item => Image (Q) );
+         Work := Work - Q * Value.Denominator;
+      end loop Zeros;
+
+      Count : for I in 1 .. 1_000 loop
+         exit Count when Work = UI0;
+
+         Work := Ten * Work;
+         Q := Work / Value.Denominator;
+         Append (Source => Result, New_Item => Image (Q) );
+         Work := Work - Q * Value.Denominator;
+      end loop Count;
+
+      return To_String (Result);
    end Image;
 
    function Value (Image : String) return Rational is
