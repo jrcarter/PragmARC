@@ -3,7 +3,6 @@
 -- **************************************************************************
 --
 -- History:
--- 2014 May 01     J. Carter          V1.3--Improved Shuffle more
 -- 2010 Oct 01     J. Carter          V1.2--Improved Shuffle
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -41,7 +40,7 @@ package body PragmARC.Deck_Handler is
 
       Permute_All : for I in 1 .. Item.Count - 1 loop
          Temp := Item.Value (I);
-         Index := Random.Random_Int (I + 1, Item.Count);
+         Index := Random.Random_Int (I, Item.Count);
          Item.Value (I) := Item.Value (Index);
          Item.Value (Index) := Temp;
       end loop Permute_All;
