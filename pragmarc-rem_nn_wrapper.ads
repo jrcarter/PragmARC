@@ -11,6 +11,7 @@
 -- Default values for all other parameters should be satisfactory
 --
 -- History:
+-- 2014 Jun 01     J. Carter          V1.1--Added concurrency
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with System;
@@ -18,7 +19,7 @@ package PragmARC.REM_NN_Wrapper is
    type Real is digits System.Max_Digits; -- Inputs and outputs of the network
    subtype Natural_Real  is Real range 0.0              .. Real'Safe_Last;
    subtype Positive_Real is Real range Real'Model_Small .. Real'Safe_Last;
-   
+
    type Node_Set is array (Positive range <>) of Real;
 
    generic -- REM_NN
@@ -69,13 +70,13 @@ package PragmARC.REM_NN_Wrapper is
       -- In practical terms, this means the procedure body of the actual procedure associated with Get_Input must occur before
       -- the instantiation of this package
    package REM_NN is
-      subtype Output_Id is Positive range 1 .. Num_Output_Nodes;
-      subtype Output_Set is Node_Set (Output_Id);
+      subtype Output_ID is Positive range 1 .. Num_Output_Nodes;
+      subtype Output_Set is Node_Set (Output_ID);
 
-      procedure Respond (Pattern : in Positive; Output : out Output_Set);
+      procedure Respond (Pattern : in Positive; Output : out Output_Set; Num_Tasks : in Positive := 1);
       -- Calls Get_Input for this pattern #, and propagates the input through the network to obtain the network's response
 
-      procedure Train;
+      procedure Train (Num_Tasks : in Positive := 1);
       -- Propagates error & derivative backward through the network, & updates the network's weights
 
       procedure Save_Weights;
