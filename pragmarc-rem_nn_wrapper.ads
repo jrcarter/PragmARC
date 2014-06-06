@@ -10,8 +10,10 @@
 -- Set Weight_File_Name as desired
 -- Default values for all other parameters should be satisfactory
 --
+-- Note: with GNAT, a unit that instantiates REM_NN_Wrapper.REM_NN should not use an optimization level about -O1
+--
 -- History:
--- 2014 Jun 01     J. Carter          V1.1--Added concurrency
+-- 2014 Jun 01     J. Carter          V1.1--Added concurrency and GNAT warning
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with System;

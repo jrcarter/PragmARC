@@ -272,16 +272,18 @@ package body PragmARC.REM_NN_Wrapper is
          -- Get network response
          -- Send input to input nodes
          Input_Tasks : declare
-            package IDs is new ID_Generator (Num_Tasks => Num_Tasks);
+            Tasks : constant Positive := Integer'Min (Num_Tasks, Input_ID'Last);
+
+            package IDs is new ID_Generator (Num_Tasks => Tasks);
 
             task type Input_Agent (ID : Positive := IDs.Next_ID);
 
             task body Input_Agent is
-               Start : constant Positive := (ID - 1) * (Input_ID'Last / Num_Tasks) + 1;
+               Start : constant Positive := (ID - 1) * (Input_ID'Last / Tasks) + 1;
 
-               Stop : Positive := Start + Input_ID'Last / Num_Tasks - 1;
+               Stop : Positive := Start + Input_ID'Last / Tasks - 1;
             begin -- Input_Agent
-               if ID = Num_Tasks then
+               if ID = Tasks then
                   Stop := Input_ID'Last;
                end if;
 
@@ -290,7 +292,7 @@ package body PragmARC.REM_NN_Wrapper is
                end loop All_Input;
             end Input_Agent;
 
-            type Agent_List is array (1 .. Num_Tasks) of Input_Agent;
+            type Agent_List is array (1 .. Tasks) of Input_Agent;
 
             Agent : Agent_List;
          begin -- Input_Tasks
@@ -298,44 +300,50 @@ package body PragmARC.REM_NN_Wrapper is
          end Input_Tasks;
 
          -- For hidden nodes
-         Hidden_Tasks : declare
-            package IDs is new ID_Generator (Num_Tasks => Num_Tasks);
+         if Num_Hidden_Nodes > 0 then
+            Hidden_Tasks : declare
+               Tasks : constant Positive := Integer'Min (Num_Tasks, Hidden_ID'Last);
 
-            task type Hidden_Agent (ID : Positive := IDs.Next_ID);
+               package IDs is new ID_Generator (Num_Tasks => Tasks);
 
-            task body Hidden_Agent is
-               Start : constant Positive := (ID - 1) * (Hidden_ID'Last / Num_Tasks) + 1;
+               task type Hidden_Agent (ID : Positive := IDs.Next_ID);
 
-               Stop  : Positive := Start + Hidden_ID'Last / Num_Tasks - 1;
-            begin -- Hidden_Agent
-               if ID = Num_Tasks then
-                  Stop := Hidden_ID'Last;
-               end if;
+               task body Hidden_Agent is
+                  Start : constant Positive := (ID - 1) * (Hidden_ID'Last / Tasks) + 1;
 
-               All_Hidden : for Node in Start .. Stop loop
-                  Hidden.Respond (Node => Hidden_Node (Node) );
-               end loop All_Hidden;
-            end Hidden_Agent;
+                  Stop  : Positive := Start + Hidden_ID'Last / Tasks - 1;
+               begin -- Hidden_Agent
+                  if ID = Tasks then
+                     Stop := Hidden_ID'Last;
+                  end if;
 
-            type Agent_List is array (1 .. Num_Tasks) of Hidden_Agent;
+                  All_Hidden : for Node in Start .. Stop loop
+                     Hidden.Respond (Node => Hidden_Node (Node) );
+                  end loop All_Hidden;
+               end Hidden_Agent;
 
-            Agent : Agent_List;
-         begin -- Hidden_Tasks
-            null;
-         end Hidden_Tasks;
+               type Agent_List is array (1 .. Tasks) of Hidden_Agent;
+
+               Agent : Agent_List;
+            begin -- Hidden_Tasks
+               null;
+            end Hidden_Tasks;
+         end if;
 
          -- For output nodes
          Output_Tasks : declare
-            package IDs is new ID_Generator (Num_Tasks => Num_Tasks);
+            Tasks : constant Positive := Integer'Min (Num_Tasks, Output_ID'Last);
+
+            package IDs is new ID_Generator (Num_Tasks => Tasks);
 
             task type Output_Agent (ID : Positive := IDs.Next_ID);
 
             task body Output_Agent is
-               Start : constant Positive := (ID - 1) * (Output_ID'Last / Num_Tasks) + 1;
+               Start : constant Positive := (ID - 1) * (Output_ID'Last / Tasks) + 1;
 
-               Stop  : Positive := Start + Output_ID'Last / Num_Tasks - 1;
+               Stop  : Positive := Start + Output_ID'Last / Tasks - 1;
             begin -- Output_Agent
-               if ID = Num_Tasks then
+               if ID = Tasks then
                   Stop := Output_ID'Last;
                end if;
 
@@ -344,7 +352,7 @@ package body PragmARC.REM_NN_Wrapper is
                end loop All_Output;
             end Output_Agent;
 
-            type Agent_List is array (1 .. Num_Tasks) of Output_Agent;
+            type Agent_List is array (1 .. Tasks) of Output_Agent;
 
             Agent : Agent_List;
          begin -- Output_Tasks
@@ -362,16 +370,18 @@ package body PragmARC.REM_NN_Wrapper is
          Cycle_S := Real'Max (S, Real (Update_Count) * K_S);
 
          Output_Tasks : declare
-            package IDs is new ID_Generator (Num_Tasks => Num_Tasks);
+            Tasks : constant Positive := Integer'Min (Num_Tasks, Output_ID'Last);
+
+            package IDs is new ID_Generator (Num_Tasks => Tasks);
 
             task type Output_Agent (ID : Positive := IDs.Next_ID);
 
             task body Output_Agent is
-               Start : constant Positive := (ID - 1) * (Output_ID'Last / Num_Tasks) + 1;
+               Start : constant Positive := (ID - 1) * (Output_ID'Last / Tasks) + 1;
 
-               Stop  : Positive := Start + Output_ID'Last / Num_Tasks - 1;
+               Stop  : Positive := Start + Output_ID'Last / Tasks - 1;
             begin -- Output_Agent
-               if ID = Num_Tasks then
+               if ID = Tasks then
                   Stop := Output_ID'Last;
                end if;
 
@@ -381,38 +391,42 @@ package body PragmARC.REM_NN_Wrapper is
                end loop All_Outputs;
             end Output_Agent;
 
-            type Agent_List is array (1 .. Num_Tasks) of Output_Agent;
+            type Agent_List is array (1 .. Tasks) of Output_Agent;
 
             Agent : Agent_List;
          begin -- Output_Tasks
             null;
          end Output_Tasks;
 
-         Hidden_Tasks : declare
-            package IDs is new ID_Generator (Num_Tasks => Num_Tasks);
+         if Num_Hidden_Nodes > 0 then
+            Hidden_Tasks : declare
+               Tasks : constant Positive := Integer'Min (Num_Tasks, Hidden_ID'Last);
 
-            task type Hidden_Agent (ID : Positive := IDs.Next_ID);
+               package IDs is new ID_Generator (Num_Tasks => Tasks);
 
-            task body Hidden_Agent is
-               Start : constant Positive := (ID - 1) * (Hidden_ID'Last / Num_Tasks) + 1;
+               task type Hidden_Agent (ID : Positive := IDs.Next_ID);
 
-               Stop  : Positive := Start + Hidden_ID'Last / Num_Tasks - 1;
-            begin -- Hidden_Agent
-               if ID = Num_Tasks then
-                  Stop := Hidden_ID'Last;
-               end if;
+               task body Hidden_Agent is
+                  Start : constant Positive := (ID - 1) * (Hidden_ID'Last / Tasks) + 1;
 
-               All_Hidden : for Node in Start .. Stop loop
-                  Hidden.Train (Node => Hidden_Node (Node), ID => Node);
-               end loop All_Hidden;
-            end Hidden_Agent;
+                  Stop  : Positive := Start + Hidden_ID'Last / Tasks - 1;
+               begin -- Hidden_Agent
+                  if ID = Tasks then
+                     Stop := Hidden_ID'Last;
+                  end if;
 
-            type Agent_List is array (1 .. Num_Tasks) of Hidden_Agent;
+                  All_Hidden : for Node in Start .. Stop loop
+                     Hidden.Train (Node => Hidden_Node (Node), ID => Node);
+                  end loop All_Hidden;
+               end Hidden_Agent;
 
-            Agent : Agent_List;
-         begin -- Hidden_Tasks
-            null;
-         end Hidden_Tasks;
+               type Agent_List is array (1 .. Tasks) of Hidden_Agent;
+
+               Agent : Agent_List;
+            begin -- Hidden_Tasks
+               null;
+            end Hidden_Tasks;
+         end if;
       end Train;
 
       procedure Save_Weights is
