@@ -3,12 +3,16 @@
 -- **************************************************************************
 --
 -- History:
+-- 2014 Jun 15     J. Carter          V1.2--Moved large arrays to heap
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
-with Ada.Sequential_IO;
-with PragmARC.Universal_Random;
+with Ada.Finalization;
 with Ada.Numerics.Generic_Elementary_Functions;
+with Ada.Sequential_IO;
+with Ada.Unchecked_Deallocation;
+
+with PragmARC.Universal_Random;
 
 use Ada;
 package body PragmARC.REM_NN_Wrapper is
@@ -37,6 +41,7 @@ package body PragmARC.REM_NN_Wrapper is
       end Input;
 
       type Input_Node_Set is array (Input_ID) of Input.Node_Handle;
+      type Input_Set_Ptr is access Input_Node_Set;
 
       Deriv_Lim : constant := 1.0E-4;
 
@@ -72,6 +77,7 @@ package body PragmARC.REM_NN_Wrapper is
       end Hidden;
 
       type Hidden_Node_Set is array (Hidden_ID) of Hidden.Node_Handle;
+      type Hidden_Set_Ptr is access Hidden_Node_Set;
 
       type Star_Group is record
          E_Star : Real := 0.0;
@@ -121,16 +127,25 @@ package body PragmARC.REM_NN_Wrapper is
 
       subtype Output_Node_Handle is Output.Node_Handle (Input_To_Output => Input_To_Output_Connections);
       type Output_Node_Set is array (Output_ID) of Output_Node_Handle;
+      type Output_Set_Ptr is access Output_Node_Set;
+
+      type Finalizer is new Ada.Finalization.Limited_Controlled with null record;
+
+      overriding procedure Finalize (Object : in out Finalizer);
 
       Input_Lim  : constant := 300.0;
       H_Star_Lim : constant := 100.0;
 
       -- Network state information
-      Input_Node  : Input_Node_Set;
-      Hidden_Node : Hidden_Node_Set;
-      Output_Node : Output_Node_Set;
-      Desired     : Desired_Set := Desired_Set'(others => Output_Set'(others => 0.0) );
-      Target      : Output_Set := Output_Set'(others => 0.0); -- Current D infinity
+      Input_Node_Ptr  : Input_Set_Ptr := new Input_Node_Set;
+      Input_Node      : Input_Node_Set renames Input_Node_Ptr.all;
+      Hidden_Node_Ptr : Hidden_Set_Ptr := new Hidden_Node_Set;
+      Hidden_Node     : Hidden_Node_Set renames Hidden_Node_Ptr.all;
+      Output_Node_Ptr : Output_Set_Ptr := new Output_Node_Set;
+      Output_Node     : Output_Node_Set renames Output_Node_Ptr.all;
+      Desired         : Desired_Set := Desired_Set'(others => Output_Set'(others => 0.0) );
+      Target          : Output_Set  := Output_Set'(others => 0.0); -- Current D infinity
+      Final           : Finalizer;
 
       Current_Pattern : Positive;
 
@@ -695,6 +710,16 @@ package body PragmARC.REM_NN_Wrapper is
             return Node.Bias;
          end Get_Bias_Weight;
       end Output;
+
+      procedure Finalize (Object : in out Finalizer) is
+         procedure Free is new Ada.Unchecked_Deallocation (Object => Input_Node_Set,  Name => Input_Set_Ptr);
+         procedure Free is new Ada.Unchecked_Deallocation (Object => Hidden_Node_Set, Name => Hidden_Set_Ptr);
+         procedure Free is new Ada.Unchecked_Deallocation (Object => OutPut_Node_Set, Name => OutPut_Set_Ptr);
+      begin -- Finalize
+         Free (Input_Node_Ptr);
+         Free (Hidden_Node_Ptr);
+         Free (OutPut_Node_Ptr);
+      end Finalize;
    begin -- REM_NN
       if Num_Hidden_Nodes <= 0 and then not Input_To_Output_Connections then
          raise Invalid_Architecture;
