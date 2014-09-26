@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 15     J. Carter          V1.2--Moved large arrays to heap
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -17,9 +18,6 @@ with PragmARC.Universal_Random;
 use Ada;
 package body PragmARC.REM_NN_Wrapper is
    package body REM_NN is
-      subtype Input_ID  is Positive range 1 .. Num_Input_Nodes;
-      subtype Hidden_ID is Positive range 1 .. Num_Hidden_Nodes;
-
       subtype Pattern_ID is Positive range 1 .. Num_Patterns;
       type Desired_Set is array (Pattern_ID) of Output_Set;
       type Count_Value is range 0 .. System.Max_Int;
@@ -43,15 +41,6 @@ package body PragmARC.REM_NN_Wrapper is
       type Input_Node_Set is array (Input_ID) of Input.Node_Handle;
       type Input_Set_Ptr is access Input_Node_Set;
 
-      Deriv_Lim : constant := 1.0E-4;
-
-      type Weight_Group is record
-         Weight : Real := 0.0;
-         Active : Boolean := True;
-         G : Real := 2.0 * Ec;
-         Delta_W_Rm : Real := 0.0;
-         Deriv_Rm : Real := Deriv_Lim;
-      end record;
       type Weight_Set is array (Positive range <>) of Weight_Group;
 
       package Hidden is -- Definition of hidden nodes
@@ -278,6 +267,205 @@ package body PragmARC.REM_NN_Wrapper is
          end Next_ID;
       end ID_Generator;
 
+      procedure Set_Weights (Weight : in Weight_Info) is
+         -- Empty declarative part
+      begin -- Set_Weights
+         Set_I : for I in Weight.IH_Weight'Range(1) loop
+            I_To_H : for H in Weight.IH_Weight'Range (2) loop
+               Hidden.Set_Weight (Node => Hidden_Node (H), From => I, Weight => Weight.IH_Weight (I, H) );
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Weight.IO_Weight'Range (2) loop
+                  Output.Set_Input_Weight (Node => Output_Node (O), From => I, Weight => Weight.IO_Weight (I, O) );
+               end loop I_To_O;
+            end if;
+         end loop Set_I;
+
+         Set_H : for H in Weight.Hidden_Bias'Range loop
+            Hidden.Set_Bias_Weight (Node => Hidden_Node (H), Weight => Weight.Hidden_Bias (H) );
+
+            H_To_O : for O in Weight.HO_Weight'Range (2) loop
+               Output.Set_Hidden_Weight (Node => Output_Node (O), From => H, Weight => Weight.HO_Weight (H, O) );
+            end loop H_To_O;
+         end loop Set_H;
+
+         Set_O : for O in Weight.Output_Bias'Range loop
+            Output.Set_Bias_Weight (Node => Output_Node (O), Weight => Weight.Output_Bias (O) );
+         end loop Set_O;
+      end Set_Weights;
+
+      procedure Read (File_Name : in String; Weight : out Weight_Info) is
+         File : Connection_IO.File_Type;
+      begin -- Read
+         Connection_IO.Open (File => File, Mode => Connection_IO.In_File, Name => File_Name);
+
+         Get_I : for I in Weight.IH_Weight'Range(1) loop
+            I_To_H : for H in Weight.IH_Weight'Range (2) loop
+               Connection_IO.Read (File => File, Item => Weight.IH_Weight (I, H) );
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Weight.IO_Weight'Range (2) loop
+                  Connection_IO.Read (File => File, Item => Weight.IO_Weight (I, O) );
+               end loop I_To_O;
+            end if;
+         end loop Get_I;
+
+         Get_H : for H in Weight.Hidden_Bias'Range loop
+            Connection_IO.Read (File => File, Item => Weight.Hidden_Bias (H) );
+
+            H_To_O : for O in Weight.HO_Weight'Range (2) loop
+               Connection_IO.Read (File => File, Item => Weight.HO_Weight (H, O) );
+            end loop H_To_O;
+         end loop Get_H;
+
+         Get_O : for O in Weight.Output_Bias'Range loop
+            Connection_IO.Read (File => File, Item => Weight.Output_Bias (O) );
+         end loop Get_O;
+
+         Connection_IO.Close (File => File);
+      end Read;
+
+      procedure Read (File_Name : in String) is
+         File   : Connection_IO.File_Type;
+         Weight : Weight_Group;
+      begin -- Read
+         Connection_IO.Open (File => File, Mode => Connection_IO.In_File, Name => File_Name);
+
+         Get_I : for I in Input_ID loop
+            I_To_H : for H in Hidden_ID loop
+               Connection_IO.Read (File => File, Item => Weight);
+               Hidden.Set_Weight (Node => Hidden_Node (H), From => I, Weight => Weight);
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Output_ID loop
+                  Connection_IO.Read (File => File, Item => Weight);
+                  Output.Set_Input_Weight (Node => Output_Node (O), From => I, Weight => Weight);
+               end loop I_To_O;
+            end if;
+         end loop Get_I;
+
+         Get_H : for H in Hidden_ID loop
+            Connection_IO.Read (File => File, Item => Weight);
+            Hidden.Set_Bias_Weight (Node => Hidden_Node (H), Weight => Weight);
+
+            H_To_O : for O in Output_ID loop
+               Connection_IO.Read (File => File, Item => Weight);
+               Output.Set_Hidden_Weight (Node => Output_Node (O), From => H, Weight => Weight);
+            end loop H_To_O;
+         end loop Get_H;
+
+         Get_O : for O in Output_ID loop
+            Connection_IO.Read (File => File, Item => Weight);
+            Output.Set_Bias_Weight (Node => Output_Node (O), Weight => Weight);
+         end loop Get_O;
+
+         Connection_IO.Close (File => File);
+      end Read;
+
+      procedure Prepare_For_Training is
+         -- Empty declarative part
+      begin -- Prepare_For_Training
+         -- Pass each pattern through the network to obtain initial response (D zero)
+         All_Patterns : for Pattern in Desired'Range loop
+            Respond (Pattern => Pattern, Output => Desired (Pattern) );
+         end loop All_Patterns;
+      end Prepare_For_Training;
+
+      procedure Get_Weights (Weight : out Weight_Info) is
+         -- Empty declarative part
+      begin -- Get_Weights
+         Get_I : for I in Weight.IH_Weight'Range(1) loop
+            I_To_H : for H in Weight.IH_Weight'Range (2) loop
+               Weight.IH_Weight (I, H) := Hidden.Get_Weight (Node => Hidden_Node (H), From => I);
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Weight.IO_Weight'Range (2) loop
+                  Weight.IO_Weight (I, O) := Output.Get_Input_Weight (Node => Output_Node (O), From => I);
+               end loop I_To_O;
+            end if;
+         end loop Get_I;
+
+         Get_H : for H in Weight.Hidden_Bias'Range loop
+            Weight.Hidden_Bias (H) := Hidden.Get_Bias_Weight (Node => Hidden_Node (H) );
+
+            H_To_O : for O in Weight.HO_Weight'Range (2) loop
+               Weight.HO_Weight (H, O) := Output.Get_Hidden_Weight (Node => Output_Node (O), From => H);
+            end loop H_To_O;
+         end loop Get_H;
+
+         Get_O : for O in Weight.Output_Bias'Range loop
+            Weight.Output_Bias (O) := Output.Get_Bias_Weight (Node => Output_Node (O) );
+         end loop Get_O;
+      end Get_Weights;
+
+      procedure Write (File_Name : in String; Weight : in Weight_Info) is
+         File : Connection_IO.File_Type;
+      begin -- Write
+         Connection_IO.Create (File => File, Name => File_Name);
+
+         Get_I : for I in Weight.IH_Weight'Range(1) loop
+            I_To_H : for H in Weight.IH_Weight'Range (2) loop
+               Connection_IO.Write (File => File, Item => Weight.IH_Weight (I, H) );
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Weight.IO_Weight'Range (2) loop
+                  Connection_IO.Write (File => File, Item => Weight.IO_Weight (I, O) );
+               end loop I_To_O;
+            end if;
+         end loop Get_I;
+
+         Get_H : for H in Weight.Hidden_Bias'Range loop
+            Connection_IO.Write (File => File, Item => Weight.Hidden_Bias (H) );
+
+            H_To_O : for O in Weight.HO_Weight'Range (2) loop
+               Connection_IO.Write (File => File, Item => Weight.HO_Weight (H, O) );
+            end loop H_To_O;
+         end loop Get_H;
+
+         Get_O : for O in Weight.Output_Bias'Range loop
+            Connection_IO.Write (File => File, Item => Weight.Output_Bias (O) );
+         end loop Get_O;
+
+         Connection_IO.Close (File => File);
+      end Write;
+
+      procedure Write (File_Name : in String) is
+         File : Connection_IO.File_Type;
+      begin -- Write
+         Connection_IO.Create (File => File, Name => File_Name);
+
+         Get_I : for I in Input_ID loop
+            I_To_H : for H in Hidden_ID loop
+               Connection_IO.Write (File => File, Item => Hidden.Get_Weight (Node => Hidden_Node (H), From => I) );
+            end loop I_To_H;
+
+            if Input_To_Output_Connections then
+               I_To_O : for O in Output_ID loop
+                  Connection_IO.Write (File => File, Item => Output.Get_Input_Weight (Node => Output_Node (O), From => I) );
+               end loop I_To_O;
+            end if;
+         end loop Get_I;
+
+         Get_H : for H in Hidden_ID loop
+            Connection_IO.Write (File => File, Item => Hidden.Get_Bias_Weight (Node => Hidden_Node (H) ) );
+
+            H_To_O : for O in Output_ID loop
+               Connection_IO.Write (File => File, Item => Output.Get_Hidden_Weight (Node => Output_Node (O), From => H) );
+            end loop H_To_O;
+         end loop Get_H;
+
+         Get_O : for O in Output_ID loop
+            Connection_IO.Write (File => File, Item => Output.Get_Bias_Weight (Node => Output_Node (O) ) );
+         end loop Get_O;
+
+         Connection_IO.Close (File => File);
+      end Write;
+
       procedure Respond (Pattern : in Positive; Output : out Output_Set; Num_Tasks : in Positive := 1) is
          Input_Value : Node_Set (Input_ID);
       begin -- Respond
@@ -443,38 +631,6 @@ package body PragmARC.REM_NN_Wrapper is
             end Hidden_Tasks;
          end if;
       end Train;
-
-      procedure Save_Weights is
-         -- null;
-      begin -- Save_Weights
-         Connection_IO.Create (File => Weight_File, Name => Weight_File_Name);
-
-         From_Inputs : for I_ID in Input_ID loop
-            To_Hidden : for H_ID in Hidden_ID loop
-               Connection_IO.Write (File => Weight_File, Item => Hidden.Get_Weight (Hidden_Node (H_ID), I_ID) );
-            end loop To_Hidden;
-
-            if Input_To_Output_Connections then
-               To_Output : for O_ID in Output_ID loop
-                  Connection_IO.Write (File => Weight_File, Item => Output.Get_Input_Weight (Output_Node (O_ID), I_ID) );
-               end loop To_Output;
-            end if;
-         end loop From_Inputs;
-
-         From_Hidden : for H_ID in Hidden_ID loop
-            Connection_IO.Write (File => Weight_File, Item => Hidden.Get_Bias_Weight (Hidden_Node (H_ID) ) );
-
-            Hidden_To_Output : for O_ID in Output_ID loop
-               Connection_IO.Write (File => Weight_File, Item => Output.Get_Hidden_Weight (Output_Node (O_ID), H_ID) );
-            end loop Hidden_To_Output;
-         end loop From_Hidden;
-
-         Output_Bias : for O_ID in Output_ID loop
-            Connection_IO.Write (File => Weight_File, Item => Output.Get_Bias_Weight (Output_Node (O_ID) ) );
-         end loop Output_Bias;
-
-         Connection_IO.Close (File => Weight_File);
-      end Save_Weights;
 
       package body Input is
          procedure Set_Input (Node : in out Node_Handle; Value : in Real) is
@@ -726,74 +882,6 @@ package body PragmARC.REM_NN_Wrapper is
       end if;
 
       Random.Randomize;
-
-      if not New_Random_Weights then
-         Connection_IO.Open (File => Weight_File, Mode => Connection_IO.In_File, Name => Weight_File_Name);
-      end if;
-
-      -- Get initial values for weights
-      From_Inputs : for I_ID in Input_ID loop
-         To_Hidden : for H_ID in Hidden_ID loop
-            if New_Random_Weights then -- Random selection of initial weights
-               Weight.Weight := Random_Range (-Random_Weight_Range, Random_Weight_Range);
-            else -- read initial weights from file
-               Connection_IO.Read (File => Weight_File, Item => Weight);
-            end if;
-
-            Hidden.Set_Weight (Node => Hidden_Node (H_ID), From => I_ID, Weight => Weight);
-         end loop To_Hidden;
-
-         if Input_To_Output_Connections then
-            To_Output : for O_ID in Output_ID loop
-               if New_Random_Weights then
-                  Weight.Weight := Random_Range (-Random_Weight_Range, Random_Weight_Range);
-               else
-                  Connection_IO.Read (File => Weight_File, Item => Weight);
-               end if;
-
-               Output.Set_Input_Weight (Node => Output_Node (O_ID), From => I_ID, Weight => Weight);
-            end loop To_Output;
-         end if;
-      end loop From_Inputs;
-
-      From_Hidden : for H_ID in Hidden_ID loop
-         if New_Random_Weights then
-            Weight.Weight := Random_Range (-Random_Weight_Range, Random_Weight_Range);
-         else
-            Connection_IO.Read (File => Weight_File, Item => Weight);
-         end if;
-
-         Hidden.Set_Bias_Weight (Node => Hidden_Node (H_ID), Weight => Weight);
-
-         Hidden_To_Output : for O_ID in Output_ID loop
-            if New_Random_Weights then
-               Weight.Weight := Random_Range (-Random_Weight_Range, Random_Weight_Range);
-            else
-               Connection_IO.Read (File => Weight_File, Item => Weight);
-            end if;
-
-            Output.Set_Hidden_Weight (Node => Output_Node (O_ID), From => H_ID, Weight => Weight);
-         end loop Hidden_To_Output;
-      end loop From_Hidden;
-
-      Output_Bias : for O_ID in Output_ID loop
-         if New_Random_Weights then
-            Weight.Weight := Random_Range (-Random_Weight_Range, Random_Weight_Range);
-         else
-            Connection_IO.Read (File => Weight_File, Item => Weight);
-         end if;
-
-         Output.Set_Bias_Weight (Node => Output_Node (O_ID), Weight => Weight);
-      end loop Output_Bias;
-
-      if not New_Random_Weights then
-         Connection_IO.Close (File => Weight_File);
-      end if;
-
-      -- Pass each pattern through the network to obtain initial response (D zero)
-      All_Patterns : for Pattern in Desired'range loop
-         Respond (Pattern => Pattern, Output => Desired (Pattern) );
-      end loop All_Patterns;
    end REM_NN;
 end PragmARC.REM_NN_Wrapper;
 --

@@ -1,23 +1,17 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2014 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
--- Implements a skip list, a probabilistically-balanced structure similar to a balanced tree in use and in search time
--- Described by W. Pugh in "Skip Lists:  A Probabilistic Alternative to Balanced Trees," CACM 1990 Jun
+-- Skip lists that are stored in files
 --
 -- History:
--- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
----------------------------------------------------------------------------------
--- 2002 Dec 01     J. Carter          V1.5--Iterate should not allow modification
--- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
--- 2002 May 01     J. Carter          V1.3--Added Assign
--- 2001 May 01     J. Carter          V1.2--Added Is_Empty; improved memory usage
--- 2000 Jul 01     J. Carter          V1.1--Eliminated function Random from generic specification
--- 2000 May 01     J. Carter          V1.0--Initial release
+-- 2014 Oct 01     J. Carter          V1.0--Initial version
 --
 private with Ada.Finalization;
+private with Ada.Strings.Unbounded;
+private with PragmARC.Skip_List_Unbounded;
 
-generic -- PragmARC.Skip_List_Unbounded
+generic -- PragmARC.Persistent_Skip_List_Unbounded
    type Element is private; -- Values to store in the list
 
    with function "<" (Left : Element; Right : Element) return Boolean is <>;
@@ -26,22 +20,24 @@ generic -- PragmARC.Skip_List_Unbounded
 
    with function "=" (Left : Element; Right : Element) return Boolean is <>;
    -- Usually operates on part (the key) of an Element
-package PragmARC.Skip_List_Unbounded is
-   type Skip_List is tagged limited private; -- Initial value: empty
+package PragmARC.Persistent_Skip_List_Unbounded is
+   type Persistent_Skip_List (<>) is tagged limited private;
 
-   procedure Clear (List : in out Skip_List);
+   Invalid_File : exception;
+
+   function Open_List (Filename : in String; Write_On_Modify : in Boolean := False) return Persistent_Skip_List;
+   -- If a file named Filename exists, opens it and reads it into a Persistent_Skip_List, which is returned
+   -- Otherwise, creates an empty file named Filename and returns an empty Persistent_Skip_List
+   -- Raises Invalid_File if Filename exists but does not represent a valid Persistent_Skip_List
+   -- if Write_On_Modify, the list will be written to Filename whenever it is modified (safer but slower)
+   -- Otherwise, it will be written when finalized (Faster but less safe)
+
+   procedure Clear (List : in out Persistent_Skip_List);
    -- Makes List empty
    --
    -- Time: O(N)
    --
    -- Postcondition: Length (List) = 0
-
-   procedure Assign (To : out Skip_List; From : in Skip_List);
-   -- Makes To a copy of From
-   -- May raise Storage_Exhausted
-   -- The state of To if Storage_Exhausted is raised is undefined
-   --
-   -- Time: O(N)
 
    type Result (Found : Boolean := False) is record
       case Found is
@@ -52,13 +48,13 @@ package PragmARC.Skip_List_Unbounded is
       end case;
    end record;
 
-   function Search (List : Skip_List; Item : Element) return Result;
+   function Search (List : Persistent_Skip_List; Item : Element) return Result;
    -- If there exists a value stored in List such that Value = Item, returns (Found => True, Item => Value)
    -- Returns (Found => False) otherwise
    --
    -- Time: approximately O(log N)
 
-   procedure Insert (List : in out Skip_List; Item : in Element);
+   procedure Insert (List : in out Persistent_Skip_List; Item : in Element);
    -- raise Storage_Exhausted
    -- Adds Item to List in the order specified by "<"
    -- If there is a value in List which is = Item, replaces the value with Item
@@ -67,13 +63,13 @@ package PragmARC.Skip_List_Unbounded is
    --
    -- Time : approximately O(log N)
 
-   procedure Delete (List : in out Skip_List; Item : in Element);
-   -- Deletes the value in List which is = Item
+   procedure Delete (List : in out Persistent_Skip_List; Item : in Element);
+   -- Deletes the first value in List which is = Item
    -- If there is no such value in List, this procedure has no effect
    --
    -- Time : approximately O(log N)
 
-   function Get_First (List : Skip_List) return Element; -- raise Empty
+   function Get_First (List : Persistent_Skip_List) return Element; -- raise Empty
    -- Returns the first value stored in List (values are ordered by "<")
    -- Raises Empty if List is empty
    --
@@ -81,7 +77,7 @@ package PragmARC.Skip_List_Unbounded is
    --
    -- Precondition : not Is_Empty (List)     raise Empty if violated
 
-   function Get_Last (List : Skip_List) return Element; -- raise Empty
+   function Get_Last (List : Persistent_Skip_List) return Element; -- raise Empty
    -- Similar to Get_First except it returns the last value stored in List
    -- Raises Empty if List is empty
    --
@@ -89,52 +85,33 @@ package PragmARC.Skip_List_Unbounded is
    --
    -- Precondition : not Is_Empty (List)     raise Empty if violated
 
-   function Is_Empty (List : Skip_List) return Boolean;
+   function Is_Empty (List : Persistent_Skip_List) return Boolean;
    -- Returns True if List is empty [Length (List) = 0]; returns False otherwise
    --
    -- Time : O(1)
 
-   function Length (List : Skip_List) return Natural;
+   function Length (List : Persistent_Skip_List) return Natural;
    -- Returns a count of the number of values stored in List
    --
    -- Time : O(N)
 
    generic -- Iterate
       with procedure Action (Item : in Element; Continue : out Boolean);
-   procedure Iterate (List : in out Skip_List);
+   procedure Iterate (List : in out Persistent_Skip_List);
    -- Applies Action to each value in List in order
    -- Returns immediately if Action sets Continue to False
-private -- PragmARC.Skip_List_Unbounded
-   use Ada;
+private -- Persistent_Skip_List_Unbounded
+   package Lists is new PragmARC.Skip_List_Unbounded (Element => Element);
 
-   Max_Level : constant := 5;
-
-   subtype Level_Id is Positive range 1 .. Max_Level;
-
-   type Node (Has_Data : Boolean; Level : Level_Id);
-   type Link is access all Node;
-
-   type Forward_Set is array (Level_Id range <>) of Link;
-
-   type Node (Has_Data : Boolean; Level : Level_Id) is record
-      Forward : Forward_Set (Level_Id'First .. Level) := Forward_Set'(Level_Id'First .. Level => null);
-
-      case Has_Data is
-      when False =>
-         null;
-      when True =>
-         Value : Element;
-      end case;
+   type Persistent_Skip_List is new Ada.Finalization.Limited_Controlled with record
+      Filename        : Ada.Strings.Unbounded.Unbounded_String;
+      Write_On_Modify : Boolean;
+      List            : Lists.Skip_List;
+      Finalized       : Boolean := False;
    end record;
 
-   type Skip_List is new Finalization.Limited_Controlled with record
-      Level  : Level_Id := Level_Id'First;
-      Header : Link     := new Node (Has_Data => False, Level => Max_Level);
-      Last   : Link     := null;
-   end record;
-
-   procedure Finalize (Object : in out Skip_List);
-end PragmARC.Skip_List_Unbounded;
+   procedure Finalize (Object : in out Persistent_Skip_List);
+end PragmARC.Persistent_Skip_List_Unbounded;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

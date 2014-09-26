@@ -28,6 +28,7 @@ with PragmARC.Menu_Handler;
 with PragmARC.Min_Max;
 with PragmARC.Mixed_Case;
 with PragmARC.Monitor_Handler;
+with PragmARC.Persistent_Skip_List_Unbounded;
 with PragmARC.Postfix_Calculator;
 with PragmARC.Protected_Option;
 with PragmARC.Queue_Bounded;
