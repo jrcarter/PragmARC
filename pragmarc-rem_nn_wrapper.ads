@@ -12,6 +12,7 @@
 -- Note: with GNAT, a unit that instantiates REM_NN_Wrapper.REM_NN should not use an optimization level above -O1
 --
 -- History:
+-- 2015 Nov 01     J. Carter          V2.1--Removed unused generic parameter
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency and GNAT warning
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -57,9 +58,6 @@ package PragmARC.REM_NN_Wrapper is
       -- Random ranges: Random values will be selected from the range -X .. X, where X is one of:
       Random_E_Star_Range : Natural_Real := 0.001; -- If > 0, the network will add random noise to E*
       Random_H_Star_Range : Natural_Real := 0.001; -- Ditto for H*
-
-      -- File name: store, & possibly read, network values from this file
-      Weight_File_Name : String := "rem.wgt";
 
       with procedure Get_Input (Pattern : in Positive; Input : out Node_Set; Desired : out Node_Set);
       -- Gets an input pattern & associated desired output pattern for this pattern #

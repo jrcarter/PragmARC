@@ -1,5 +1,6 @@
 with PragmARC;
 with PragmARC.Ansi_Tty_Control;
+with PragmARC.B_Strings;
 with PragmARC.Bag_Unbounded;
 with PragmARC.Bag_Unbounded_Unprotected;
 with PragmARC.Binary_Searcher;
