@@ -87,7 +87,7 @@ package body PragmARC.B_Strings is
    function "=" (Left : B_String; Right : B_String) return Boolean is
       -- Empty declarative part
    begin -- "="
-      return Left.Value (1 .. Left.Length) = Right.Value (1 .. Right.Length);
+      return Left.Length = Right.Length and then Left.Value (1 .. Left.Length) = Right.Value (1 .. Right.Length);
    end "=";
 
    function "<" (Left : B_String; Right : B_String) return Boolean is
