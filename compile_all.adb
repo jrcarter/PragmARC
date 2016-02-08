@@ -55,6 +55,7 @@ with PragmARC.Sort_Quick_In_Place;
 with PragmARC.Sort_Radix;
 with PragmARC.Stack_Unbounded;
 with PragmARC.Stack_Unbounded_Unprotected;
+with PragmARC.Text_IO;
 with PragmARC.Three_Way;
 with PragmARC.Threefry_Random;
 with PragmARC.Transporter_Handler;

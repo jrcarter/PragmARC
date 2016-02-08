@@ -7,6 +7,7 @@
 -- Based on an idea by Robert Duff presented on comp.lang.ada
 --
 -- History:
+-- 2016 Feb 15     J. carter          v1.1--Forgot "+" for To_B_String
 -- 2015 Nov 15     J. Carter          V1.0--Initial release
 --
 with Ada.Strings;
@@ -22,6 +23,7 @@ package PragmARC.B_Strings is
    -- Lower bound of result is 1; upper bound is Length (Source)
 
    function To_B_String (Source : String) return B_String;
+   function "+" (Source : String) return B_String renames To_B_String;
    -- Result's Max_Length will be Source'Length, or 1 if Source'Lenth = 0
 
    function Length (Source : B_String) return Natural;
