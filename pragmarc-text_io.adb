@@ -5,18 +5,30 @@
 -- History:
 -- 2016 Feb 15     J. Carter          V1.0--Initial version
 --
+with Ada.Characters.Latin_1;
 with Ada.IO_Exceptions;
 with Ada.Strings;
 
 with PragmARC.B_Strings;
 
 package body PragmARC.Text_IO is
-   Line_Terminator : B_Strings.B_String (Max_Length => 5);
+   DOS_Windows_String : constant String := Ada.Characters.Latin_1.CR & Ada.Characters.Latin_1.LF;
+   Mac_String         : constant String := Ada.Characters.Latin_1.CR & "";
+   Unix_String        : constant String := Ada.Characters.Latin_1.LF & "";
 
-   procedure Set_Line_Terminator (EOL : in String) is
+   Line_Terminator : B_Strings.B_String (Max_Length => 2);
+
+   procedure Set_Line_Terminator (EOL : in EOL_ID) is
       -- Empty
    begin -- Set_Line_Terminator
-      B_Strings.Assign (To => Line_Terminator, From => EOL, Drop => Ada.Strings.Right);
+      case EOL is
+      when DOS_Windows_EOL =>
+         B_Strings.Assign (To => Line_Terminator, From => DOS_Windows_String, Drop => Ada.Strings.Right);
+      when Mac_EOL =>
+         B_Strings.Assign (To => Line_Terminator, From => Mac_String, Drop => Ada.Strings.Right);
+      when Unix_EOL =>
+         B_Strings.Assign (To => Line_Terminator, From => Unix_String, Drop => Ada.Strings.Right);
+      end case;
    end Set_Line_Terminator;
 
    procedure Create (File : in out File_Handle;
@@ -215,5 +227,5 @@ package body PragmARC.Text_IO is
       File.Empty := False;
    end Put_Back_C;
 begin -- PragmARC.Text_IO
-   B_Strings.Assign (To => Line_Terminator, From => DOS_Windows_EOL, Drop => Ada.Strings.Right);
+   B_Strings.Assign (To => Line_Terminator, From => DOS_Windows_String, Drop => Ada.Strings.Right);
 end PragmARC.Text_IO;

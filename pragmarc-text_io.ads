@@ -3,26 +3,25 @@
 -- **************************************************************************
 --
 -- Text I/O to handle text files from multiple platforms
--- Line terminators must be encoded as a sequence of 1 or more characters
+-- Line terminators must be encoded as a sequence of 1 or 2 characters
 -- No column, line, or page counting; no column or page operations
 -- End_Of_File works correctly
 --
 -- History:
 -- 2016 Feb 15     J. Carter          V1.0--Initial version
 --
-with Ada.Characters.Latin_1;
 with Ada.Text_IO;
 
 private with Ada.Text_IO.Text_Streams;
 
 package PragmARC.Text_IO is
-   DOS_Windows_EOL : constant String := Ada.Characters.Latin_1.CR & Ada.Characters.Latin_1.LF;
-   Mac_Old_EOL     : constant String := Ada.Characters.Latin_1.CR & "";
-   Unix_EOL        : constant String := Ada.Characters.Latin_1.LF & "";
+   type EOL_ID is (DOS_Windows_EOL, Mac_EOL, Unix_EOL);
+   -- DOS_Windows_EOL = CR-LF
+   -- Mac_EOL         = CR
+   -- Unix_EOL        = LF
 
-   procedure Set_Line_Terminator (EOL : in String);
+   procedure Set_Line_Terminator (EOL : in EOL_ID);
    -- Sets the line terminator for output to EOL
-   -- EOL cannot exceed 5 characters; extra characters will be discarded
    -- The default output EOL is DOS_Windows_EOL
 
    type File_Handle is tagged limited private;
