@@ -155,7 +155,7 @@ package body PragmARC.Text_IO is
       -- Empty
    begin -- Get
       Get_All : for I in Item'Range loop -- Not String'Read, because that will include EOLs
-         Item (I) := Get_C (File);
+         Get (File => File, Item => Item (I) );
       end loop Get_All;
    end Get;
 
