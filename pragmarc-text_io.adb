@@ -111,7 +111,8 @@ package body PragmARC.Text_IO is
    when Ada.IO_Exceptions.End_Error =>
       if Count = 0 then
          raise;
-      end if; -- Otherwise we have a final line without a line terminator, which we've skipped
+      end if;
+      -- Otherwise we have a final line without a line terminator, or with a Mac line terminator, and we've skipped that line
    end Skip_Line;
 
    function End_Of_Line (File : File_Handle) return Boolean is
@@ -204,7 +205,7 @@ package body PragmARC.Text_IO is
    when Ada.IO_Exceptions.End_Error =>
       if Last < Item'First then
          raise;
-      end if; -- Otherwise we have a final line without a line terminator, which is in Item (Item'First .. Last)
+      end if; -- Otherwise we have a final line without a line terminator, and that line is in Item (Item'First .. Last)
    end Get_Line;
 
    procedure Put_Line (File : in out File_Handle; Item : in String) is
