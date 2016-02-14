@@ -87,10 +87,12 @@ package body PragmARC.Text_IO is
    procedure Skip_Line (File : in out File_Handle; Spacing : in Positive := 1) is
       Char1 : Character;
       Char2 : Character;
+      Count : Natural := 0;
    begin -- Skip_Line
       All_Lines : for I in 1 .. Spacing loop
          Find_EOL : loop
             Char1 := Get_C (File);
+            Count := Count + 1;
 
             exit Find_EOL when Char1 = Ada.Characters.Latin_1.LF;
 
@@ -105,6 +107,11 @@ package body PragmARC.Text_IO is
             end if;
          end loop Find_EOL;
       end loop All_Lines;
+   exception -- Skip_Line
+   when Ada.IO_Exceptions.End_Error =>
+      if Count = 0 then
+         raise;
+      end if; -- Otherwise we have a final line without a line terminator, which we've skipped
    end Skip_Line;
 
    function End_Of_Line (File : File_Handle) return Boolean is
@@ -193,6 +200,11 @@ package body PragmARC.Text_IO is
          Item (I) := Get_C (File);
          Last := I;
       end loop Get_Characters;
+   exception -- Get_Line
+   when Ada.IO_Exceptions.End_Error =>
+      if Last < Item'First then
+         raise;
+      end if; -- Otherwise we have a final line without a line terminator, which is in Item (Item'First .. Last)
    end Get_Line;
 
    procedure Put_Line (File : in out File_Handle; Item : in String) is
