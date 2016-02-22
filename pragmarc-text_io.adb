@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Mar 01     J. Carter          Use Sequential_IO so no extra EOLs when a file is closed
 -- 2016 Feb 15     J. Carter          V1.0--Initial version
 --
 with Ada.Characters.Latin_1;
@@ -32,40 +33,37 @@ package body PragmARC.Text_IO is
    end Set_Line_Terminator;
 
    procedure Create (File : in out File_Handle;
-                     Name : in     String                := "";
-                     Mode : in     Ada.Text_IO.File_Mode := Ada.Text_IO.Out_File;
-                     Form : in     String                := "")
+                     Name : in     String                 := "";
+                     Mode : in     Character_IO.File_Mode := Out_File;
+                     Form : in     String                 := "")
    is
       -- Empty
    begin -- Create
-      Ada.Text_IO.Create (File => File.File, Name => Name, Mode => Mode, Form => Form);
-      File.Stream := Ada.Text_IO.Text_Streams.Stream (File.File);
+      Character_IO.Create (File => File.File, Name => Name, Mode => Mode, Form => Form);
       File.Empty := True;
    end Create;
 
    procedure Open (File : in out File_Handle;
                    Name : in     String;
-                   Mode : in     Ada.Text_IO.File_Mode := Ada.Text_IO.In_File;
-                   Form : in     String                := "")
+                   Mode : in     Character_IO.File_Mode := In_File;
+                   Form : in     String                 := "")
    is
       -- Empty
    begin -- Open
-      Ada.Text_IO.Open (File => File.File, Name => Name, Mode => Mode, Form => Form);
-      File.Stream := Ada.Text_IO.Text_Streams.Stream (File.File);
+      Character_IO.Open (File => File.File, Name => Name, Mode => Mode, Form => Form);
       File.Empty := True;
    end Open;
 
    procedure Close (File : in out File_Handle) is
       -- Empty
    begin -- Close
-      Ada.Text_IO.Close (File => File.File);
-      File.Stream := null;
+      Character_IO.Close (File => File.File);
    end Close;
 
    function Is_Open (File : File_Handle) return Boolean is
       -- Empty
    begin -- Is_Open
-      return Ada.Text_IO.Is_Open (File.File);
+      return Character_IO.Is_Open (File.File);
    end Is_Open;
 
    use type B_Strings.B_String;
@@ -74,7 +72,9 @@ package body PragmARC.Text_IO is
       EOL : constant String := +Line_Terminator;
    begin -- New_Line
       All_Lines : for I in 1 .. Spacing loop
-         String'Write (File.Stream, EOL);
+         All_Characters : for J in EOL'Range loop
+            Character_IO.Write (File => File.File, Item => EOL (J) );
+         end loop All_Characters;
       end loop All_Lines;
    end New_Line;
 
@@ -124,15 +124,9 @@ package body PragmARC.Text_IO is
    end End_Of_Line;
 
    function End_Of_File (File : File_Handle) return Boolean is
-      Char : Character;
+      -- Empty
    begin -- End_Of_File
-      Char := Get_C (File);
-      Put_Back_C (File => File.Handle.Ptr.all, Item => Char);
-
-      return False;
-   exception -- End_Of_File
-   when Ada.IO_Exceptions.End_Error =>
-      return True;
+      return Character_IO.End_Of_File (File => File.File);
    end End_Of_File;
 
    procedure Get (File : in out File_Handle; Item : out Character) is
@@ -156,21 +150,23 @@ package body PragmARC.Text_IO is
    procedure Put (File : in out File_Handle; Item : in Character) is
       -- Empty
    begin -- Put
-      Character'Write (File.Stream, Item);
+      Character_IO.Write (File => File.File, Item => Item);
    end Put;
 
    procedure Get (File : in out File_Handle; Item : out String) is
       -- Empty
    begin -- Get
-      Get_All : for I in Item'Range loop -- Not String'Read, because that will include EOLs
-         Get (File => File, Item => Item (I) );
+      Get_All : for I in Item'Range loop
+         Get (File => File, Item => Item (I) ); -- Not Get_C, because that will include EOLs
       end loop Get_All;
    end Get;
 
    procedure Put (File : in out File_Handle; Item : in String) is
       -- Empty
    begin -- Put
-      String'Write (File.Stream, Item);
+      All_Characters : for I in Item'Range loop
+         Character_IO.Write (File => File.File, Item => Item (I) );
+      end loop All_Characters;
    end Put;
 
    function Get_Line (File : File_Handle) return String is
@@ -220,7 +216,7 @@ package body PragmARC.Text_IO is
       Result : Character;
    begin -- Get_C
       if F.Empty then
-         Character'Read (F.Stream, Result);
+         Character_IO.Read (File => F.File, Item => Result);
       else
          Result := F.Buffer;
          F.Empty := True;
