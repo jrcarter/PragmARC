@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- A Recursive Error Minimization (REM) neural network
@@ -12,6 +12,7 @@
 -- Note: with GNAT, a unit that instantiates REM_NN_Wrapper.REM_NN should not use an optimization level above -O1
 --
 -- History:
+-- 2016 Mar 15     J. Carter          V2.2--Added Random_Weights
 -- 2015 Nov 01     J. Carter          V2.1--Removed unused generic parameter
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency and GNAT warning
@@ -93,13 +94,16 @@ package PragmARC.REM_NN_Wrapper is
       end record;
 
       procedure Set_Weights (Weight : in Weight_Info);
-      -- Sets the networks weights to Weight. Should be called before using Prepare_For_Training, Respond, or Train
+      -- Sets the network's weights to Weight. Should be called before using Prepare_For_Training, Respond, or Train
+
+      procedure Random_Weights (Max : in Positive_Real := 0.1);
+      -- Sets the network's weights to random values in -Max .. Max
 
       procedure Read (File_Name : in String; Weight : out Weight_Info);
-      -- Reads Weight from File_Name, assuming the file format used by v1.x of this package
+      -- Reads Weight, written by this package, from File_Name
 
       procedure Read (File_Name : in String);
-      -- Equivalent to passing the values obtained by calling Read to Set_Weights, but might be faster
+      -- Equivalent to passing the values obtained by calling Read to Set_Weights
 
       procedure Prepare_For_Training;
       -- If Num_Patterns > 1 or R > 1.0, this should be called once for a new set of weights before calling Train
@@ -109,10 +113,10 @@ package PragmARC.REM_NN_Wrapper is
       -- Returns the current network weights in Weight
 
       procedure Write (File_Name : in String; Weight : in Weight_Info);
-      -- Writes Weight to File_Name in the format used by v1.x of this package
+      -- Writes Weight to File_Name
 
       procedure Write (File_Name : in String);
-      -- Equivalent to passing the values obtained by calling Get_Weights to Write, but might be faster
+      -- Equivalent to passing the values obtained by calling Get_Weights to Write
 
       procedure Respond (Pattern : in Positive; Output : out Output_Set; Num_Tasks : in Positive := 1);
       -- Calls Get_Input for this pattern #, and propagates the input through the network to obtain the network's response

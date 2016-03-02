@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Mar 15     J. Carter          V2.1--Added Random_Weights and improved reading and writing weights
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 15     J. Carter          V1.2--Moved large arrays to heap
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency
@@ -144,11 +145,7 @@ package body PragmARC.REM_NN_Wrapper is
 
       Update_Count : Count_Value := 0;
 
-      package Connection_IO is new Sequential_IO (Element_Type => Weight_Group);
-
-      -- Variables used for initialization
-      Weight_File : Connection_IO.File_Type;
-      Weight      : Weight_Group;
+      package Connection_IO is new Sequential_IO (Element_Type => Weight_Info);
 
       package Random is new Universal_Random (Supplied_Real => Real);
       package Real_Math is new Numerics.Generic_Elementary_Functions (Float_Type => Real);
@@ -176,8 +173,8 @@ package body PragmARC.REM_NN_Wrapper is
       -- Transfer: apply the node transfer function to a weighted summed input value
       --           Calculates node output & derivative
       procedure Transfer (Net_Input : in Real; Output : out Real; Deriv : out Real) is
-         A : Real := Real_Math.Exp (Real'Min (Real'Max (0.5 * Net_Input, -Input_Lim), Input_Lim) );
-         B : Real := 1.0 / A;
+         A : constant Real := Real_Math.Exp (Real'Min (Real'Max (0.5 * Net_Input, -Input_Lim), Input_Lim) );
+         B : constant Real := 1.0 / A;
       begin -- Transfer
          Output := (A - B) / (A + B); -- Hyperbolic tangent (tanh)
          Deriv := 2.0 / ( (A + B) ** 2); -- Derivative of tanh
@@ -255,7 +252,7 @@ package body PragmARC.REM_NN_Wrapper is
          Next : Positive := 1;
 
          function Next_ID return Positive is
-            Result : Positive := Next;
+            Result : constant Positive := Next;
          begin -- Next_ID
             if Next > Num_Tasks then
                raise Constraint_Error with "Too many tasks";
@@ -295,74 +292,33 @@ package body PragmARC.REM_NN_Wrapper is
          end loop Set_O;
       end Set_Weights;
 
+      procedure Random_Weights (Max : in Positive_Real := 0.1) is
+         Weight : constant Weight_Info :=
+            (IH_Weight   => (others => (others => (Weight => Random_Range (-Max, Max), others => <>) ) ),
+             IO_Weight   => (others => (others => (Weight => Random_Range (-Max, Max), others => <>) ) ),
+             Hidden_Bias => (others => (Weight => Random_Range (-Max, Max), others => <>) ),
+             HO_Weight   => (others => (others => (Weight => Random_Range (-Max, Max), others => <>) ) ),
+             Output_Bias => (others => (Weight => Random_Range (-Max, Max), others => <>) ) );
+      begin --Random_Weights
+         Set_Weights (Weight => Weight);
+      end Random_Weights;
+
       procedure Read (File_Name : in String; Weight : out Weight_Info) is
          File : Connection_IO.File_Type;
       begin -- Read
          Connection_IO.Open (File => File, Mode => Connection_IO.In_File, Name => File_Name);
-
-         Get_I : for I in Weight.IH_Weight'Range(1) loop
-            I_To_H : for H in Weight.IH_Weight'Range (2) loop
-               Connection_IO.Read (File => File, Item => Weight.IH_Weight (I, H) );
-            end loop I_To_H;
-
-            if Input_To_Output_Connections then
-               I_To_O : for O in Weight.IO_Weight'Range (2) loop
-                  Connection_IO.Read (File => File, Item => Weight.IO_Weight (I, O) );
-               end loop I_To_O;
-            end if;
-         end loop Get_I;
-
-         Get_H : for H in Weight.Hidden_Bias'Range loop
-            Connection_IO.Read (File => File, Item => Weight.Hidden_Bias (H) );
-
-            H_To_O : for O in Weight.HO_Weight'Range (2) loop
-               Connection_IO.Read (File => File, Item => Weight.HO_Weight (H, O) );
-            end loop H_To_O;
-         end loop Get_H;
-
-         Get_O : for O in Weight.Output_Bias'Range loop
-            Connection_IO.Read (File => File, Item => Weight.Output_Bias (O) );
-         end loop Get_O;
-
+         Connection_IO.Read (File => File, Item => Weight);
          Connection_IO.Close (File => File);
       end Read;
 
       procedure Read (File_Name : in String) is
          File   : Connection_IO.File_Type;
-         Weight : Weight_Group;
+         Weight : Weight_Info;
       begin -- Read
          Connection_IO.Open (File => File, Mode => Connection_IO.In_File, Name => File_Name);
-
-         Get_I : for I in Input_ID loop
-            I_To_H : for H in Hidden_ID loop
-               Connection_IO.Read (File => File, Item => Weight);
-               Hidden.Set_Weight (Node => Hidden_Node (H), From => I, Weight => Weight);
-            end loop I_To_H;
-
-            if Input_To_Output_Connections then
-               I_To_O : for O in Output_ID loop
-                  Connection_IO.Read (File => File, Item => Weight);
-                  Output.Set_Input_Weight (Node => Output_Node (O), From => I, Weight => Weight);
-               end loop I_To_O;
-            end if;
-         end loop Get_I;
-
-         Get_H : for H in Hidden_ID loop
-            Connection_IO.Read (File => File, Item => Weight);
-            Hidden.Set_Bias_Weight (Node => Hidden_Node (H), Weight => Weight);
-
-            H_To_O : for O in Output_ID loop
-               Connection_IO.Read (File => File, Item => Weight);
-               Output.Set_Hidden_Weight (Node => Output_Node (O), From => H, Weight => Weight);
-            end loop H_To_O;
-         end loop Get_H;
-
-         Get_O : for O in Output_ID loop
-            Connection_IO.Read (File => File, Item => Weight);
-            Output.Set_Bias_Weight (Node => Output_Node (O), Weight => Weight);
-         end loop Get_O;
-
+         Connection_IO.Read (File => File, Item => Weight);
          Connection_IO.Close (File => File);
+         Set_Weights (Weight => Weight);
       end Read;
 
       procedure Prepare_For_Training is
@@ -406,63 +362,17 @@ package body PragmARC.REM_NN_Wrapper is
          File : Connection_IO.File_Type;
       begin -- Write
          Connection_IO.Create (File => File, Name => File_Name);
-
-         Get_I : for I in Weight.IH_Weight'Range(1) loop
-            I_To_H : for H in Weight.IH_Weight'Range (2) loop
-               Connection_IO.Write (File => File, Item => Weight.IH_Weight (I, H) );
-            end loop I_To_H;
-
-            if Input_To_Output_Connections then
-               I_To_O : for O in Weight.IO_Weight'Range (2) loop
-                  Connection_IO.Write (File => File, Item => Weight.IO_Weight (I, O) );
-               end loop I_To_O;
-            end if;
-         end loop Get_I;
-
-         Get_H : for H in Weight.Hidden_Bias'Range loop
-            Connection_IO.Write (File => File, Item => Weight.Hidden_Bias (H) );
-
-            H_To_O : for O in Weight.HO_Weight'Range (2) loop
-               Connection_IO.Write (File => File, Item => Weight.HO_Weight (H, O) );
-            end loop H_To_O;
-         end loop Get_H;
-
-         Get_O : for O in Weight.Output_Bias'Range loop
-            Connection_IO.Write (File => File, Item => Weight.Output_Bias (O) );
-         end loop Get_O;
-
+         Connection_IO.Write (File => File, Item => Weight);
          Connection_IO.Close (File => File);
       end Write;
 
       procedure Write (File_Name : in String) is
-         File : Connection_IO.File_Type;
+         File   : Connection_IO.File_Type;
+         Weight : Weight_Info;
       begin -- Write
+         Get_Weights (Weight => Weight);
          Connection_IO.Create (File => File, Name => File_Name);
-
-         Get_I : for I in Input_ID loop
-            I_To_H : for H in Hidden_ID loop
-               Connection_IO.Write (File => File, Item => Hidden.Get_Weight (Node => Hidden_Node (H), From => I) );
-            end loop I_To_H;
-
-            if Input_To_Output_Connections then
-               I_To_O : for O in Output_ID loop
-                  Connection_IO.Write (File => File, Item => Output.Get_Input_Weight (Node => Output_Node (O), From => I) );
-               end loop I_To_O;
-            end if;
-         end loop Get_I;
-
-         Get_H : for H in Hidden_ID loop
-            Connection_IO.Write (File => File, Item => Hidden.Get_Bias_Weight (Node => Hidden_Node (H) ) );
-
-            H_To_O : for O in Output_ID loop
-               Connection_IO.Write (File => File, Item => Output.Get_Hidden_Weight (Node => Output_Node (O), From => H) );
-            end loop H_To_O;
-         end loop Get_H;
-
-         Get_O : for O in Output_ID loop
-            Connection_IO.Write (File => File, Item => Output.Get_Bias_Weight (Node => Output_Node (O) ) );
-         end loop Get_O;
-
+         Connection_IO.Write (File => File, Item => Weight);
          Connection_IO.Close (File => File);
       end Write;
 
