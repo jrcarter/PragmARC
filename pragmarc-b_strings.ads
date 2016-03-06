@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2015 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Bounded, variable-length strings that are hopefully more usable than
@@ -7,13 +7,14 @@
 -- Based on an idea by Robert Duff presented on comp.lang.ada
 --
 -- History:
--- 2016 Feb 15     J. carter          v1.1--Forgot "+" for To_B_String
+-- 2016 Mar 15     J. Carter          V1.2--Default discriminant doesn't work as Duff claimed, at least with GNAT
+-- 2016 Feb 15     J. carter          V1.1--Forgot "+" for To_B_String
 -- 2015 Nov 15     J. Carter          V1.0--Initial release
 --
 with Ada.Strings;
 
 package PragmARC.B_Strings is
-   type B_String (Max_Length : Positive := 250) is limited private;
+   type B_String (Max_Length : Positive) is limited private;
    -- Default initial value is Null_B_String
 
    Null_B_String : constant B_String; -- A string of zero characters
@@ -44,7 +45,7 @@ package PragmARC.B_Strings is
    function ">"  (Left : B_String; Right : B_String) return Boolean;
    function ">=" (Left : B_String; Right : B_String) return Boolean;
 private -- PragmARC.B_Strings
-   type B_String (Max_Length : Positive := 250) is limited record
+   type B_String (Max_Length : Positive) is limited record
       Length : Natural := 0;
       Value  : String (1 .. Max_Length) := (1 .. Max_Length => ' ');
    end record;
