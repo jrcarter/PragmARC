@@ -14,7 +14,7 @@ package body PragmARC.Unbounded_Integers is
 
    use type Digit_List;
 
-   function Element (List : Digit_List; Index : Positive) return Digit_Value;
+   function El_Or_0 (List : Digit_List; Index : Positive) return Digit_Value;
    -- If Index is a valid index into List, returns the value stored there; otherwise, returns 0
 
    procedure Insert (List : in out Digit_List; Index : in Positive; Value : in Digit_Value);
@@ -30,15 +30,15 @@ package body PragmARC.Unbounded_Integers is
                      Remainder :    out Unbounded_Integer);
    -- Left > 0, Right > 0.
 
-   function Element (List : Digit_List; Index : Positive) return Digit_Value is
+   function El_Or_0 (List : Digit_List; Index : Positive) return Digit_Value is
       -- Empty declarative part
-   begin -- Element
+   begin -- El_Or_0
       if Index in 1 .. List.Last_Index then
          return List.Element (Index);
       end if;
 
       return 0;
-   end Element;
+   end El_Or_0;
 
    procedure Insert (List : in out Digit_List; Index : in Positive; Value : in Digit_Value) is
       -- Empty declarative part
@@ -98,7 +98,7 @@ package body PragmARC.Unbounded_Integers is
       end if;
 
       if Value.Digit.Last_Index = 2 then
-         Result := Result + Calculation_Value (Value.Digit.Last_Element);
+         Result := Result + Radix * Calculation_Value (Value.Digit.Last_Element);
       end if;
 
       if Value.Negative then
@@ -148,7 +148,7 @@ package body PragmARC.Unbounded_Integers is
       end if;
 
       Add : for I in 1 .. Max_MSD loop
-         Sum := Calculation_Value (Element (Left.Digit, I) ) + Calculation_Value (Element (Right.Digit, I) ) + Sum / Radix;
+         Sum := Calculation_Value (El_Or_0 (Left.Digit, I) ) + Calculation_Value (El_Or_0 (Right.Digit, I) ) + Sum / Radix;
          Insert (List => Result.Digit, Index => I, Value => Digit_Value (Sum rem Radix) );
       end loop Add;
 
@@ -198,7 +198,7 @@ package body PragmARC.Unbounded_Integers is
       end if;
 
       Sub : for I in 1 .. Max_MSD loop
-         Left_Digit := Calculation_Value (Element (Work_Left.Digit, I) );
+         Left_Digit := Calculation_Value (El_Or_0 (Work_Left.Digit, I) );
 
          if Borrow then -- We borrowed from this digit the previous time through the loop, so reduce it by 1
             if Left_Digit = 0 then -- We need to borrow from the next digit, too
@@ -209,7 +209,7 @@ package body PragmARC.Unbounded_Integers is
             end if;
          end if;
 
-         Right_Digit := Calculation_Value (Element (Work_Right.Digit, I) );
+         Right_Digit := Calculation_Value (El_Or_0 (Work_Right.Digit, I) );
 
          if Left_Digit < Right_Digit then -- We need to borrow from the next digit
             Left_Digit := Left_Digit + Radix;
@@ -245,10 +245,10 @@ package body PragmARC.Unbounded_Integers is
                D := D + Calculation_Value (Left.Digit.Element (J) ) * Calculation_Value (Right.Digit.Element (I) );
             end if; -- D now equals Left (J) * Right (I) + Carry
 
-            S := Calculation_Value (Element (Result.Digit, K) ) + D rem Radix; -- Add D to the evolving product
+            S := Calculation_Value (El_Or_0 (Result.Digit, K) ) + D rem Radix; -- Add D to the evolving product
             Insert (List => Result.Digit, Index => K, Value => Digit_Value (S rem Radix) );
             K := K + 1;
-            Insert (List => Result.Digit, Index => K, Value => Element (Result.Digit, K) + Digit_Value (S / Radix) );
+            Insert (List => Result.Digit, Index => K, Value => El_Or_0 (Result.Digit, K) + Digit_Value (S / Radix) );
          end loop All_Right_Digits;
       end loop All_Left_Digits;
 
@@ -415,8 +415,8 @@ package body PragmARC.Unbounded_Integers is
          end if;
 
          Build_Results : declare
-            Result : Calculation_Value := Left_Digit / Right_Digit;
-            Remain : Calculation_Value := Left_Digit - Result * Right_Digit;
+            Result : constant Calculation_Value := Left_Digit / Right_Digit;
+            Remain : constant Calculation_Value := Left_Digit - Result * Right_Digit;
          begin -- Build_Results
             Insert (List => Quotient.Digit, Index => 1, Value => Digit_Value (Result rem Radix) );
             Insert (List => Quotient.Digit, Index => 2, Value => Digit_Value (Result / Radix) );
