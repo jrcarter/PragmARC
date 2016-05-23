@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2010 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
--- 2010 Oct 01     J. Carter          V1.2--Improved Shuffle
+-- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
+-- 2010 Oct 01     J. Carter          V1.1--Improved Shuffle
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Universal_Random;
@@ -11,19 +12,19 @@ with System;
 
 package body PragmARC.Deck_Handler is
    function Is_Empty (Item : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Empty
       return Item.Count <= 0;
    end Is_Empty;
 
    function Is_Full (Item : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Full
       return Item.Count >= Item.Max_Cards;
    end Is_Full;
 
    function Size (Item : Handle) return Natural is
-      -- null;
+      -- Empty
    begin -- Size
       return Item.Count;
    end Size;
@@ -47,13 +48,13 @@ package body PragmARC.Deck_Handler is
    end Shuffle;
 
    procedure Make_Empty (Item : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Make_Empty
       Item.Count := 0;
    end Make_Empty;
 
    procedure Add (Item : in Card; To : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Add
       if To.Count >= To.Max_Cards then
          raise Full;
@@ -64,7 +65,7 @@ package body PragmARC.Deck_Handler is
    end Add;
 
    procedure Insert (Item : in Card; Into : in out Handle; Before : in Positive) is
-      -- null;
+      -- Empty
    begin -- Insert
       if Into.Count >= Into.Max_Cards then
          raise Full;
@@ -82,7 +83,7 @@ package body PragmARC.Deck_Handler is
    end Insert;
 
    procedure Deal (From : in out Handle; To : out Card) is
-      -- null;
+      -- Empty
    begin -- Deal
       if From.Count <= 0 then
          raise Empty;
@@ -97,7 +98,7 @@ package body PragmARC.Deck_Handler is
    end Deal;
 
    procedure Remove (From : in out Handle; Position : in Positive; To : out Card) is
-      -- null;
+      -- Empty
    begin -- Remove
       if Position > From.Count then
          raise Empty;
@@ -112,7 +113,7 @@ package body PragmARC.Deck_Handler is
    end Remove;
 
    function Value (From : Handle; Position : Positive) return Card is
-      -- null;
+      -- Empty
    begin -- Value
       if Position > From.Count then
          raise Empty;
@@ -122,7 +123,7 @@ package body PragmARC.Deck_Handler is
    end Value;
 
    procedure Assign (To : in out Handle; From : in Handle) is
-      -- null;
+      -- Empty
    begin -- Assign
       if From.Count > To.Max_Cards then
          raise Full;
@@ -133,7 +134,7 @@ package body PragmARC.Deck_Handler is
    end Assign;
 
    function "=" (Left : Handle; Right : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- "="
       return Left.Count = Right.Count and then Left.Value (1 .. Left.Count) = Right.Value (1 .. Right.Count);
    end "=";

@@ -1,18 +1,21 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2001 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Added comment for empty declarative part
 -- 2001 Dec 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Protected_Option is
    protected body Handle is
       function Enabled return Boolean is
+         -- Empty
       begin -- Enabled
          return State;
       end Enabled;
 
       procedure Enable (Enabled : in Boolean := True) is
+         -- Empty
       begin -- Enabled
          State := Enabled;
       end Enable;

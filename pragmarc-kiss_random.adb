@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
--- 2013 Nov 01     J. Carter     v1.1--Eliminated an impossible case
--- 2013 Aug 01     J. Carter     v1.0--Initial release
+-- 2016 Jun 01     J. Carter     V1.2--Changed comment for empty declarative part
+-- 2013 Nov 01     J. Carter     V1.1--Eliminated an impossible case
+-- 2013 Aug 01     J. Carter     V1.0--Initial release
 
 with Ada.Calendar;
 with PragmARC.Date_Handler;
@@ -18,7 +19,7 @@ package body PragmARC.KISS_Random is
                        New_Y : in     Positive_Raw := Default_Y;
                        New_Z : in     Positive_Raw := Default_Z)
    is
-      -- null;
+      -- Empty
    begin -- Set_Seed
       State.W := New_W;
       State.X := New_X;
@@ -71,13 +72,13 @@ package body PragmARC.KISS_Random is
       -- Returns Value xor Shift_Right (Value, Shift)
 
       function ML (Value : in Raw_Value; Shift : in Natural) return Raw_Value is
-         -- null;
+         -- Empty
       begin -- ML
          return Value xor Interfaces.Shift_Left (Value, Shift);
       end ML;
 
       function MR (Value : in Raw_Value; Shift : in Natural) return Raw_Value is
-         -- null;
+         -- Empty
       begin -- MR
          return Value xor Interfaces.Shift_Right (Value, Shift);
       end MR;

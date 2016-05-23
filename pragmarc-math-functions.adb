@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2006 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
 -- 2006 Mar 01     J. Carter          V1.2--Moved Integer functions to Integer_Functions
 -- 2002 Oct 01     J. Carter          V1.1--Added GCD and LCM
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -14,19 +15,19 @@ package body PragmARC.Math.Functions is
    package Mth is new Numerics.Generic_Elementary_Functions (Float_Type => Real);
 
    function "**" (Left : Natural_Real; Right : Real) return Real is
-      -- null;
+      -- Empty
    begin -- "**"
       return Mth."**" (Left, Right);
    end "**";
 
    function Sqrt (Right : Natural_Real) return Real is
-      -- null;
+      -- Empty
    begin -- Sqrt
       return Mth.Sqrt (Right);
    end Sqrt;
 
    function Exp (Right : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Exp
       return Mth.Exp (Right);
    exception -- Exp
@@ -35,31 +36,31 @@ package body PragmARC.Math.Functions is
    end Exp;
 
    function Log (Right : Positive_Real) return Real is
-      -- null;
+      -- Empty
    begin -- Log
       return Mth.Log (Right);
    end Log;
 
    function Sin (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Sin
       return Mth.Sin (Angle);
    end Sin;
 
    function Cos (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Cos
       return Mth.Cos (Angle);
    end Cos;
 
    function Tan (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Tan
       return Mth.Tan (Angle);
    end Tan;
 
    function Cot (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Cot
       return Mth.Cot (Angle);
    exception -- Cot
@@ -68,55 +69,55 @@ package body PragmARC.Math.Functions is
    end Cot;
 
    function Arcsin (Sin : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arcsin
       return Mth.Arcsin (Sin);
    end Arcsin;
 
    function Arccos (Cos : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arccos
       return Mth.Arccos (Cos);
    end Arccos;
 
    function Arctan (Tan : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arctan
       return Mth.Arctan (Tan);
    end Arctan;
 
    function Arccot (Cot : Real) return Real is
-      -- null;
+      -- Empty
    begin -- arccot
       return Mth.Arccot (Cot);
    end Arccot;
 
    function Arctan (X : Real; Y : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arctan
       return Mth.Arctan (Y, X);
    end Arctan;
 
    function Sinh (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Sinh
       return Mth.Sinh (Angle);
    end Sinh;
 
    function Cosh (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Cosh
       return Mth.Cosh (Angle);
    end Cosh;
 
    function Tanh (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Tanh
       return Mth.Tanh (Angle);
    end Tanh;
 
    function Coth (Angle : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Coth
       return Mth.Coth (Angle);
    exception -- Coth
@@ -125,25 +126,25 @@ package body PragmARC.Math.Functions is
    end Coth;
 
    function Arcsinh (Sinh : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arcsinh
       return Mth.Arcsinh (Sinh);
    end Arcsinh;
 
    function Arccosh (Cosh : Cosh_Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arccosh
       return Mth.Arccosh (Cosh);
    end Arccosh;
 
    function Arctanh (Tanh : Tanh_Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arctanh
       return Mth.Arctanh (Tanh);
    end Arctanh;
 
    function Arccoth (Coth : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Arccoth
       return Mth.Arccoth (Coth);
    exception -- Arccoth
@@ -166,4 +167,4 @@ end PragmARC.Math.Functions;
 -- this unit does not by itself cause the resulting executable to be
 -- covered by the GNU General Public License. This exception does not
 -- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License. 
+-- covered by the GNU Public License.

@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Fast "hashing function specifically tailored to variable-length text strings."
@@ -7,6 +7,7 @@
 -- From P. K. Pearson, "Fast Hashing of Variable-Length Text Strings," Comm. ACM, 1990 Jun
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package PragmARC.Hash_Fast_Variable_Length is
@@ -34,9 +35,8 @@ package PragmARC.Hash_Fast_Variable_Length is
                          027, 188, 067, 124, 168, 252, 042, 004, 029, 108, 021, 247, 019, 205, 039, 203,
                          233, 040, 186, 147, 198, 192, 155, 033, 164, 191, 098, 204, 165, 180, 117, 076,
                          140, 036, 210, 172, 041, 054, 159, 008, 185, 232, 113, 196, 231, 047, 146, 120,
-                         051, 065, 028, 144, 254, 221, 093, 189, 194, 139, 112, 043, 071, 109, 184, 209
-                        )
-   ; -- This permutation table gives good hashing behavior
+                         051, 065, 028, 144, 254, 221, 093, 189, 194, 139, 112, 043, 071, 109, 184, 209);
+   -- This permutation table gives good hashing behavior
 
    generic -- Hash
       type Element is limited private; -- "Characters" which make up a string

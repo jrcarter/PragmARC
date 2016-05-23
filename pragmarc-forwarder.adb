@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
 -- 2002 Oct 01     J. Carter          V1.2--Use mode out to allow scalars
 -- 2001 Dec 01     J. Carter          V1.1--Added Desired_Priority
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -10,12 +11,12 @@
 package body PragmARC.Forwarder is
    task Handler is
       pragma Priority (Desired_Priority);
-      
+
       entry Forward (Item : in Element);
    end Handler;
 
    procedure Forward (Item : in Element) is
-      -- null;
+      -- Empty
    begin -- Forward
       Handler.Forward (Item => Item);
    end Forward;

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 -----------------------------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; protected list IDs; use mode out to allow scalars
@@ -60,7 +61,7 @@ package body PragmARC.List_Bounded_Unprotected is
    end ID_Supply;
 
    procedure Clear (List : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Clear
       List.Head := Null_Position;
       List.Tail := Null_Position;
@@ -80,25 +81,25 @@ package body PragmARC.List_Bounded_Unprotected is
    end Clear;
 
    function First (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- First
       return (ID => List.ID, Pos => List.Head);
    end First;
 
    function Last (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Last
       return (ID => List.ID, Pos => List.Tail);
    end Last;
 
    function Off_List (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Off_List
       return (ID => List.ID, Pos => Null_Position);
    end Off_List;
 
    function Next (Pos : Position; List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Next
       if Pos.ID /= List.ID then
          raise Invalid_Position;
@@ -112,7 +113,7 @@ package body PragmARC.List_Bounded_Unprotected is
    end Next;
 
    function Prev (Pos : Position; List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Prev
       if Pos.ID /= List.ID then
          raise Invalid_Position;
@@ -272,7 +273,7 @@ package body PragmARC.List_Bounded_Unprotected is
    end Delete;
 
    function Get (From : Handle; Pos : Position) return Element is
-      -- null;
+      -- Empty
    begin -- Get
       if Pos.ID /= From.ID or (Pos.Pos not in From.Storage'range or else From.Storage (Pos.Pos).ID /= From.ID) then
          raise Invalid_Position;
@@ -282,7 +283,7 @@ package body PragmARC.List_Bounded_Unprotected is
    end Get;
 
    procedure Put (Into : in out Handle; Pos : in Position; Item : in Element) is
-      -- null;
+      -- Empty
    begin -- Put
       if Pos.ID /= Into.ID or (Pos.Pos not in Into.Storage'range or else Into.Storage (Pos.Pos).ID /= Into.ID) then
          raise Invalid_Position;
@@ -292,13 +293,13 @@ package body PragmARC.List_Bounded_Unprotected is
    end Put;
 
    function Is_Empty (List : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Empty
       return List.Head = Null_Position;
    end Is_Empty;
 
    function Is_Full (List : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Full
       return List.Free = Null_Position;
    end Is_Full;
@@ -336,7 +337,7 @@ package body PragmARC.List_Bounded_Unprotected is
 
    protected body ID_Supply is
       procedure Get (ID : out List_ID) is
-         -- null;
+         -- Empty
       begin -- Get
          Last_ID := Last_ID + 1;
 

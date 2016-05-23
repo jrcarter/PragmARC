@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Universal random number generator
@@ -24,6 +24,7 @@
 -- of known, good quality, should portability of the algorithm be a concern.
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 generic -- PragmARC.Universal_Random
@@ -45,9 +46,7 @@ package PragmARC.Universal_Random is
    procedure Set_Seed (New_I : Seed_Range_1 := Default_I;
                        New_J : Seed_Range_1 := Default_J;
                        New_K : Seed_Range_1 := Default_K;
-                       New_L : Seed_Range_2 := Default_L
-                      )
-   ;
+                       New_L : Seed_Range_2 := Default_L);
 
    procedure Randomize;
 

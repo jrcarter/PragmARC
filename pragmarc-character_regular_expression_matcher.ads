@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Instantiation of PragmARC.Regular_Expression_Matcher for strings
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Revised formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Regular_Expression_Matcher;
@@ -17,9 +18,7 @@ new PragmARC.Regular_Expression_Matcher (Item             => Character,
                                          Not_Item         => '~',
                                          Closure_Item     => '*',
                                          Start_Class_Item => '[',
-                                         Stop_Class_Item  => ']'
-                                        )
-;
+                                         Stop_Class_Item  => ']');
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

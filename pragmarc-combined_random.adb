@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
--- 2013 Aug 01     J. Carter     v1.0--Initial release
+-- 2016 Jun 01     J. Carter     V1.1--Changed comment for empty declarative part
+-- 2013 Aug 01     J. Carter     V1.0--Initial release
 
 with PragmARC.Universal_Random;
 
@@ -26,7 +27,7 @@ package body PragmARC.Combined_Random is
                        New_Y : in PragmARC.KISS_Random.Positive_Raw := PragmARC.KISS_Random.Default_Y;
                        New_Z : in PragmARC.KISS_Random.Positive_Raw := PragmARC.KISS_Random.Default_Z)
    is
-      -- null;
+      -- Empty
    begin -- Set_Seed
       Universal.Set_Seed (New_I => New_I, New_J => New_J, New_K => New_K, New_L => New_L);
       KISS_State.Set_Seed (New_W => New_W, New_X => New_X, New_Y => New_Y, New_Z => New_Z);
@@ -34,7 +35,7 @@ package body PragmARC.Combined_Random is
    end Set_Seed;
 
    procedure Randomize is
-      -- null;
+      -- Empty
    begin -- Randomize
       Universal.Randomize;
       KISS_State.Randomize;
@@ -53,7 +54,7 @@ package body PragmARC.Combined_Random is
    end Random;
 
    function Random_Range (Min : Real; Max : Real) return Real is
-      -- null;
+      -- Empty
    begin -- Random_Range
       return Random * (Max - Min) + Min;
    end Random_Range;

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2005 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part and formatting
 -- 2005 Jul 01     J. Carter          V1.2--Eliminate assumption that A * B = B * A for Element
 -- 2003 Sep 01     J. Carter          V1.1--Correct error in Matrix * Vector
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -61,7 +62,7 @@ package body PragmARC.Matrix_Math is
    end "*";
 
    function "/" (Left : Matrix; Right : Matrix) return Matrix is
-      -- null;
+      -- Empty
    begin -- "/"
       return Left * Invert (Right);
    end "/";
@@ -138,7 +139,7 @@ package body PragmARC.Matrix_Math is
    end Invert;
 
    function Determinant (Mat : Matrix) return Element is -- This function is mutually recursive with Cofactor
-      -- null;
+      -- Empty
    begin -- Determinant
       if Mat.Num_Rows /= Mat.Num_Columns then
          raise Not_Square;
@@ -193,10 +194,9 @@ package body PragmARC.Matrix_Math is
       return Neg_One_Element ** (I - J) * Determinant (Minor);
    end Cofactor;
 
-   function Sub_Matrix (Mat : Matrix; From_Row : Positive; From_Col : Positive;
-                           To_Row : Positive; To_Col : Positive)
+   function Sub_Matrix (Mat : Matrix; From_Row : Positive; From_Col : Positive; To_Row : Positive; To_Col : Positive)
    return Matrix is
-      -- null;
+      -- Empty
    begin -- Sub_Matrix
       if From_Row > To_Row or From_Col > To_Col then
          Null_Matrix : declare
@@ -220,13 +220,13 @@ package body PragmARC.Matrix_Math is
    end Sub_Matrix;
 
    function "+" (Left : Vector; Right : Vector) return Vector is
-      -- null;
+      -- Empty
    begin -- "+"
       return Vector'(Num_Elements => Left.Num_Elements, Value => Left.Value + Right.Value);
    end "+";
 
    function "-" (Left : Vector; Right : Vector) return Vector is
-      -- null;
+      -- Empty
    begin -- "-"
       return Vector'(Num_Elements => Left.Num_Elements, Value => Left.Value - Right.Value);
    end "-";
@@ -246,43 +246,43 @@ package body PragmARC.Matrix_Math is
    end "*";
 
    function "*" (Left : Element; Right : Vector) return Vector is
-      -- null;
+      -- Empty
    begin -- "*"
       return Vector'(Num_Elements => Right.Num_Elements, Value => Left * Right.Value);
    end "*";
 
    function "*" (Left : Vector; Right : Element) return Vector is
-      -- null;
+      -- Empty
    begin -- "*"
       return Vector'(Num_Elements => Left.Num_Elements, Value => Left.Value * Right);
    end "*";
 
    function "/" (Left : Vector; Right : Element) return Vector is
-      -- null;
+      -- Empty
    begin -- "/"
       return Vector'(Num_Elements => Left.Num_Elements, Value => Left.Value / Right);
    end "/";
 
    function "*" (Left : Matrix; Right : Vector) return Vector is
-      -- null;
+      -- Empty
    begin -- "*"
       return Vector'(Num_Elements => Left.Num_Rows, Value => Left * Right.Value);
    end "*";
 
    function "*" (Left : Vector; Right : Matrix) return Matrix is
-      -- null;
+      -- Empty
    begin -- "*"
       return Left.Value * Right;
    end "*";
 
    function Transpose (Vec : Vector) return Matrix is
-      -- null;
+      -- Empty
    begin -- transpose
       return Transpose (Vec.Value);
    end Transpose;
 
    function Norm (Vec : Vector) return Element is
-      -- null;
+      -- Empty
    begin -- norm
       return Sqrt (Vec * Vec);
    end Norm;
@@ -291,14 +291,11 @@ package body PragmARC.Matrix_Math is
       Result : Vector_3;
    begin -- cross
       Result.Value.Value (1, 1) := Left.Value.Value (2, 1) * Right.Value.Value (3, 1) -
-                                   Left.Value.Value (3, 1) * Right.Value.Value (2, 1)
-      ;
+                                   Left.Value.Value (3, 1) * Right.Value.Value (2, 1);
       Result.Value.Value (2, 1) := Left.Value.Value (3, 1) * Right.Value.Value (1, 1) -
-                                   Left.Value.Value (1, 1) * Right.Value.Value (3, 1)
-      ;
+                                   Left.Value.Value (1, 1) * Right.Value.Value (3, 1);
       Result.Value.Value (3, 1) := Left.Value.Value (1, 1) * Right.Value.Value (2, 1) -
-                                   Left.Value.Value (2, 1) * Right.Value.Value (1, 1)
-      ;
+                                   Left.Value.Value (2, 1) * Right.Value.Value (1, 1);
 
       return Result;
    end Cross;

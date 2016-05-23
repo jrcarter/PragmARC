@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2001 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Provides an image function for type Calendar.Time, day of the week functions, leap-year
@@ -7,6 +7,7 @@
 -- Seconds
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.3--Changed some formatting
 -- 2001 May 01     J. Carter          V1.2--Added expanded Image capabilities
 -- 2000 Jul 01     J. Carter          V1.1--Added Split
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -20,13 +21,13 @@ package PragmARC.Date_Handler is
    subtype Hour_Number     is Integer range 0 .. 23;
    subtype Minute_Number   is Integer range 0 .. 59;
    subtype Minute_Duration is Calendar.Day_Duration range 0.0 .. 60.0;
-   
+
    procedure Split (Seconds : in out Calendar.Day_Duration; Hour : out Hour_Number; Minute : out Minute_Number);
    -- Splits Seconds into Hour, Minute, and Seconds within Minute
    -- If Seconds = Calendar.Day_Duration'Last, all results are zero (00:00:00.000 of next day)
    --
    -- Postcondition: after[Seconds] in Minute_Duration
-   
+
    procedure Split (Date    : in     Calendar.Time;
                     Year    :    out Calendar.Year_Number;
                     Month   :    out Calendar.Month_Number;
@@ -35,9 +36,9 @@ package PragmARC.Date_Handler is
                     Minute  :    out Minute_Number;
                     Seconds :    out Minute_Duration);
    -- Splits Date using Split to obtain Hour, Minute, and Seconds within Minute
-   
+
    -- Image operations:
-   
+
    -- Image functions with a Zero_Fill parameter may have extra leading characters in the result.
    -- If Zero_Fill, these will be '0'; otherwise they will be ' '.
 
@@ -45,7 +46,7 @@ package PragmARC.Date_Handler is
    function Year_Image_Short (Year : Positive; Zero_Fill : Boolean := True) return String;
    -- Returns the decimal image of Year rem 100.
    -- If Zero_Fill, result will always be 2 characters long. Otherwise, result will be 1 or 2 characters long.
-   
+
    function Year_Image_Long  (Year : Positive; Zero_Fill : Boolean := True; Width : Positive := 4) return String;
    -- Returns the decimal image of Year. Result will be large enough to hold this image, or Width characters long,
    -- whichever is larger.
@@ -61,7 +62,7 @@ package PragmARC.Date_Handler is
                                                09 => To_Unbounded_String ("Sep"), 10 => To_Unbounded_String ("Oct"),
                                                11 => To_Unbounded_String ("Nov"), 12 => To_Unbounded_String ("Dec") );
                                                -- Default "short" month names
-                                               
+
    Default_Long_Name  : constant Name_List := (01 => To_Unbounded_String ("January"),
                                                02 => To_Unbounded_String ("February"),
                                                03 => To_Unbounded_String ("March"),
@@ -79,14 +80,15 @@ package PragmARC.Date_Handler is
    function Month_Image_Numeric (Month : Calendar.Month_Number; Zero_Fill : Boolean := True) return String;
    -- Returns the decimal image of Month.
    -- If Zero_Fill, result will always be 2 characters long. Otherwise, result will be 1 or 2 characters long.
-   
+
    function Month_Image_Alpha (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List) return String;
    -- Returns To_String (Name (Month) ), formatted as directed by Casing.
-   
+
    -- Renamings for default month names:
    function Month_Image_Short
       (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List := Default_Short_Name)
    return String renames Month_Image_Alpha;
+
    function Month_Image_Long
       (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List := Default_Long_Name)
    return String renames Month_Image_Alpha;
@@ -100,11 +102,12 @@ package PragmARC.Date_Handler is
 
    Default_AM_PM_Name : constant AM_PM_List := (AM => To_Unbounded_String (" am"), PM => To_Unbounded_String (" pm") );
 
-   function Hour_Image_12 (Hour : Hour_Number; AM_PM : AM_PM_List := Default_AM_PM_Name; Zero_Fill : Boolean := True) return String;
+   function Hour_Image_12 (Hour : Hour_Number; AM_PM : AM_PM_List := Default_AM_PM_Name; Zero_Fill : Boolean := True)
+   return String;
    -- If Hour = 0, Image is "12". If Hour in 1 .. 12, Image is image of Hour. Otherwise, Image is image of Hour - 12.
    -- If Hour < 12, returns Image & To_String (AM_PM (AM) ). Otherwise, returns Image & To_String (AM_PM (PM) ).
    -- If Zero_Fill, Image will always be 2 characters long. Otherwise, Image will be 1 or 2 characters long.
-   
+
    function Hour_Image_24 (Hour : Hour_Number; Zero_Fill : Boolean := True) return String;
    -- Returns the decimal image of Hour.
    -- If Zero_Fill, result will always be 2 characters long. Otherwise, result will be 1 or 2 characters long.
@@ -121,7 +124,7 @@ package PragmARC.Date_Handler is
    -- If Aft > 0 and Zero_Fill, the portion of result left of the decimal point will always be 2 characters long.
    -- Otherwise, the portion of result left of the decimal point may be 1 or 2 characters long.
    -- If Seconds = Minute_Duration'Last, returns the image of 0.0.
-   
+
    function Image (Date : Calendar.Time) return String;
    -- Splits Date into Year, Month, Day, Hour, Minute, and Seconds, then
    -- returns the 23-character string resulting from

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with Ada.Characters.Latin_1;
@@ -55,7 +56,7 @@ package body PragmARC.Word_Input is
    end Get;
 
    procedure Get (Value : out Word) is
-      -- null;
+      -- Empty
    begin -- Get
       Get (File => Text_Io.Current_Input, Value => Value);
    end Get;

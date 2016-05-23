@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose stack for general use
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Eliminated unused type declarations
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
@@ -22,12 +23,6 @@ package PragmARC.Stack_Unbounded is
    pragma Preelaborate;
 
    package Implementation is new Stack_Unbounded_Unprotected (Element => Element);
-
-   type Context_Data is tagged null record; -- Provides context data to Iterate
-
-   type Action_Ptr is access procedure (Item : in out Element; Context : in out Context_Data'Class; Continue : out Boolean);
-   -- We can't have a generic protected subprogram, so we use this type to implement Iterate. This means that
-   -- the actual procedure passed to Iterate must be declared at the library level to pass accessibility checks
 
    protected type Handle (Ceiling_Priority : System.Any_Priority := System.Default_Priority) is -- Initial value: empty
       pragma Priority (Ceiling_Priority);

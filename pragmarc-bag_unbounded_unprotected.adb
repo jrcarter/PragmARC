@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
@@ -12,13 +13,13 @@
 --
 package body PragmARC.Bag_Unbounded_Unprotected is
    procedure Assign (To : out Handle; From : in Handle) is
-      -- null;
+      -- Empty
    begin -- Assign
       Implementation.Assign (To => To.List, From => From.List);
    end Assign;
 
    procedure Clear (Bag : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Clear
       Implementation.Clear (Bag.List);
    end Clear;
@@ -86,20 +87,20 @@ package body PragmARC.Bag_Unbounded_Unprotected is
    end Find;
 
    function Empty (Bag : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Empty
       return Implementation.Is_Empty (Bag.List);
    end Empty;
 
    function Size (Bag : Handle) return Natural is
-      -- null;
+      -- Empty
    begin -- Size
       return Implementation.Length (Bag.List);
    end Size;
 
    procedure Iterate (Over : in out Handle) is
       procedure Action (Item : in out Element; Pos : in Implementation.Position; Continue : out Boolean) is
-         -- null;
+         -- Empty
       begin -- Action
          Action (Item => Item, Continue => Continue);
       end Action;

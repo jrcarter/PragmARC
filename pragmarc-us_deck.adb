@@ -1,13 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.US_Deck is
    procedure Standard_Deck (Item : in out Deck_52) is
-      -- null;
+      -- Empty
    begin -- Standard_Deck
       Deck.Make_Empty (Item => Item);
 

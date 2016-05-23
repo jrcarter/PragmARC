@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V2.2--Changed comment for empty declarative part and formatting
 -- 2016 Mar 15     J. Carter          V2.1--Added Random_Weights and improved reading and writing weights
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 15     J. Carter          V1.2--Moved large arrays to heap
@@ -156,7 +157,7 @@ package body PragmARC.REM_NN_Wrapper is
 
       protected body Control is
          procedure Random_Range (Min : in Real; Max : in Real; Result : out Real) is
-            -- null;
+            -- Empty
          begin -- Random_Range
             Result := Random.Random_Range (Min, Max);
          end Random_Range;
@@ -182,7 +183,7 @@ package body PragmARC.REM_NN_Wrapper is
 
       -- New_Rm: Calculate the new value of a Recursive Mean
       function New_Rm (Length : Positive_Real; Old_Value : Real; New_Value : Real) return Real is
-         -- null;
+         -- Empty
       begin -- New_Rm
          return (1.0 - 1.0 / Length) * Old_Value + (1.0 / Length) * New_Value;
       end New_Rm;
@@ -219,17 +220,13 @@ package body PragmARC.REM_NN_Wrapper is
                Weight.G := New_Rm (Cycle_S,
                                    Weight.G,
                                    E_Star ** 2 + (Sender_Out * H_Star) ** 2 * 0.5 * Weight.Weight ** 2 *
-                                   Real_Math.Exp (2.0 * Sender_Out * Receiver_Out * Weight.Weight)
-                                  )
-               ;
+                                   Real_Math.Exp (2.0 * Sender_Out * Receiver_Out * Weight.Weight) );
             else
                Weight.G := New_Rm (Cycle_S,
                                    Weight.G,
                                    E_Star ** 2 + (Sender_Out * H_Star) ** 2 *
                                    ( (1.0 - (1.0 + Psi) * Real_Math.Exp (-Psi)) / Denom) *
-                                   Real_Math.Exp (2.0 * Sender_Out * Receiver_Out * Weight.Weight)
-                                  )
-               ;
+                                   Real_Math.Exp (2.0 * Sender_Out * Receiver_Out * Weight.Weight) );
             end if;
 
             if Weight.Active then
@@ -322,7 +319,7 @@ package body PragmARC.REM_NN_Wrapper is
       end Read;
 
       procedure Prepare_For_Training is
-         -- Empty declarative part
+         -- Empty
       begin -- Prepare_For_Training
          -- Pass each pattern through the network to obtain initial response (D zero)
          All_Patterns : for Pattern in Desired'Range loop
@@ -331,7 +328,7 @@ package body PragmARC.REM_NN_Wrapper is
       end Prepare_For_Training;
 
       procedure Get_Weights (Weight : out Weight_Info) is
-         -- Empty declarative part
+         -- Empty
       begin -- Get_Weights
          Get_I : for I in Weight.IH_Weight'Range(1) loop
             I_To_H : for H in Weight.IH_Weight'Range (2) loop
@@ -474,7 +471,7 @@ package body PragmARC.REM_NN_Wrapper is
       end Respond;
 
       procedure Train (Num_Tasks : in Positive := 1) is
-         -- null;
+         -- Empty
       begin -- Train
          -- Update global "constants"
          Update_Count := Update_Count + 1;
@@ -544,13 +541,13 @@ package body PragmARC.REM_NN_Wrapper is
 
       package body Input is
          procedure Set_Input (Node : in out Node_Handle; Value : in Real) is
-            -- null;
+            -- Empty
          begin -- Set_Input
             Node.Output := Value;
          end Set_Input;
 
          function Get_Output (From : Node_Handle) return Real is
-            -- null;
+            -- Empty
          begin -- Get_Output
             return From.Output;
          end Get_Output;
@@ -574,7 +571,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Respond;
 
          function Get_Output (From : Node_Handle) return Real is
-            -- null;
+            -- Empty
          begin -- Get_Output
             return From.Output;
          end Get_Output;
@@ -588,9 +585,7 @@ package body PragmARC.REM_NN_Wrapper is
             Sum_Stars : for O_ID in Output_ID loop
                Prop := Output.Get_Stars (Output_Node (O_ID), ID);
                Star := Star_Group'(E_Star => Star.E_Star + Prop.E_Star,
-                                   H_Star => Star.H_Star + Prop.H_Star
-                                  )
-               ;
+                                   H_Star => Star.H_Star + Prop.H_Star);
             end loop Sum_Stars;
 
             Star.E_Star := Node.Deriv * Star.E_Star;
@@ -602,18 +597,14 @@ package body PragmARC.REM_NN_Wrapper is
                               Receiver_Out => Node.Output,
                               E_Star => Star.E_Star,
                               H_Star => Star.H_Star,
-                              Weight => Node.Weight (I_ID)
-                             )
-               ;
+                              Weight => Node.Weight (I_ID) );
             end loop Modify;
 
             Update_Values (Sender_Out => 1.0, -- Update bias
                            Receiver_Out => Node.Output,
                            E_Star => Star.E_Star,
                            H_Star => Star.H_Star,
-                           Weight => Node.Bias
-                          )
-            ;
+                           Weight => Node.Bias);
 
             -- Check for inactivity
             Check : for I_ID in Input_ID loop
@@ -626,25 +617,25 @@ package body PragmARC.REM_NN_Wrapper is
          end Train;
 
          procedure Set_Weight (Node : in out Node_Handle; From : in Input_ID; Weight : in Weight_Group) is
-            -- null;
+            -- Empty
          begin -- Set_Weight
             Node.Weight (From) := Weight;
          end Set_Weight;
 
          function Get_Weight (Node : Node_Handle; From : Input_ID) return Weight_Group is
-            -- null;
+            -- Empty
          begin -- Get_Weight
             return Node.Weight (From);
          end Get_Weight;
 
          procedure Set_Bias_Weight (Node : in out Node_Handle; Weight : in Weight_Group) is
-            -- null;
+            -- Empty
          begin -- Set_Bias_Weight
             Node.Bias := Weight;
          end Set_Bias_Weight;
 
          function Get_Bias_Weight (Node : Node_Handle) return Weight_Group is
-            -- null;
+            -- Empty
          begin -- Get_Bias_Weight
             return Node.Bias;
          end Get_Bias_Weight;
@@ -683,9 +674,7 @@ package body PragmARC.REM_NN_Wrapper is
             -- Calculate E* & H* for this node
             Star.H_Star := Real'Min (Real'Max (Node.Deriv, -H_Star_Lim), H_Star_Lim);
             Star.E_Star := Star.H_Star * (Desired (Current_Pattern) (ID) - Node.Output +
-                                          Random_Range (-Random_E_Star_Range, Random_E_Star_Range)
-                                         )
-            ;
+                                          Random_Range (-Random_E_Star_Range, Random_E_Star_Range) );
             Star.H_Star := Star.H_Star + Random_Range (-Random_H_Star_Range, Random_H_Star_Range);
 
             -- E* & H* have to be propagated back before the weights are updated
@@ -696,9 +685,7 @@ package body PragmARC.REM_NN_Wrapper is
                   Node.Hidden_Star (H_ID) := Star_Group'(E_Star => 0.0, H_Star => 0.0);
                else
                   Node.Hidden_Star (H_ID) := Star_Group'(E_Star => Node.Hidden_Weight (H_ID).Weight * Star.E_Star,
-                                                         H_Star => Node.Hidden_Weight (H_ID).Weight * Star.H_Star
-                                                        )
-                  ;
+                                                         H_Star => Node.Hidden_Weight (H_ID).Weight * Star.H_Star);
                end if;
             end loop Adjust_Stars;
 
@@ -709,9 +696,7 @@ package body PragmARC.REM_NN_Wrapper is
                                  Receiver_Out => Node.Output,
                                  E_Star => Star.E_Star,
                                  H_Star => Star.H_Star,
-                                 Weight => Node.Input_Weight (I_ID)
-                                )
-                  ;
+                                 Weight => Node.Input_Weight (I_ID) );
                end loop Update_Input;
             end if;
 
@@ -720,58 +705,54 @@ package body PragmARC.REM_NN_Wrapper is
                               Receiver_Out => Node.Output,
                               E_Star => Star.E_Star,
                               H_Star => Star.H_Star,
-                              Weight => Node.Hidden_Weight (H_ID)
-                             )
-               ;
+                              Weight => Node.Hidden_Weight (H_ID) );
             end loop Update_Hidden;
 
             Update_Values (Sender_Out => 1.0, -- Update bias value
                            Receiver_Out => Node.Output,
                            E_Star => Star.E_Star,
                            H_Star => Star.H_Star,
-                           Weight => Node.Bias
-                          )
-            ;
+                           Weight => Node.Bias);
          end Train;
 
          function Get_Stars (Node : Node_Handle; From : Hidden_ID) return Star_Group is
-            -- null;
+            -- Empty
          begin -- Get_Stars
             return Node.Hidden_Star (From);
          end Get_Stars;
 
          procedure Set_Input_Weight (Node : in out Node_Handle; From : in Input_ID; Weight : in Weight_Group) is
-            -- null;
+            -- Empty
          begin -- Set_Input_Weight
             Node.Input_Weight (From) := Weight;
          end Set_Input_Weight;
 
          function Get_Input_Weight (Node : Node_Handle; From : Input_ID) return Weight_Group is
-            -- null;
+            -- Empty
          begin -- Get_Input_Weight
             return Node.Input_Weight (From);
          end Get_Input_Weight;
 
          procedure Set_Hidden_Weight (Node : in out Node_Handle; From : in Hidden_ID; Weight : in Weight_Group) is
-            -- null;
+            -- Empty
          begin -- Set_Hidden_Weight
             Node.Hidden_Weight (From) := Weight;
          end Set_Hidden_Weight;
 
          function Get_Hidden_Weight (Node : Node_Handle; From : Hidden_ID) return Weight_Group is
-            -- null;
+            -- Empty
          begin -- Get_Hidden_Weight
             return Node.Hidden_Weight (From);
          end Get_Hidden_Weight;
 
          procedure Set_Bias_Weight (Node : in out Node_Handle; Weight : in Weight_Group) is
-            -- null;
+            -- Empty
          begin -- Set_Bias_Weight
             Node.Bias := Weight;
          end Set_Bias_Weight;
 
          function Get_Bias_Weight (Node : Node_Handle) return Weight_Group is
-            -- null;
+            -- Empty
          begin -- Get_Bias_Weight
             return Node.Bias;
          end Get_Bias_Weight;

@@ -1,20 +1,21 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Safe_Semaphore_Handler is
    procedure Initialize (Object : in out Safe_Semaphore) is
-      -- null;
+      -- Empty
    begin -- Initialize
       Object.Unsafe.Request;
    end Initialize;
 
    procedure Finalize (Object : in out Safe_Semaphore) is
-      -- null;
+      -- Empty
    begin -- Finalize
       if Object.Needs_Finalization then -- Provide for multiple calls to Finalize
          Object.Needs_Finalization := False;

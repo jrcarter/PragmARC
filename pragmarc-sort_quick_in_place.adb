@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 --------------------------------------------------------------------------------------
 -- 2013 Mar 01     J. Carter          V2.0--Package with sequential and parallel sorts
@@ -56,7 +57,7 @@ package body PragmARC.Sort_Quick_In_Place is
    procedure Insertion_Sort is new PragmARC.Sort_Insertion (Element, Index, Sort_Set);
 
    function ">=" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">="
       return not (Left < Right);
    end ">=";
@@ -64,7 +65,7 @@ package body PragmARC.Sort_Quick_In_Place is
 
    -- Partitions Set (Front .. Back)
    procedure Partition (Set : in out Sort_Set; Front : in out Index; Back : in out Index; Pivot : in Element) is
-      -- null;
+      -- Empty
    begin -- Partition
       Both : loop
          Small : loop -- Increase Front until it points to something >= Pivot
@@ -95,7 +96,7 @@ package body PragmARC.Sort_Quick_In_Place is
    end Partition;
 
    procedure Easy_Cases (Set : in out Sort_Set; Finished : out Boolean) is
-      -- null;
+      -- Empty
    begin -- Easy_Cases
       Finished := False;
 
@@ -195,13 +196,13 @@ package body PragmARC.Sort_Quick_In_Place is
 
       protected body Task_Control is
          function Remaining return Natural is
-            -- null;
+            -- Empty
          begin -- Remaining
             return Count;
          end Remaining;
 
          procedure Decrement is
-            -- null;
+            -- Empty
          begin -- Decrement
             if Count > 0 then
                Count := Count - 1;
@@ -210,7 +211,7 @@ package body PragmARC.Sort_Quick_In_Place is
       end Task_Control;
 
       task body Sorter is
-         -- null;
+         -- Empty
       begin -- Sorter
          Sort (First => First, Last => Last);
       end Sorter;

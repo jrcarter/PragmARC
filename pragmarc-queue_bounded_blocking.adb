@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
@@ -13,43 +14,43 @@
 package body PragmARC.Queue_Bounded_Blocking is
    protected body Handle is
       procedure Clear is
-         -- null;
+         -- Empty
       begin -- Clear
          Implementation.Clear (Queue => Queue);
       end Clear;
 
       entry Put (Item : in Element) when not Implementation.Is_Full (Queue) is
-         -- null;
+         -- Empty
       begin -- Put
          Implementation.Put (Into => Queue, Item => Item);
       end Put;
 
       entry Get (Item : out Element) when not Implementation.Is_Empty (Queue) is
-         -- null;
+         -- Empty
       begin -- Get
          Implementation.Get (From => Queue, Item => Item);
       end Get;
 
       function Full return Boolean is
-         -- null;
+         -- Empty
       begin -- Full
          return Implementation.Is_Full (Queue);
       end Full;
 
       function Empty return Boolean is
-         -- null;
+         -- Empty
       begin -- Empty
          return Implementation.Is_Empty (Queue);
       end Empty;
 
       function Length return Natural is
-         -- null;
+         -- Empty
       begin -- Length
          return Implementation.Length (Queue);
       end Length;
 
       function Peek return Element is
-         -- null;
+         -- Empty
       begin -- Peek
          return Implementation.Peek (Queue);
       end Peek;

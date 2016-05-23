@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
@@ -18,26 +19,26 @@ package body PragmARC.Stack_Unbounded_Unprotected is
    use type Implementation.Position;
 
    procedure Clear (Stack : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Clear
       Implementation.Clear (List => Stack.List);
    end Clear;
 
    procedure Assign (To : out Handle; From : in Handle) is
-      -- null;
+      -- Empty
    begin -- Assign
       Implementation.Assign (To => To.List, From => From.List);
    end Assign;
 
    function Is_Empty (Stack : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Empty
       return Implementation.Is_Empty (Stack.List);
    end Is_Empty;
 
    procedure Iterate (Over : in out Handle) is
       procedure Action (Item : in out Element; Pos : in Implementation.Position; Continue : out Boolean) is
-         -- null;
+         -- Empty
       begin -- Action
          Action (Item => Item, Continue => Continue);
       end Action;
@@ -48,7 +49,7 @@ package body PragmARC.Stack_Unbounded_Unprotected is
    end Iterate;
 
    function Length (Stack : Handle) return Natural is
-      -- null;
+      -- Empty
    begin -- Length
       return Implementation.Length (Stack.List);
    end Length;

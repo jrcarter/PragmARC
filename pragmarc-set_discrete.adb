@@ -1,13 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Set_Discrete is
    function "+" (Left : Set; Right : Set) return Set is
-      -- null;
+      -- Empty
    begin -- "+"
       return Set'(Value => Left.Value or Right.Value);
    end "+";
@@ -29,13 +30,13 @@ package body PragmARC.Set_Discrete is
    end "+";
 
    function "*" (Left : Set; Right : Set) return Set is
-      -- null;
+      -- Empty
    begin -- "*"
       return Set'(Value => Left.Value and Right.Value);
    end "*";
 
    function "-" (Left : Set; Right : Set) return Set is
-      -- null;
+      -- Empty
    begin -- "-"
       return Set'(Value => Left.Value and not Right.Value);
    end "-";
@@ -49,37 +50,37 @@ package body PragmARC.Set_Discrete is
    end "-";
 
    function "/" (Left : Set; Right : Set) return Set is
-      -- null;
+      -- Empty
    begin -- "/"
       return Set'(Value => Left.Value xor Right.Value);
    end "/";
 
    function "<=" (Left : Set; Right : Set) return Boolean is
-      -- null;
+      -- Empty
    begin -- "<="
       return (Left.Value and Right.Value) = Left.Value;
    end "<=";
 
    function "<" (Left : Set; Right : Set) return Boolean is
-      -- null;
+      -- Empty
    begin -- "<"
       return Left.Value /= Right.Value and then (Left.Value and Right.Value) = Left.Value;
    end "<";
 
    function ">=" (Left : Set; Right : Set) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">="
       return (Left.Value and Right.Value) = Right.Value;
    end ">=";
 
    function ">" (Left : Set; Right : Set) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">"
       return Left.Value /= Right.Value and then (Left.Value and Right.Value) = Right.Value;
    end ">";
 
    function Member (Item : Element; Group : Set) return Boolean is
-      -- null;
+      -- Empty
    begin -- Member
       return Group.Value (Item);
    end Member;

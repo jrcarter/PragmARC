@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for general use
@@ -7,6 +7,7 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Eliminated unused types
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; use mode out to allow scalars
@@ -27,17 +28,6 @@ package PragmARC.List_Bounded is
    -- Other positions accessible via Next and Prev
 
    Invalid_Position : exception; -- Raised if a position is invalid or if the Off_List position is used for Delete, Get, or Put
-
-   -- Since we can't have generic protected subprograms, we'll implement Iterate and Sort with the
-   -- access-to-subprogram types Action_Ptr & Less_Ptr. This means that the actual subprograms
-   -- passed to Iterate and Sort must be declared at the library level to pass accessibility checks.
-
-   type Context_Data is tagged null record; -- Used to pass context data to the Action procedure during Iteration.
-
-   type Action_Ptr is access procedure (Item     : in out Element;
-                                        Context  : in out Context_Data'Class;
-                                        Pos      : in     Position;
-                                        Continue :    out Boolean);
 
    protected type Handle (Max_Size : Positive; Ceiling_Priority : System.Any_Priority) is -- Initial value: Empty
       pragma Priority (Ceiling_Priority);

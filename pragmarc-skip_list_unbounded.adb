@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------
@@ -188,7 +189,7 @@ package body PragmARC.Skip_List_Unbounded is
    end Get_First;
 
    function Get_Last (List : Skip_List) return Element is
-      -- null;
+      -- Empty
    begin -- Get_Last
       if List.Last = null then
          raise Empty;
@@ -198,7 +199,7 @@ package body PragmARC.Skip_List_Unbounded is
    end Get_Last;
 
    function Is_Empty (List : Skip_List) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Empty
       return List.Last = null;
    end Is_Empty;
@@ -218,7 +219,7 @@ package body PragmARC.Skip_List_Unbounded is
    end Length;
 
    procedure Finalize (Object : in out Skip_List) is
-      -- null;
+      -- Empty
    begin -- Finalize
       if Object.Header /= null then
          Clear (List => Object);

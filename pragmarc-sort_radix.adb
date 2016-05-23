@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 procedure PragmARC.Sort_Radix (Set : in out Sort_Set) is
@@ -38,8 +39,7 @@ begin -- PragmARC.Sort_Radix
          Set := Zero;
       else
          Set := Zero (Zero'First .. Index'Val (Index'Pos (Zero'First) + Num_Zeroes - 1) ) &
-                One  (One'First  .. Index'Val (Index'Pos (One'First)  + Num_Ones   - 1) )
-         ;
+                One  (One'First  .. Index'Val (Index'Pos (One'First)  + Num_Ones   - 1) );
       end if;
 
       Mask := 2 * Mask; -- Move on to next bit

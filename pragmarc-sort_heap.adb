@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic heap sort
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ------------------------------------------------------------------
 -- 2004 Sep 01     J. Carter          V1.0--Initial release
@@ -20,28 +21,28 @@ procedure PragmARC.Sort_Heap (Set : in out Sort_Set) is
    pragma Inline (Swap);
 
    function ">=" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">="
       return not (Left < Right);
    end ">=";
    pragma Inline (">=");
 
    function "=" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- "="
       return (not (Left < Right) ) and (not (Right < Left) );
    end "=";
    pragma Inline ("=");
 
    function ">" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">"
       return Left /= Right and (not (Left < Right) );
    end ">";
    pragma Inline (">");
 
    function "<=" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- "<="
       return Left < Right or Left = Right;
    end "<=";

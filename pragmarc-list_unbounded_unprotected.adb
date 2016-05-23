@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------
@@ -90,25 +91,25 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Clear;
 
    function First (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- First
       return Position'(List_Id => List.Off_List, Ptr => List.Off_List.Next);
    end First;
 
    function Last (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Last
       return Position'(List_Id => List.Off_List, Ptr => List.Off_List.Prev);
    end Last;
 
    function Off_List (List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Off_List
       return Position'(List_Id => List.Off_List, Ptr => List.Off_List);
    end Off_List;
 
    procedure Check_Valid (List : in Handle; Pos : in Position) is -- Help procedure to check that Pos is valid for List
-      -- null;
+      -- Empty
    begin -- Check_Valid
       if Pos.List_Id /= List.Off_List or else Pos.Ptr = null or else Pos.Ptr.List_Id /= List.Off_List then
          raise Invalid_Position;
@@ -117,7 +118,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    pragma Inline (Check_Valid);
 
    function Next (Pos : Position; List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Next
       Check_Valid (List => List, Pos => Pos);
 
@@ -125,7 +126,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Next;
 
    function Prev (Pos : Position; List : Handle) return Position is
-      -- null;
+      -- Empty
    begin -- Prev
       Check_Valid (List => List, Pos => Pos);
 
@@ -133,7 +134,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Prev;
 
    function Get return Link is -- Help function to get a new node and convert Storage_Error to Storage_Exhausted
-      -- null;
+      -- Empty
    begin -- Get
       return new Node (Has_Data => True);
    exception -- Get
@@ -186,7 +187,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    pragma Inline (Check_Valid_And_Not_Off);
 
    procedure Delete (From : in out Handle; Pos : in out Position) is
-      -- null;
+      -- Empty
    begin -- Delete
       Check_Valid_And_Not_Off (List => From, Pos => Pos);
 
@@ -201,7 +202,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Delete;
 
    function Get (From : Handle; Pos : Position) return Element is
-      -- null;
+      -- Empty
    begin -- Get
       Check_Valid_And_Not_Off (List => From, Pos => Pos);
 
@@ -209,7 +210,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Get;
 
    procedure Put (Into : in out Handle; Pos : in Position; Item : in Element) is
-      -- null;
+      -- Empty
    begin -- Put
       Check_Valid_And_Not_Off (List => Into, Pos => Pos);
 
@@ -217,7 +218,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Put;
 
    function Is_Empty (List : Handle) return Boolean is
-      -- null;
+      -- Empty
    begin -- Is_Empty
       return List.Off_List.Next = List.Off_List;
    end Is_Empty;
@@ -237,7 +238,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Length;
 
    procedure Finalize (Object : in out Handle) is
-      -- null;
+      -- Empty
    begin -- Finalize
       if Object.Off_List /= null then
          Clear (List => Object);
@@ -280,7 +281,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Rest          : Link;
 
       procedure Unlink (Ptr : in Link) is -- Unlink merged node from its subset
-         -- null;
+         -- Empty
       begin -- Unlink
          if Ptr.Next /= null then
             Ptr.Next.Prev := null;

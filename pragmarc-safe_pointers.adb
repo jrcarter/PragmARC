@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.2--Added exception handler to Finalize
 -- 2011 Jul 01     J. Carter          V1.1--Finalize may be called multiple times
 -- 2005 Jul 01     J. Carter          V1.0--Initial release
@@ -15,13 +16,13 @@ package body PragmARC.Safe_Pointers is
    end record;
 
    function "=" (Left : Safe_Pointer; Right : Safe_Pointer) return Boolean is
-      -- null;
+      -- Empty
    begin -- "="
       return Left.Ptr = Right.Ptr;
    end "=";
 
    procedure Adjust (Item : in out Safe_Pointer) is
-      -- null;
+      -- Empty
    begin -- Adjust
       if Item.Ptr /= null then
          Item.Ptr.Count := Item.Ptr.Count + 1;
@@ -29,13 +30,13 @@ package body PragmARC.Safe_Pointers is
    end Adjust;
 
    function Allocate return Safe_Pointer is
-      -- null;
+      -- Empty
    begin -- Allocate
       return Safe_Pointer'(Ada.Finalization.Controlled with Ptr => new Safe_Group);
    end Allocate;
 
    function Allocate (Data : Object) return Safe_Pointer is
-      -- null;
+      -- Empty
    begin -- Allocate
       return Safe_Pointer'(Ada.Finalization.Controlled with Ptr => new Safe_Group'(Data => Data, Count => 1) );
    end Allocate;
@@ -60,13 +61,13 @@ package body PragmARC.Safe_Pointers is
    end Finalize;
 
    function Get (Pointer : Safe_Pointer) return Object is
-      -- null;
+      -- Empty
    begin -- Get
       return Pointer.Ptr.Data;
    end Get;
 
    procedure Put (Pointer : in Safe_Pointer; Value : in Object) is
-      -- null;
+      -- Empty
    begin -- Put
       Pointer.Ptr.Data := Value;
    end Put;

@@ -1,25 +1,26 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.US_Card is
    function Make (Suit : Suit_Id; Rank : Rank_Id) return Card_Handle is
-      -- null;
+      -- Empty
    begin -- Make
       return Card_Handle'(Suit => Suit, Rank => Rank);
    end Make;
 
    function Rank (Item : Card_Handle) return Rank_Id is
-      -- null;
+      -- Empty
    begin -- Rank
       return Item.Rank;
    end Rank;
 
    function Suit (Item : Card_Handle) return Suit_Id is
-      -- null;
+      -- Empty
    begin -- Suit
       return Item.Suit;
    end Suit;

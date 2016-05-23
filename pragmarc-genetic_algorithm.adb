@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part and formatting changes
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2006 May 01     J. Carter          V1.0--Initial version
@@ -32,7 +33,7 @@ is
    end record;
 
    function "<" (Left : Member; Right : Member) return Boolean is
-      -- null;
+      -- Empty
    begin -- "<"
       return Left.Fitness > Right.Fitness; -- Sort in descending order of fitness.
    end "<";
@@ -48,9 +49,7 @@ is
 
       Prob_Gen  : Ada.Numerics.Float_Random.Generator;
 
-      function Choose_Index return Index is
-      -- Pick an Index based on probability of mating.
-
+      function Choose_Index return Index is -- Pick an Index based on probability of mating.
          function Probability (I : Index) return Float is
             Total_Chances : constant Float := Float ( (Index'Last * (Index'Last + 1) ) / 2);
             Chances       : constant Float := Float (Index'Last - I + 1);
@@ -72,8 +71,8 @@ is
          return Index'Last; -- If Random returns 1.0, which means use the last value.
       end Choose_Index;
 
-      Left      : Index;
-      Right     : Index;
+      Left  : Index;
+      Right : Index;
    begin -- Reproduce
       Ada.Numerics.Float_Random.Reset (Gen => Prob_Gen);
 

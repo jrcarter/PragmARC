@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Matrix manipulation routines
@@ -15,6 +15,7 @@
 -- Type Element is private to allow more abstract types (complex numbers, for example)
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 generic -- PragmARC.Matrix_Math
@@ -62,8 +63,8 @@ package PragmARC.Matrix_Math is
    function Determinant (Mat : Matrix) return Element;
    function Cofactor    (Mat : Matrix; I : Positive; J : Positive) return Element;
 
-   function Sub_Matrix (Mat : Matrix; From_Row : Positive; From_Col : Positive; To_Row : Positive; To_Col : Positive) return Matrix
-   ;
+   function Sub_Matrix (Mat : Matrix; From_Row : Positive; From_Col : Positive; To_Row : Positive; To_Col : Positive)
+   return Matrix;
    -- Returns that part of Mat in rows From_Row .. To_Row and From_Col .. To_Col
    -- If From_Row > To_Row or From_Col > To_Col, a null Matrix will be returned
 

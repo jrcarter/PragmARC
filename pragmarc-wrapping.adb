@@ -1,13 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Wrapping is
    function Wrap_Pred (Value : Item) return Item is
-      -- null;
+      -- Empty
    begin -- Wrap_Pred
       if Value <= Item'First then
          return Item'Last;
@@ -17,7 +18,7 @@ package body PragmARC.Wrapping is
    end Wrap_Pred;
 
    function Wrap_Succ (Value : Item) return Item is
-      -- null;
+      -- Empty
    begin -- Wrap_Succ
       if Value >= Item'Last then
          return Item'First;

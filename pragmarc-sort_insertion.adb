@@ -1,17 +1,18 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic insertion sort
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ------------------------------------------------------------------
 -- 2004 Sep 01     J. Carter          V1.0--Initial release
 --
 procedure PragmARC.Sort_Insertion (Set : in out Sort_Set) is
    function ">=" (Left : Element; Right : Element) return Boolean is
-      -- null;
+      -- Empty
    begin -- ">="
       return not (Left < Right);
    end ">=";

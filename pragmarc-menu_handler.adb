@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part and formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Ansi_Tty_Control;
@@ -27,13 +28,11 @@ package body PragmARC.Menu_Handler is
       package Choice_Io is new Text_Io.Integer_Io (Choice_Id);
 
       procedure Error_Message is
-         -- null;
+         -- Empty
       begin -- Error_Message
          Text_Io.Put (Ansi_Tty_Control.Position (Error_Line_Entry, Error_Column_Entry) &
                       Ansi_Tty_Control.Clear_End_Of_Line &
-                      "*** Invalid choice - Please reenter ***"
-                     )
-         ;
+                      "*** Invalid choice - Please reenter ***");
       end Error_Message;
    begin -- Process
       -- Output centered and bold header
@@ -41,9 +40,7 @@ package body PragmARC.Menu_Handler is
                    Ansi_Tty_Control.Position (Top_Line, 40 - V_String.Length (Menu.Header) / 2) &
                    Ansi_Tty_Control.Bold_Mode &
                    V_String.To_String (Menu.Header) &
-                   Ansi_Tty_Control.Normal_Mode
-                  )
-      ;
+                   Ansi_Tty_Control.Normal_Mode);
 
       -- Find length of longest line for centering purposes
       Longest_Line := V_String.Length (Menu.Item (1) );
@@ -65,9 +62,7 @@ package body PragmARC.Menu_Handler is
          if Menu.Default_Exists and then Counter = Menu.Default_Choice then
             Text_Io.Put (Ansi_Tty_Control.Reverse_Video &
                          V_String.To_String (Menu.Item (Counter) ) &
-                         Ansi_Tty_Control.Normal_Mode
-                        )
-            ;
+                         Ansi_Tty_Control.Normal_Mode);
          else
             Text_Io.Put (V_String.To_String (Menu.Item (Counter) ) );
          end if;
@@ -77,9 +72,7 @@ package body PragmARC.Menu_Handler is
 
       Valid_Selection : loop
          Text_Io.Put (Ansi_Tty_Control.Position (Choice_Line_Entry, Choice_Column_Place) &
-                      Ansi_Tty_Control.Clear_End_Of_Line
-                     )
-         ;
+                      Ansi_Tty_Control.Clear_End_Of_Line);
 
          Get_Choice : declare
             Input  : constant String := Get_Line;

@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Solves linear equations of the form A * X = B for X, where A is a matrix and X and B are vectors
@@ -7,6 +7,7 @@
 -- Uses QR factorization
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Matrix_Math;
@@ -22,7 +23,8 @@ package PragmARC.Linear_Equation_Solver is
 
    package Real_Math is new Numerics.Generic_Elementary_Functions (Float_Type => Real);
 
-   package Real_Matrix is new PragmARC.Matrix_Math (Element => Real, Neg_One_Element => -1.0, Zero_Element => 0.0, Sqrt => Real_Math.Sqrt);
+   package Real_Matrix is new
+      PragmARC.Matrix_Math (Element => Real, Neg_One_Element => -1.0, Zero_Element => 0.0, Sqrt => Real_Math.Sqrt);
 
    function Solve_Linear_Equation (A : Real_Matrix.Matrix; B : Real_Matrix.Vector) return Real_Matrix.Vector;
    -- Uses matrix operations from Real_Matrix; may raise any of the exceptions defined in PragmARC.Matrix_Math

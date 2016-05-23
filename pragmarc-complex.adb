@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2001 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part and changed formatting
 -- 2001 Dec 01     J. Carter          V1.1--Corrected context clause
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -16,51 +17,47 @@ package body PragmARC.Complex is
    function Sqrt (Right : Real) return Real renames Math.Sqrt;
 
    function "+" (Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "+"
       return Right;
    end "+";
 
    function "-" (Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "-"
       return Number'(Real_Part => -Right.Real_Part, Imag_Part => -Right.Imag_Part);
    end "-";
 
    function "+" (Left : Number; Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "+"
       return Number'(Real_Part => Left.Real_Part + Right.Real_Part, Imag_Part => Left.Imag_Part + Right.Imag_Part);
    end "+";
 
    function "-" (Left : Number; Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "-"
       return Number'(Real_Part => Left.Real_Part - Right.Real_Part, Imag_Part => Left.Imag_Part - Right.Imag_Part);
    end "-";
 
    function "*" (Left : Number; Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "*"
       return Number'(Real_Part => Left.Real_Part * Right.Real_Part - Left.Imag_Part * Right.Imag_Part,
-                     Imag_Part => Left.Imag_Part * Right.Real_Part + Left.Real_Part * Right.Imag_Part
-                    )
-      ;
+                     Imag_Part => Left.Imag_Part * Right.Real_Part + Left.Real_Part * Right.Imag_Part);
    end "*";
 
    function "/" (Left : Number; Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- "/"
       return Number'(Real_Part => (Left.Real_Part * Right.Real_Part + Left.Imag_Part * Right.Imag_Part) /
                                   (Right.Real_Part ** 2 + Right.Imag_Part ** 2),
                      Imag_Part => (Left.Imag_Part * Right.Real_Part - Left.Real_Part * Right.Imag_Part) /
-                                  (Right.Real_Part ** 2 + Right.Imag_Part ** 2)
-                    )
-      ;
+                                  (Right.Real_Part ** 2 + Right.Imag_Part ** 2) );
    end "/";
 
    function "abs" (Right : Number) return Real is
-      -- null;
+      -- Empty
    begin -- "abs"
       return Sqrt (Right.Real_Part ** 2 + Right.Imag_Part ** 2);
    end "abs";
@@ -80,34 +77,32 @@ package body PragmARC.Complex is
    end "**";
 
    function Sqrt (Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- Sqrt
       return Number'(Real_Part => Sqrt ( (abs Right + Right.Real_Part) / 2.0),
-                     Imag_Part => Sqrt ( (abs Right - Right.Real_Part) / 2.0)
-                    )
-      ;
+                     Imag_Part => Sqrt ( (abs Right - Right.Real_Part) / 2.0) );
    end Sqrt;
 
    function Conjugate (Right : Number) return Number is
-      -- null;
+      -- Empty
    begin -- Conjugate
       return Number'(Real_Part => Right.Real_Part, Imag_Part => -Right.Imag_Part);
    end Conjugate;
 
    function To_Complex (Real_Part : Real; Imag_Part : Real) return Number is
-      -- null;
+      -- Empty
    begin -- To_Complex
       return Number'(Real_Part => Real_Part, Imag_Part => Imag_Part);
    end To_Complex;
 
    function Real_Part (Value : Number) return Real is
-      -- null;
+      -- Empty
    begin -- Real_Part
       return Value.Real_Part;
    end Real_Part;
 
    function Imag_Part (Value : Number) return Real is
-      -- null;
+      -- Empty
    begin -- imag_part
       return Value.Imag_Part;
    end Imag_Part;

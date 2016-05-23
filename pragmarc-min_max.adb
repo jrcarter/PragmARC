@@ -1,15 +1,16 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ------------------------------------------------------------------
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 package body PragmARC.Min_Max is
     function Min (Left : Element; Right : Element) return Element is
-        -- null;
+        -- Empty
     begin -- Min
         if Left < Right then
             return Left;
@@ -19,7 +20,7 @@ package body PragmARC.Min_Max is
     end Min;
 
     function Max (Left : Element; Right : Element) return Element is
-        -- null;
+        -- Empty
     begin -- Max
         if Left < Right then
             return Right;

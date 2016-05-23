@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part and formatting
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Use Real for Element of stack
@@ -37,20 +38,20 @@ package body PragmARC.Postfix_Calculator is
       package Ansi renames Ansi_Tty_Control;
 
       procedure Process_Result (Stack : in out Real_Stack.Handle; Result : in Real) is
-         -- null;
+         -- Empty
       begin -- Process_Result
          Stack.Push (Item => Result);
          Text_Io.Put (Ansi.Position (Display_Line, 1) & Ansi.Clear_End_Of_Line & Real'Image (Result) );
       end Process_Result;
 
       procedure Get_Unary_Operand (Stack : in out Real_Stack.Handle; Left : out Real) is
-         -- null;
+         -- Empty
       begin -- Get_Unary_Operand
          Stack.Pop (Item => Left);
       end Get_Unary_Operand;
 
       procedure Get_Binary_Operands (Stack : in out Real_Stack.Handle; Left : out Real; Right : out Real) is
-         -- null;
+         -- Empty
       begin -- Get_Binary_Operands
          Stack.Pop (Item => Right);
          Stack.Pop (Item => Left);
@@ -74,7 +75,7 @@ package body PragmARC.Postfix_Calculator is
 
       All_Ops : loop
          Handle_Errors : declare
-            -- null;
+            -- Empty
          begin -- Handle_Errors
             Text_Io.Put (Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line);
             Input.Get (Value => Command);
@@ -164,36 +165,28 @@ package body PragmARC.Postfix_Calculator is
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Invalid input:  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
                Get_Unary_Operand (Stack => Stack, Left => Result);
                Process_Result (Stack => Stack, Result => Result);
             when Storage_Exhausted =>
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Stack is full (no room for this operand):  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
                Get_Unary_Operand (Stack => Stack, Left => Result);
                Process_Result (Stack => Stack, Result => Result);
             when Empty =>
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Stack is empty (not enough operands for operation):  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
                Stack.Clear; -- Should not change anything
                Process_Result (Stack => Stack, Result => 0.0);
             when Text_Io.Data_Error =>
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Invalid number:  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
 
                if Stack.Is_Empty then
                   Stack.Clear;
@@ -206,9 +199,7 @@ package body PragmARC.Postfix_Calculator is
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Invalid result:  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
 
                if Stack.Is_Empty then
                   Stack.Clear;
@@ -221,9 +212,7 @@ package body PragmARC.Postfix_Calculator is
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Invalid exponentiation:  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
 
                if Stack.Is_Empty then
                   Stack.Clear;
@@ -236,9 +225,7 @@ package body PragmARC.Postfix_Calculator is
                Text_Io.Put (Ansi.Position (Error_Line, 1) &
                             Ansi.Clear_End_Of_Line &
                             "Error:  Invalid operand:  " &
-                            Com_Str
-                           )
-               ;
+                            Com_Str);
 
                if Stack.Is_Empty then
                   Stack.Clear;
@@ -252,17 +239,13 @@ package body PragmARC.Postfix_Calculator is
          when Input.Word_Too_Long =>
             Text_Io.Put (Ansi.Position (Error_Line, 1) &
                          Ansi.Clear_End_Of_Line &
-                         "Error:  Too many characters without whitespace"
-                        )
-            ;
+                         "Error:  Too many characters without whitespace");
             Get_Unary_Operand (Stack => Stack, Left => Result);
             Process_Result (Stack => Stack, Result => Result);
          when others => -- ?
             Text_Io.Put (Ansi.Position (Error_Line, 1) &
                          Ansi.Clear_End_Of_Line &
-                         "Error:  Undefined error handled by Handle_Errors"
-                        )
-            ;
+                         "Error:  Undefined error handled by Handle_Errors");
             Get_Unary_Operand (Stack => Stack, Left => Result);
             Process_Result (Stack => Stack, Result => Result);
          end Handle_Errors;
