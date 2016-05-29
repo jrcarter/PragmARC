@@ -3,56 +3,42 @@
 -- **************************************************************************
 --
 -- History:
--- 2016 Jun 01     J. Carter          V2.1--Added license text
+-- 2016 Jun 01     J. Carter          V2.1--Added license text, corrected Skip_Line, and set EOL per file
 -- 2016 Mar 01     J. Carter          V2.0--Use Sequential_IO so no extra EOLs when a file is closed
 -- 2016 Feb 15     J. Carter          V1.0--Initial version
 --
 with Ada.Characters.Latin_1;
 with Ada.IO_Exceptions;
-with Ada.Strings;
-
-with PragmARC.B_Strings;
 
 package body PragmARC.Text_IO is
    DOS_Windows_String : constant String := Ada.Characters.Latin_1.CR & Ada.Characters.Latin_1.LF;
    Mac_String         : constant String := Ada.Characters.Latin_1.CR & "";
    Unix_String        : constant String := Ada.Characters.Latin_1.LF & "";
 
-   Line_Terminator : B_Strings.B_String (Max_Length => 2);
-
-   procedure Set_Line_Terminator (EOL : in EOL_ID) is
-      -- Empty
-   begin -- Set_Line_Terminator
-      case EOL is
-      when DOS_Windows_EOL =>
-         B_Strings.Assign (To => Line_Terminator, From => DOS_Windows_String, Drop => Ada.Strings.Right);
-      when Mac_EOL =>
-         B_Strings.Assign (To => Line_Terminator, From => Mac_String, Drop => Ada.Strings.Right);
-      when Unix_EOL =>
-         B_Strings.Assign (To => Line_Terminator, From => Unix_String, Drop => Ada.Strings.Right);
-      end case;
-   end Set_Line_Terminator;
-
    procedure Create (File : in out File_Handle;
                      Name : in     String                 := "";
                      Mode : in     Character_IO.File_Mode := Out_File;
-                     Form : in     String                 := "")
+                     Form : in     String                 := "";
+                     EOL  : in     EOL_ID                 := DOS_Windows_EOL)
    is
       -- Empty
    begin -- Create
       Character_IO.Create (File => File.File, Name => Name, Mode => Mode, Form => Form);
       File.Empty := True;
+      File.EOL := EOL;
    end Create;
 
    procedure Open (File : in out File_Handle;
                    Name : in     String;
                    Mode : in     Character_IO.File_Mode := In_File;
-                   Form : in     String                 := "")
+                   Form : in     String                 := "";
+                   EOL  : in     EOL_ID                 := DOS_Windows_EOL)
    is
       -- Empty
    begin -- Open
       Character_IO.Open (File => File.File, Name => Name, Mode => Mode, Form => Form);
       File.Empty := True;
+      File.EOL := EOL;
    end Open;
 
    procedure Close (File : in out File_Handle) is
@@ -67,10 +53,24 @@ package body PragmARC.Text_IO is
       return Character_IO.Is_Open (File.File);
    end Is_Open;
 
-   use type B_Strings.B_String;
-
    procedure New_Line (File : in out File_Handle; Spacing : in Positive := 1) is
-      EOL : constant String := +Line_Terminator;
+      function EOL_String return String;
+      -- Returns the EOL string for File.EOL
+
+      function EOL_String return String is
+         -- Empty
+      begin -- EOL_String
+         case File.EOL is
+         when DOS_Windows_EOL =>
+            return DOS_Windows_String;
+         when Mac_EOL =>
+            return Mac_String;
+         when Unix_EOL =>
+            return Unix_String;
+         end case;
+      end EOL_String;
+
+      EOL : constant String := EOL_String;
    begin -- New_Line
       All_Lines : for I in 1 .. Spacing loop
          All_Characters : for J in EOL'Range loop
@@ -88,12 +88,12 @@ package body PragmARC.Text_IO is
    procedure Skip_Line (File : in out File_Handle; Spacing : in Positive := 1) is
       Char1 : Character;
       Char2 : Character;
-      Count : Natural := 0;
+      EOF   : Boolean := True; -- Indicates if End_Error should be reraised
    begin -- Skip_Line
       All_Lines : for I in 1 .. Spacing loop
          Find_EOL : loop
             Char1 := Get_C (File);
-            Count := Count + 1;
+            EOF := I < Spacing;
 
             exit Find_EOL when Char1 = Ada.Characters.Latin_1.LF;
 
@@ -110,7 +110,7 @@ package body PragmARC.Text_IO is
       end loop All_Lines;
    exception -- Skip_Line
    when Ada.IO_Exceptions.End_Error =>
-      if Count = 0 then
+      if EOF then
          raise;
       end if;
       -- Otherwise we have a final line without a line terminator, or with a Mac line terminator, and we've skipped that line
@@ -236,8 +236,6 @@ package body PragmARC.Text_IO is
       File.Buffer := Item;
       File.Empty := False;
    end Put_Back_C;
-begin -- PragmARC.Text_IO
-   B_Strings.Assign (To => Line_Terminator, From => DOS_Windows_String, Drop => Ada.Strings.Right);
 end PragmARC.Text_IO;
 --
 -- This is free software; you can redistribute it and/or modify it under
