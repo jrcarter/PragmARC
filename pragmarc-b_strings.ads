@@ -4,9 +4,10 @@
 --
 -- Bounded, variable-length strings that are hopefully more usable than
 -- Ada.Strings.Bounded provides
--- Based on an idea by Robert Duff presented on comp.lang.ada
+-- Based on an idea by Robert Duff presented on comp.lang.ada, which didn't work
 --
 -- History:
+-- 2016 Jul 01     J. Carter          V1.3--Made type B_String tagged and non-limited
 -- 2016 Mar 15     J. Carter          V1.2--Default discriminant doesn't work as Duff claimed, at least with GNAT
 -- 2016 Feb 15     J. carter          V1.1--Forgot "+" for To_B_String
 -- 2015 Nov 15     J. Carter          V1.0--Initial release
@@ -14,7 +15,7 @@
 with Ada.Strings;
 
 package PragmARC.B_Strings is
-   type B_String (Max_Length : Positive) is limited private;
+   type B_String (Max_Length : Positive) is tagged private;
    -- Default initial value is Null_B_String
 
    Null_B_String : constant B_String; -- A string of zero characters
@@ -25,18 +26,20 @@ package PragmARC.B_Strings is
 
    function To_B_String (Source : String) return B_String;
    function "+" (Source : String) return B_String renames To_B_String;
-   -- Result's Max_Length will be Source'Length, or 1 if Source'Lenth = 0
+   -- Result's Max_Length will be Max (Source'Length, 1)
 
    function Length (Source : B_String) return Natural;
 
    Too_Long : exception;
 
-   procedure Assign (To : in out B_String; From : in B_String; Drop : in Ada.Strings.Truncation);
+   procedure Assign (To : in out B_String; From : in B_String; Drop : in Ada.Strings.Truncation := Ada.Strings.Error);
    -- Gives To the same value as From
    -- If Drop = Error and Length (From) > To.Max_Length, raises Too_Long
    -- To is unchanged if Too_Long is raised
+   -- Default assignment (":=") only works for objects with the same value of Max_Length
+   -- Assign works for any 2 B_Strings
 
-   procedure Assign (To : in out B_String; From : in String; Drop : in Ada.Strings.Truncation);
+   procedure Assign (To : in out B_String; From : in String; Drop : in Ada.Strings.Truncation := Ada.Strings.Error);
    -- Same as Assign (To => To, From => +From, Drop => Drop);
 
    function "="  (Left : B_String; Right : B_String) return Boolean;
@@ -45,9 +48,9 @@ package PragmARC.B_Strings is
    function ">"  (Left : B_String; Right : B_String) return Boolean;
    function ">=" (Left : B_String; Right : B_String) return Boolean;
 private -- PragmARC.B_Strings
-   type B_String (Max_Length : Positive) is limited record
-      Length : Natural := 0;
-      Value  : String (1 .. Max_Length) := (1 .. Max_Length => ' ');
+   type B_String (Max_Length : Positive) is tagged record
+      Len   : Natural := 0;
+      Value : String (1 .. Max_Length) := (1 .. Max_Length => ' ');
    end record;
 
    Null_B_String : constant B_String := (Max_Length => 1, others => <>);

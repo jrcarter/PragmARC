@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2015 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jul 01     J. Carter          V1.1--Made type B_String tagged and non-limited
 -- 2015 Nov 15     J. Carter          V1.0--Initial release
 --
 
@@ -17,50 +18,50 @@ package body PragmARC.B_Strings is
       Max_Length : constant Positive := Integer'Max (1, Source'Length);
       Length     : constant Natural  := Source'Length;
    begin -- To_B_String
-      return (Max_Length => Max_Length, Length => Length, Value => Source & (Length + 1 .. Max_Length => ' ') );
+      return (Max_Length => Max_Length, Len => Length, Value => Source & (Length + 1 .. Max_Length => ' ') );
    end To_B_String;
 
    function Length (Source : B_String) return Natural is
       -- Empty declarative part
    begin -- Length
-      return Source.Length;
+      return Source.Len;
    end Length;
 
-   procedure Assign (To : in out B_String; From : in B_String; Drop : in Ada.Strings.Truncation) is
+   procedure Assign (To : in out B_String; From : in B_String; Drop : in Ada.Strings.Truncation := Ada.Strings.Error) is
       use type Ada.Strings.Truncation;
    begin -- Assign
-      if From.Length <= To.Max_Length then
-         To.Length := From.Length;
-         To.Value (1 .. To.Length) := From.Value (1 .. To.Length);
+      if From.Len <= To.Max_Length then
+         To.Len := From.Len;
+         To.Value (1 .. To.Len) := From.Value (1 .. To.Len);
 
          return;
       end if;
 
-      -- From.Length > To.Max_Length
+      -- From.Len > To.Max_Length
 
       if Drop = Ada.Strings.Error then
          raise Too_Long;
       end if;
 
-      To.Length := To.Max_Length;
+      To.Len := To.Max_Length;
 
       if Drop = Ada.Strings.Left then
-         To.Value := From.Value (From.Length - To.Length + 1 .. From.Length);
+         To.Value := From.Value (From.Len - To.Len + 1 .. From.Len);
 
          return;
       end if;
 
       -- Drop = Right
 
-      To.Value := From.Value (1 .. To.Length);
+      To.Value := From.Value (1 .. To.Len);
    end Assign;
 
-   procedure Assign (To : in out B_String; From : in String; Drop : in Ada.Strings.Truncation) is
+   procedure Assign (To : in out B_String; From : in String; Drop : in Ada.Strings.Truncation := Ada.Strings.Error) is
       use type Ada.Strings.Truncation;
    begin -- Assign
       if From'Length <= To.Max_Length then
-         To.Length := From'Length;
-         To.Value (1 .. To.Length) := From;
+         To.Len := From'Length;
+         To.Value (1 .. To.Len) := From;
 
          return;
       end if;
@@ -71,29 +72,29 @@ package body PragmARC.B_Strings is
          raise Too_Long;
       end if;
 
-      To.Length := To.Max_Length;
+      To.Len := To.Max_Length;
 
       if Drop = Ada.Strings.Left then
-         To.Value := From (From'Last - To.Length + 1 .. From'Last);
+         To.Value := From (From'Last - To.Len + 1 .. From'Last);
 
          return;
       end if;
 
       -- Drop = Right
 
-      To.Value := From (From'First .. From'First + To.Length - 1);
+      To.Value := From (From'First .. From'First + To.Len - 1);
    end Assign;
 
    function "=" (Left : B_String; Right : B_String) return Boolean is
       -- Empty declarative part
    begin -- "="
-      return Left.Length = Right.Length and then Left.Value (1 .. Left.Length) = Right.Value (1 .. Right.Length);
+      return Left.Len = Right.Len and then Left.Value (1 .. Left.Len) = Right.Value (1 .. Right.Len);
    end "=";
 
    function "<" (Left : B_String; Right : B_String) return Boolean is
       -- Empty declarative part
    begin -- "<"
-      return Left.Value (1 .. Left.Length) < Right.Value (1 .. Right.Length);
+      return Left.Value (1 .. Left.Len) < Right.Value (1 .. Right.Len);
    end "<";
 
    function "<=" (Left : B_String; Right : B_String) return Boolean is
@@ -105,7 +106,7 @@ package body PragmARC.B_Strings is
    function ">" (Left : B_String; Right : B_String) return Boolean is
       -- Empty declarative part
    begin -- ">"
-      return Left.Value (1 .. Left.Length) > Right.Value (1 .. Right.Length);
+      return Left.Value (1 .. Left.Len) > Right.Value (1 .. Right.Len);
    end ">";
 
    function ">=" (Left : B_String; Right : B_String) return Boolean is
