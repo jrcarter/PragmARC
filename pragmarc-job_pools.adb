@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jul 15     J. Carter          V1.1--Added Wait_Until_All_Idle
 -- 2016 Jul 01     J. Carter          V1.0--Initial version
 --
 with PragmARC.Skip_List_Unbounded;
@@ -24,6 +25,9 @@ package body PragmARC.Job_Pools is
 
       procedure Cancel (Key : in Key_Handle);
       -- Removes Key from the queue, if it exists
+
+      entry Wait_Until_All_Idle;
+      -- Blocks the caller until all tasks are idle and there are no pending jobs
 
       entry Get (Item : out Job_Info);
       -- Gets the oldest item in the queue in Item.
@@ -72,6 +76,12 @@ package body PragmARC.Job_Pools is
       Job_Queue.Cancel (Key => Key);
    end Cancel;
 
+   procedure Wait_Until_All_Idle is
+      -- Empty
+   begin -- Wait_Until_All_Idle
+      Job_Queue.Wait_Until_All_Idle;
+   end Wait_Until_All_Idle;
+
    procedure Get_Statistics (Total : out Natural; Idle : out Natural; Pending : out Natural) is
       -- Empty
    begin -- Get_Statistics
@@ -104,6 +114,12 @@ package body PragmARC.Job_Pools is
       begin -- Cancel
          Queue.Delete (Item => (Key => Key, Job => <>) );
       end Cancel;
+
+      entry Wait_Until_All_Idle when Count = Get'Count and Queue.Length = 0 is
+         -- Empty
+      begin -- Wait_Until_All_Idle
+         null;
+      end Wait_Until_All_Idle;
 
       entry Get (Item : out Job_Info) when not Queue.Is_Empty is
          Queue_Item : Queue_Info;

@@ -5,6 +5,7 @@
 -- Abstraction of a pool of job tasks
 --
 -- History:
+-- 2016 Jul 15     J. Carter          V1.1--Added Wait_Until_All_Idle
 -- 2016 Jul 01     J. Carter          V1.0--Initial version
 --
 with System;
@@ -16,7 +17,7 @@ generic -- PragmARC.Job_Pools
    Task_Priority : Standard.System.Priority := Standard.System.Default_Priority;
 
    with function Time_To_Quit return Boolean; -- Returns True when tasks should quit
-   Quit_Check_Interval : Duration := Duration'Last; -- Tasks call Time_To_Quit at this interval
+   Quit_Check_Interval : Duration := Duration'Last; -- Idle tasks call Time_To_Quit at this interval
 
    Max_Tasks     : Positive := Integer'Last; -- Maximum number of job tasks that may be created
    Initial_Tasks : Natural  := 0;            -- Number of tasks to create during elaboration
@@ -33,6 +34,9 @@ package PragmARC.Job_Pools is
 
    procedure Cancel (Key : in Key_Handle);
    -- Cancels Key if it is pending; no effect otherwise
+
+   procedure Wait_Until_All_Idle;
+   -- Blocks the caller until all tasks are idle and there are no pending jobs
 
    procedure Get_Statistics (Total : out Natural; Idle : out Natural; Pending : out Natural);
    -- Gives the number of total and idle tasks in use by the package, and number of pending jobs, at the time of the call
