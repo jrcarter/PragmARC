@@ -3,10 +3,12 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Oct 01     J. Carter          V1.3--Random_Int moved to PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2010 Oct 01     J. Carter          V1.1--Improved Shuffle
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
+with PragmARC.Real_Random_Ranges;
 with PragmARC.Universal_Random;
 with System;
 
@@ -33,6 +35,7 @@ package body PragmARC.Deck_Handler is
       type Big is digits System.Max_Digits;
 
       package Random is new Universal_Random (Supplied_Real => Big);
+      package Ranges is new Real_Random_Ranges (Supplied_Real => Big);
 
       Temp  : Card;
       Index : Positive;
@@ -41,7 +44,7 @@ package body PragmARC.Deck_Handler is
 
       Permute_All : for I in 1 .. Item.Count - 1 loop
          Temp := Item.Value (I);
-         Index := Random.Random_Int (I, Item.Count);
+         Index := Ranges.Random_Int (Random.Random, I, Item.Count);
          Item.Value (I) := Item.Value (Index);
          Item.Value (Index) := Temp;
       end loop Permute_All;

@@ -1,18 +1,29 @@
 -- PragmAda Reusable Component (PragmARC)
 -- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
-
+--
+-- Creates a random values in a range from a random value R such that 0 <= R < 1
+--
 -- History:
--- 2016 Oct 01     J. Carter     V1.1--Removed Random_Range and Normal, replaced by PragmARC.Real_Random_Ranges
--- 2013 Nov 01     J. Carter     V1.0--Initial release
+-- 2016 Oct 01     J. Carter          V1.0--Initial version
+--
+generic -- PragmARC.Real_Random_Ranges
+   type Supplied_Real is digits <>;
+package PragmARC.Real_Random_Ranges is
+   subtype Real is Supplied_Real'Base;
+   subtype Uniform is Real range 0.0 .. Real'Adjacent (1.0, 0.0);
 
-package body PragmARC.Real_Random_Values is
-   function Random (State : in Generator) return Real is
-      -- Empty declarative part
-   begin -- Random
-      return Real (Unsigned_Random (State) ) / Real (Interfaces.Unsigned_32'Modulus);
-   end Random;
-end PragmARC.Real_Random_Values;
+   function Random_Range (R : Uniform; Min : Real; Max : Real) return Real;
+   -- Converts R into a value in Min .. Max
+
+   function Random_Int (R : Uniform; Min : Integer; Max : Integer) return Integer;
+   -- Converts R into a value in Min .. Max
+
+   type Normal_List is array (1 .. 12) of Uniform;
+
+   function Normal (List : Normal_List; Mean : Real; Sigma : Real) return Real;
+   -- Uses the random values in List to approximate a normally distributed random number with the given mean & standard deviation
+end PragmARC.Real_Random_Ranges;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

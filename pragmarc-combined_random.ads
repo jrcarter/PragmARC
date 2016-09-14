@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Combines the Universal and KISS generators into one very high quality, very long period generator
 
 -- History:
--- 2013 Aug 01     J. Carter     v1.0--Initial release
+-- 2016 Oct 01     J. Carter     V1.1--Removed Random_Range, Random_Int, and Normal, replaced by PragmARC.Real_Random_Ranges
+-- 2013 Aug 01     J. Carter     V1.0--Initial release
 
 with PragmARC.KISS_Random;
 
@@ -42,15 +43,6 @@ package PragmARC.Combined_Random is
 
    function Random return Real;
    -- Returns a uniformly distributed random value in 0.0 .. 1.0 - Epsilon
-
-   function Random_Range (Min : Real; Max : Real) return Real;
-   -- Returns a random value in the given range
-
-   function Random_Int (Min : Integer; Max : Integer) return Integer;
-   -- Returns a random integer in the given range
-
-   function Normal (Mean : Real; Sigma : Real) return Real;
-   -- Uses 12 random values to approximate a normally distributed random value with the give mean and standard deviation
 end PragmARC.Combined_Random;
 --
 -- This is free software; you can redistribute it and/or modify it under

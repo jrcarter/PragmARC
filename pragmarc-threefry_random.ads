@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- The Threefry Random Number Generator
@@ -7,7 +7,8 @@
 -- Passes all of the Crush suite of tests (Big Crush), and said to be fastest generator that does so
 
 -- History:
--- 2013 Nov 01     J. Carter     v1.0--Initial release
+-- 2016 Oct 01     J. Carter     V1.1--Pulled out Random_Range into PragmARC.Random_Ranges
+-- 2013 Nov 01     J. Carter     V1.0--Initial release
 
 with Interfaces;
 
@@ -40,9 +41,6 @@ package PragmARC.Threefry_Random is
 
    procedure Advance (State : in out Generator; By : in Unsigned_64);
    -- Advances the state of State by By; equivalent to By calls to Random
-
-   function Random_Range (State : in Generator; Min : in Unsigned_32; Max : in Unsigned_32) return Unsigned_32;
-   -- Returns a random value in the given range
 private -- PragmARC.Threefry_Random
    type Generator_Ptr is access all Generator;
 

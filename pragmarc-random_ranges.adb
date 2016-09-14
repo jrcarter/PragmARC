@@ -1,18 +1,36 @@
 -- PragmAda Reusable Component (PragmARC)
 -- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
-
+--
 -- History:
--- 2016 Oct 01     J. Carter     V1.1--Removed Random_Range and Normal, replaced by PragmARC.Real_Random_Ranges
--- 2013 Nov 01     J. Carter     V1.0--Initial release
+-- 2016 Oct 01     J. Carter     V1.0--Initial Version
+--
+function PragmARC.Random_Ranges (G : Generator; Min : Interfaces.Unsigned_32; Max : Interfaces.Unsigned_32) return Interfaces.Unsigned_32
+is
+   subtype Unsigned_32 is Interfaces.Unsigned_32;
 
-package body PragmARC.Real_Random_Values is
-   function Random (State : in Generator) return Real is
-      -- Empty declarative part
-   begin -- Random
-      return Real (Unsigned_Random (State) ) / Real (Interfaces.Unsigned_32'Modulus);
-   end Random;
-end PragmARC.Real_Random_Values;
+   type U33 is mod 2 ** 33; -- 1 bit more than Unsigned_32, for calculating Max_Random
+
+   Min_Work : constant Unsigned_32 := Unsigned_32'Min (Min, Max);
+   Max_Work : constant Unsigned_32 := Unsigned_32'Max (Min, Max);
+
+   use type Unsigned_32;
+
+   Spread : constant Unsigned_32 := Max_Work - Min_Work + 1;
+   S33    : constant U33         := U33 (Spread);
+
+   Max_Random : constant Unsigned_32 := Interfaces.Unsigned_32 (S33 * (Unsigned_32'Modulus / S33) - 1);
+
+   Value : Unsigned_32;
+begin -- PragmARC.Random_Ranges
+   Get_Value : loop
+      Value := Random (G);
+
+      exit Get_Value when Value <= Max_Random;
+   end loop Get_Value;
+
+   return Min_Work + Value rem Spread;
+end PragmARC.Random_Ranges;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

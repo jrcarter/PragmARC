@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Jun 01     J. Carter          V2.3--Random_Range moved to PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V2.2--Changed comment for empty declarative part and formatting
 -- 2016 Mar 15     J. Carter          V2.1--Added Random_Weights and improved reading and writing weights
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
@@ -15,6 +16,7 @@ with Ada.Numerics.Generic_Elementary_Functions;
 with Ada.Sequential_IO;
 with Ada.Unchecked_Deallocation;
 
+with PragmARC.Real_Random_Ranges;
 with PragmARC.Universal_Random;
 
 use Ada;
@@ -149,6 +151,7 @@ package body PragmARC.REM_NN_Wrapper is
       package Connection_IO is new Sequential_IO (Element_Type => Weight_Info);
 
       package Random is new Universal_Random (Supplied_Real => Real);
+      package Ranges is new Real_Random_Ranges (Supplied_Real => Real);
       package Real_Math is new Numerics.Generic_Elementary_Functions (Float_Type => Real);
 
       protected Control is
@@ -159,7 +162,7 @@ package body PragmARC.REM_NN_Wrapper is
          procedure Random_Range (Min : in Real; Max : in Real; Result : out Real) is
             -- Empty
          begin -- Random_Range
-            Result := Random.Random_Range (Min, Max);
+            Result := Ranges.Random_Range (Random.Random, Min, Max);
          end Random_Range;
       end Control;
 

@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Oct 01     J. Carter     V1.2--Removed Random_Range, Random_Int, and Normal, replaced by PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter     V1.1--Changed comment for empty declarative part
 -- 2013 Aug 01     J. Carter     V1.0--Initial release
 
@@ -52,37 +53,6 @@ package body PragmARC.Combined_Random is
 
       return Result;
    end Random;
-
-   function Random_Range (Min : Real; Max : Real) return Real is
-      -- Empty
-   begin -- Random_Range
-      return Random * (Max - Min) + Min;
-   end Random_Range;
-
-   function Random_Int (Min : Integer; Max : Integer) return Integer is
-      Min_Work : constant Integer := Integer'Min (Min, Max);
-      Max_Work : constant Integer := Integer'Max (Min, Max);
-
-      Value : Real;
-   begin -- Random_Int
-      -- assert: Min_Work <= Max_Work
-
-      Value := Random_Range (Real (Min_Work), Real (Max_Work) + 1.0);
-      -- assert: Min_Work <= Value < Max_Work + 1
-      -- assert: Min_Work <= Floor (Value) <= Max_Work
-
-      return Integer (Real'Floor (Value) );
-   end Random_Int;
-
-   function Normal (Mean : Real; Sigma : Real) return Real is
-      Sum : Real := 0.0;
-   begin -- Normal
-      Add : for I in 1 .. 12 loop
-         Sum := Sum + Random;
-      end loop Add;
-
-      return Sigma * (Sum - 6.0) + Mean;
-   end Normal;
 end PragmARC.Combined_Random;
 --
 -- This is free software; you can redistribute it and/or modify it under

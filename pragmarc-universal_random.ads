@@ -14,16 +14,13 @@
 -- Can be set to produce any sequence by calling Set_Seed
 -- Randomize uses Calendar to obtain 4 seeds
 -- Random produces the next number in the sequence
--- Random_Range uses the generator to produce a random value in the given range
--- Random_Int uses the generator to produce a random integer in the given range
--- Normal uses 12 values from the generator to approximate a normally distributed random number with the given mean & standard
--- deviation
 --
 -- Ada 95 defines 2 standard random-number packages, Ada.Numerics.Float_Random & Ada.Numerics.Discrete_Random.
--- However, the random-number algorithm use by these packages is implementation defined. This package provides a portable generator
--- of known, good quality, should portability of the algorithm be a concern.
+-- However, the random-number algorithm use by these packages is implementation defined. This package provides a portable
+-- generator of known, good quality, should portability of the algorithm be a concern.
 --
 -- History:
+-- 2016 Oct 01     J. Carter          V1.2--Removed Random_Range, Random_Int, and Normal, replaced by PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -51,12 +48,6 @@ package PragmARC.Universal_Random is
    procedure Randomize;
 
    function Random return Real;
-
-   function Random_Range (Min : Real; Max : Real) return Real;
-
-   function Random_Int (Min : Integer; Max : Integer) return Integer;
-
-   function Normal (Mean : Real; Sigma : Real) return Real;
 end PragmARC.Universal_Random;
 --
 -- This is free software; you can redistribute it and/or modify it under

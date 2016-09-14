@@ -1,15 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Marsaglia's KISS Random Number Generator
 -- Alogirithm taken from www.fortran.com/kiss.f90
 
 -- History:
--- 2013 Aug 01     J. Carter     v1.0--Initial release
+-- 2016 Oct 01     J. Carter     V1.1--Pulled out Random_Range into PragmARC.Random_Ranges
+-- 2013 Aug 01     J. Carter     V1.0--Initial release
 
 with Interfaces;
-with PragmARC.Real_Random_Values;
 
 package PragmARC.KISS_Random is
    subtype Raw_Value is Interfaces.Unsigned_32;
@@ -35,9 +35,6 @@ package PragmARC.KISS_Random is
 
    function Raw (State : in Generator) return Raw_Value;
    -- Returns a random value
-
-   function Random_Range (State : in Generator; Min : in Raw_Value; Max : in Raw_Value) return Raw_Value;
-   -- Returns a random value in the given range
 private -- PragmARC.KISS_Random
    type Generator_Ptr is access all Generator;
 

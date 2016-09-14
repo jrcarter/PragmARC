@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2016 Oct 01     J. Carter          V1.4--Removed Random_Range, Random_Int, and Normal, replaced by PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part and formatting
 -- 2003 Sep 01     J. Carter          V1.2--Improve Randomize
 -- 2001 Feb 01     J. Carter          V1.1--Use Date_Handler in Randomize
@@ -145,36 +146,6 @@ package body PragmARC.Universal_Random is
 
       return Temp;
    end Random;
-
-   function Random_Range (Min : Real; Max : Real) return Real is
-      -- Empty
-   begin -- Random_Range
-      return Random * (Max - Min) + Min;
-   end Random_Range;
-
-   function Random_Int (Min : Integer; Max : Integer) return Integer is
-      Min_Work : Integer := Integer'Min (Min, Max);
-      Max_Work : Integer := Integer'Max (Min, Max);
-      Value    : Real;
-   begin -- Random_Int
-      -- assert: Min_Work <= Max_Work
-
-      Value := Random_Range (Real (Min_Work), Real (Max_Work) + 1.0);
-      -- assert: Min_Work <= Value < Max_Work + 1
-      -- assert: Min_Work <= Floor (Value) <= Max_Work
-
-      return Integer (Real'Floor (Value) );
-   end Random_Int;
-
-   function Normal (Mean : Real; Sigma : Real) return Real is
-      Sum : Real := 0.0;
-   begin -- Normal
-      Add : for I in 1 .. 12 loop
-         Sum := Sum + Random;
-      end loop Add;
-
-      return Sigma * (Sum - 6.0) + Mean;
-   end Normal;
 begin -- PragmARC.Universal_Random
    Set_Seed; -- Initialize to default seeds
 end PragmARC.Universal_Random;

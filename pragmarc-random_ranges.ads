@@ -1,18 +1,21 @@
 -- PragmAda Reusable Component (PragmARC)
 -- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
-
+--
+-- Returns a uniformly distributed integer in Min .. Max
+-- Internally, it declares a type mod 2 ** 33, so this won't work with compilers that have
+-- System.Max_Binary_Modulus < 2 ** 33
+--
 -- History:
--- 2016 Oct 01     J. Carter     V1.1--Removed Random_Range and Normal, replaced by PragmARC.Real_Random_Ranges
--- 2013 Nov 01     J. Carter     V1.0--Initial release
+-- 2016 Oct 01     J. Carter     V1.0--Initial Version
+--
+with Interfaces;
 
-package body PragmARC.Real_Random_Values is
-   function Random (State : in Generator) return Real is
-      -- Empty declarative part
-   begin -- Random
-      return Real (Unsigned_Random (State) ) / Real (Interfaces.Unsigned_32'Modulus);
-   end Random;
-end PragmARC.Real_Random_Values;
+generic -- PragmARC.Random_Ranges
+   type Generator (<>) is limited private;
+
+   with function Random (G : Generator) return Interfaces.Unsigned_32;
+function PragmARC.Random_Ranges (G : Generator; Min : Interfaces.Unsigned_32; Max : Interfaces.Unsigned_32) return Interfaces.Unsigned_32;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

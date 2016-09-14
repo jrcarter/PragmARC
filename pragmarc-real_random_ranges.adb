@@ -1,18 +1,38 @@
 -- PragmAda Reusable Component (PragmARC)
 -- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
-
+--
 -- History:
--- 2016 Oct 01     J. Carter     V1.1--Removed Random_Range and Normal, replaced by PragmARC.Real_Random_Ranges
--- 2013 Nov 01     J. Carter     V1.0--Initial release
+-- 2016 Oct 01     J. Carter          V1.0--Initial version
+--
+package body PragmARC.Real_Random_Ranges is
+   function Random_Range (R : Uniform; Min : Real; Max : Real) return Real is
+      -- Empty
+   begin -- Random_Range
+      return R * (Max - Min) + Min;
+   end Random_Range;
 
-package body PragmARC.Real_Random_Values is
-   function Random (State : in Generator) return Real is
-      -- Empty declarative part
-   begin -- Random
-      return Real (Unsigned_Random (State) ) / Real (Interfaces.Unsigned_32'Modulus);
-   end Random;
-end PragmARC.Real_Random_Values;
+   function Random_Int (R : Uniform; Min : Integer; Max : Integer) return Integer is
+      Min_Work : constant Integer := Integer'Min (Min, Max);
+      Max_Work : constant Integer := Integer'Max (Min, Max);
+      -- assert: Min_Work <= Max_Work
+      Value : constant Real := Random_Range (R, Real (Min_Work), Real (Max_Work) + 1.0);
+      -- assert: Min_Work <= Value < Max_Work + 1
+      -- assert: Min_Work <= Floor (Value) <= Max_Work
+   begin -- Random_Int
+      return Integer (Real'Floor (Value) );
+   end Random_Int;
+
+   function Normal (List : Normal_List; Mean : Real; Sigma : Real) return Real is
+      Sum : Real := 0.0;
+   begin -- Normal
+      Add : for I in List'Range loop
+         Sum := Sum + List (I);
+      end loop Add;
+
+      return Sigma * (Sum - 6.0) + Mean;
+   end Normal;
+end PragmARC.Real_Random_Ranges;
 --
 -- This is free software; you can redistribute it and/or modify it under
 -- terms of the GNU General Public License as published by the Free Software

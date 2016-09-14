@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 
 -- History:
+-- 2016 Oct 01     J. Carter     V1.1--Pulled out Random_Range into PragmARC.Random_Ranges
 -- 2013 Nov 01     J. Carter     v1.0--Initial release
 
 with Ada.Calendar;
@@ -89,7 +90,7 @@ package body  PragmARC.Threefry_Random is
    end Set_State;
 
    function Random (State : in Generator) return Unsigned_32 is
-      Index : Natural := State.Counter / 2;
+      Index : constant Natural := State.Counter / 2 + 1;
 
       S : Generator renames State.Handle.State.all;
    begin -- Random
@@ -97,10 +98,10 @@ package body  PragmARC.Threefry_Random is
          S.Counter := S.Counter + 1;
 
          if S.Counter rem 2 /= 0 then
-            return Unsigned_32 (S.Output (Index + 1) rem Unsigned_32'Modulus);
+            return Unsigned_32 (S.Output (Index) rem Unsigned_32'Modulus);
          end if;
 
-         return Unsigned_32 (S.Output (Index + 1) / Unsigned_32'Modulus);
+         return Unsigned_32 (S.Output (Index) / Unsigned_32'Modulus);
       end if;
 
       Increment (Value => S.State);
@@ -117,15 +118,6 @@ package body  PragmARC.Threefry_Random is
       State.Counter := 0;
       Encrypt_State (State => State);
    end Advance;
-
-   function Random_Range (State : in Generator; Min : in Unsigned_32; Max : in Unsigned_32) return Unsigned_32 is
-      Min_Work : constant Unsigned_32 := Unsigned_32'Min (Min, Max);
-      Max_Work : constant Unsigned_32 := Unsigned_32'Max (Min, Max);
-
-      Spread : constant Unsigned_32 := Max_Work - Min_Work + 1;
-   begin -- Random_Range
-      return Min_Work + State.Random rem Spread;
-   end Random_Range;
 
    procedure Initialize (Object : in out Generator) is
       -- Empty declarative part
@@ -172,10 +164,11 @@ package body  PragmARC.Threefry_Random is
          Z1 := Z1 xor Z0;
       end Mix_Double;
 
-      Work_State : Unsigned_256 := State.State;
-      Work_Key   : Unsigned_256 := State.Key;
-      Key_Extra  : Unsigned_64  :=
+      Work_Key  : constant Unsigned_256 := State.Key;
+      Key_Extra : constant Unsigned_64  :=
          16#1BD1_1BDA_A9FC_1A22# xor State.Key (1) xor State.Key (2) xor State.Key (3) xor State.Key (4);
+
+      Work_State : Unsigned_256 := State.State;
    begin -- Encrypt_State
       Mix_Key (X0 => Work_State (1), X1 => Work_State (2), Rotate_X => 14,
                Z0 => Work_State (3), Z1 => Work_State (4), Rotate_Z => 16,
