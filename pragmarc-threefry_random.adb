@@ -3,6 +3,7 @@
 -- **************************************************************************
 
 -- History:
+-- 2016 Dec 15     J. Carter     V1.2--Added Random (Key, State)
 -- 2016 Oct 01     J. Carter     V1.1--Pulled out Random_Range into PragmARC.Random_Ranges
 -- 2013 Nov 01     J. Carter     v1.0--Initial release
 
@@ -15,9 +16,6 @@ package body  PragmARC.Threefry_Random is
 
    procedure Encrypt_State (State : in out Generator);
    -- Performs the encryption processing of State to give 8 more output values
-
-   procedure Increment (Value : in out Unsigned_256; By : in Unsigned_64 := 1);
-   -- Adds By to Value
 
    procedure Set_Seed (State : in out Generator; Seed : in Unsigned_32 := 0) is
       -- Empty declarative part
@@ -89,7 +87,7 @@ package body  PragmARC.Threefry_Random is
       Encrypt_State (State => State);
    end Set_State;
 
-   function Random (State : in Generator) return Unsigned_32 is
+   function Random (State : Generator) return Unsigned_32 is
       Index : constant Natural := State.Counter / 2 + 1;
 
       S : Generator renames State.Handle.State.all;
@@ -118,6 +116,17 @@ package body  PragmARC.Threefry_Random is
       State.Counter := 0;
       Encrypt_State (State => State);
    end Advance;
+
+   function Random (Key : Unsigned_256; State : Unsigned_256) return Unsigned_32 is
+      Gen : Generator;
+   begin -- Random
+      Gen.Key := Key;
+      Gen.State := State;
+      Gen.Counter := 0;
+      Encrypt_State (State => Gen);
+
+      return Gen.Random;
+   end Random;
 
    procedure Initialize (Object : in out Generator) is
       -- Empty declarative part
