@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2014 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Rational numbers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2017 Apr 15     J. Carter          V1.2--Added Sqrt
 -- 2014 Jun 01     J. Carter          V1.1--Improved Image
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
 --
@@ -68,6 +69,10 @@ package PragmARC.Rational_Numbers is
    -- if Image is in a base other than 10, Image must be decorated
    -- Letters may be upper or lower case
    -- Raises Constraint_Error if Image is invalid
+
+   function Sqrt (Right : Rational) return Rational;
+   -- Square root of non-negative value
+   -- Raises Constraint_Error if Right < Zero
 private -- PragmARC.Rational_Numbers
    use PragmARC.Unbounded_Integers;
 

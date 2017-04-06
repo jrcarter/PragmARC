@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2014 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Integers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
 --
 private with Ada.Containers.Vectors;
@@ -54,6 +55,13 @@ package PragmARC.Unbounded_Integers is
    -- if Image is in a base other than 10, Image must be decorated
    -- Letters may be upper or lower case
    -- Raises Constraint_Error if Image is invalid
+
+   function GCD (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer;
+   -- Greatest Common Divisor; since gcd(a,b)=gcd(|a|,|b|), signs are ignored
+   -- Raises Constraint_Error if Left = Right = zero
+
+   function LCM (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer;
+   -- Least common multiple
 private -- PragmARC.Unbounded_Integers
    type Calculation_Value is mod System.Max_Binary_Modulus;
 
