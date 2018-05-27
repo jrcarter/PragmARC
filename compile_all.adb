@@ -71,6 +71,7 @@ with PragmARC.Unbounded_Integers;
 with PragmARC.Universal_Random;
 with PragmARC.Us_Card;
 with PragmARC.Us_Deck;
+with PragmARC.Vector_Conversions;
 with PragmARC.Word_Input;
 with PragmARC.Wrapping;
 
