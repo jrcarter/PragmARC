@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for general use
@@ -7,6 +7,7 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate; use mode out to allow scalars
@@ -112,9 +113,9 @@ package PragmARC.List_Unbounded is
       --
       -- Time: O(1)
 
-      function Length return Natural; -- Returns a count of the number of items in this list
+      function Length return Natural; -- Returns athe number of items in this list
       --
-      -- Time: O(N)
+      -- Time: O(1)
 
       procedure Iterate (Action : access procedure (Item : in out Element; Pos : in Position; Continue : out Boolean) );
       -- Calls Action with each Element in the list, & its Position, in turn from First to Last

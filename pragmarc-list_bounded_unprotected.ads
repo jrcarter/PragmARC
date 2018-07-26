@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for sequential use only
@@ -8,6 +8,7 @@
 -- Each list has a maximum length
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.1--Added Context to Iterate; protect list IDs; use mode out to allow scalars
@@ -130,9 +131,9 @@ package PragmARC.List_Bounded_Unprotected is
    -- Time: O(1)
 
    function Length (List : Handle) return Natural;
-   -- Returns a count of the number of items in List
+   -- Returns the number of items in List
    --
-   -- Time: O(N)
+   -- Time: O(1)
 
    generic -- Iterate
       with procedure Action (Item : in out Element; Pos : in Position; Continue : out Boolean);
@@ -164,6 +165,7 @@ private -- PragmARC.List_Bounded_Unprotected
       ID      : List_ID := Invalid_ID;
       Head    : Natural;
       Tail    : Natural;
+      Length  : Natural;
       Storage : List_Storage (1 .. Max_Size);
       Free    : Natural := 1;
    end record;

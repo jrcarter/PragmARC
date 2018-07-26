@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2014 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Skip lists that are stored in files
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2014 Oct 01     J. Carter          V1.0--Initial version
 --
 private with Ada.Finalization;
@@ -93,7 +94,7 @@ package PragmARC.Persistent_Skip_List_Unbounded is
    function Length (List : Persistent_Skip_List) return Natural;
    -- Returns a count of the number of values stored in List
    --
-   -- Time : O(N)
+   -- Time : O(1)
 
    generic -- Iterate
       with procedure Action (Item : in Element; Continue : out Boolean);

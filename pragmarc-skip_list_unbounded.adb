@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.3--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -37,6 +38,7 @@ package body PragmARC.Skip_List_Unbounded is
       List.Header.Forward := Forward_Set'(Level_Id => null);
       List.Last := null;
       List.Level := Level_Id'First;
+      List.Length := 0;
    end Clear;
 
    procedure Assign (To : out Skip_List; From : in Skip_List) is
@@ -118,6 +120,7 @@ package body PragmARC.Skip_List_Unbounded is
          Ptr := new Node (Has_Data => True, Level => New_Level);
 
          Ptr.Value := Item;
+         List.Length := List.Length + 1;
 
          if New_Level > List.Level then
             List.Level := New_Level;
@@ -175,11 +178,12 @@ package body PragmARC.Skip_List_Unbounded is
          end if;
 
          Dispose (X => Ptr);
+         List.Length := List.Length - 1;
       end if;
    end Delete;
 
    function Get_First (List : Skip_List) return Element is
-      Ptr : Link := List.Header.Forward (Level_Id'First);
+      Ptr : constant Link := List.Header.Forward (Level_Id'First);
    begin -- Get_First
       if Ptr = null then
          raise Empty;
@@ -205,17 +209,9 @@ package body PragmARC.Skip_List_Unbounded is
    end Is_Empty;
 
    function Length (List : Skip_List) return Natural is
-      Count : Natural := 0;
-      Ptr   : Link    := List.Header.Forward (Level_Id'First);
+      -- Empty
    begin -- Length
-      All_Nodes : loop
-         exit All_Nodes when Ptr = null;
-
-         Count := Count + 1;
-         Ptr := Ptr.Forward (Level_Id'First);
-      end loop All_Nodes;
-
-      return Count;
+      return List.Length;
    end Length;
 
    procedure Finalize (Object : in out Skip_List) is

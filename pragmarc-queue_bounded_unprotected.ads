@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Bounded queue ADT for sequential use only
 -- Each queue has a preset maximum size
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V2.1--Added Context to Iterate; use mode out to allow scalars
@@ -75,7 +76,7 @@ package PragmARC.Queue_Bounded_Unprotected is
    function Length (Queue : Handle) return Natural;
    -- Returns the number of Elements in Queue
    --
-   -- Time: O(N)
+   -- Time: O(1)
 
    function Peek (Queue : Handle) return Element;
    -- Returnss the Element at the head of Queue without altering Queue

@@ -66,7 +66,7 @@ package body PragmARC.Queue_Unbounded_Unprotected is
    end Length;
 
    function Peek (Queue : Handle) return Element is
-      Pos : Implementation.Position := Implementation.First (Queue.List);
+      Pos : constant Implementation.Position := Implementation.First (Queue.List);
    begin -- Peek
       if Pos = Implementation.Off_List (Queue.List) then -- Precondition
          raise Empty;

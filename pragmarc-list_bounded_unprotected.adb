@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 -----------------------------------------------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ package body PragmARC.List_Bounded_Unprotected is
 
       To.Tail := To_Pos - 1;
       To.Free := To_Pos;
+      To.Length := From.Length;
    end Assign;
 
    protected ID_Supply is
@@ -66,6 +68,7 @@ package body PragmARC.List_Bounded_Unprotected is
       List.Head := Null_Position;
       List.Tail := Null_Position;
       List.Free := List.Storage'First;
+      List.Length := 0;
 
       if List.ID = Invalid_ID then
          ID_Supply.Get (ID => List.ID);
@@ -148,6 +151,7 @@ package body PragmARC.List_Bounded_Unprotected is
          Into.Storage (New_Pos.Pos).Prev := Null_Position;
          Into.Storage (New_Pos.Pos).Next := Null_Position;
          Into.Storage (New_Pos.Pos).ID := Into.ID;
+         Into.Length := Into.Length + 1;
 
          return;
       end if;
@@ -171,6 +175,7 @@ package body PragmARC.List_Bounded_Unprotected is
       Into.Storage (New_Pos.Pos).Prev := Into.Storage (Before.Pos).Prev;
       Into.Storage (Before.Pos).Prev := New_Pos.Pos;
       Into.Storage (New_Pos.Pos).ID := Into.ID;
+      Into.Length := Into.Length + 1;
 
       Prev := Into.Storage (New_Pos.Pos).Prev;
 
@@ -219,6 +224,7 @@ package body PragmARC.List_Bounded_Unprotected is
       Into.Storage (New_Pos.Pos).Next := Into.Storage (After.Pos).Next;
       Into.Storage (After.Pos).Next := New_Pos.Pos;
       Into.Storage (New_Pos.Pos).ID := Into.ID;
+      Into.Length := Into.Length + 1;
 
       Next := Into.Storage (New_Pos.Pos).Next;
 
@@ -267,6 +273,7 @@ package body PragmARC.List_Bounded_Unprotected is
          From.Storage (Pos.Pos).Next := From.Free;
          From.Storage (Pos.Pos).ID := Invalid_ID;
          From.Free := Pos.Pos;
+         From.Length := From.Length - 1;
       end if;
 
       Pos := Invalid_Pos;
@@ -305,17 +312,9 @@ package body PragmARC.List_Bounded_Unprotected is
    end Is_Full;
 
    function Length (List : Handle) return Natural is
-      Result : Natural := 0;
-      Pos    : Natural := List.Head;
+      -- Empty
    begin -- Length
-      Count : loop
-         exit Count when Pos = Null_Position;
-
-         Result := Result + 1;
-         Pos := List.Storage (Pos).Next;
-      end loop Count;
-
-      return Result;
+      return List.Length;
    end Length;
 
    procedure Iterate (Over : in out Handle) is

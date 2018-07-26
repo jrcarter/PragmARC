@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.3--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -88,6 +89,7 @@ package body PragmARC.List_Unbounded_Unprotected is
 
       List.Off_List.Prev := List.Off_List; -- Link Off_List node to itself
       List.Off_List.Next := List.Off_List;
+      List.Length := 0;
    end Clear;
 
    function First (List : Handle) return Position is
@@ -155,6 +157,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Temp.Prev := Before.Ptr.Prev;
       Temp.Prev.Next := Temp;
       Temp.Next.Prev := Temp;
+      Into.Length := Into.Length + 1;
       New_Pos := Position'(List_Id => Before.List_Id, Ptr => Temp);
    end Insert;
 
@@ -170,6 +173,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Temp.Prev := After.Ptr;
       Temp.Prev.Next := Temp;
       Temp.Next.Prev := Temp;
+      Into.Length := Into.Length + 1;
       New_Pos := Position'(List_Id => After.List_Id, Ptr => Temp);
    end Append;
 
@@ -197,6 +201,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       Pos.Ptr.List_Id := null; -- Make node invalid
 
       Dispose (X => Pos.Ptr);
+      From.Length := From.Length - 1;
 
       Pos := Position'(List_Id => null, Ptr => null); -- Make Pos invalid
    end Delete;
@@ -224,17 +229,9 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Is_Empty;
 
    function Length (List : Handle) return Natural is
-      Result : Natural := 0;
-      Temp   : Link    := List.Off_List.Next; -- Points to first node
+      -- Empty
    begin -- Length
-      Count : loop
-         exit Count when Temp = List.Off_List;
-
-         Result := Result + 1;
-         Temp := Temp.Next;
-      end loop Count;
-
-      return Result;
+      return List.Length;
    end Length;
 
    procedure Finalize (Object : in out Handle) is

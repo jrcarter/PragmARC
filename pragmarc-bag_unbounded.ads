@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for general use.
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Size O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 --------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.3--Added Context to Iterate
@@ -86,7 +87,7 @@ package PragmARC.Bag_Unbounded is
       function Size return Natural;
       -- Returns the number of elements stored in the bag
       --
-      -- Time: O(N)
+      -- Time: O(1)
 
       procedure Iterate (Action : access procedure (Item : in out Element; Continue : out Boolean) );
       -- Applies Action to each Element in the bag in some unspecified order, until either

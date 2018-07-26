@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Implements a skip list, a probabilistically-balanced structure similar to a balanced tree in use and in search time
 -- Described by W. Pugh in "Skip Lists:  A Probabilistic Alternative to Balanced Trees," CACM 1990 Jun
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------
 -- 2002 Dec 01     J. Carter          V1.5--Iterate should not allow modification
@@ -97,7 +98,7 @@ package PragmARC.Skip_List_Unbounded is
    function Length (List : Skip_List) return Natural;
    -- Returns a count of the number of values stored in List
    --
-   -- Time : O(N)
+   -- Time : O(1)
 
    generic -- Iterate
       with procedure Action (Item : in Element; Continue : out Boolean);
@@ -131,6 +132,7 @@ private -- PragmARC.Skip_List_Unbounded
       Level  : Level_Id := Level_Id'First;
       Header : Link     := new Node (Has_Data => False, Level => Max_Level);
       Last   : Link     := null;
+      Length : Natural  := 0;
    end record;
 
    procedure Finalize (Object : in out Skip_List);

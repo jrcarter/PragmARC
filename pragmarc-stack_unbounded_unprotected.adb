@@ -55,7 +55,7 @@ package body PragmARC.Stack_Unbounded_Unprotected is
    end Length;
 
    function Peek (Stack : Handle) return Element is
-      Pos : Implementation.Position := Implementation.First (Stack.List);
+      Pos : constant Implementation.Position := Implementation.First (Stack.List);
    begin -- Peek
       if Pos = Implementation.Off_List (Stack.List) then -- Precondition
          raise Empty;

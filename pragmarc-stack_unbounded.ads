@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose stack for general use
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.1--Eliminated unused type declarations
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -63,7 +64,7 @@ package PragmARC.Stack_Unbounded is
       function Length return Natural;
       -- Returns the number of Elements in the stack
       --
-      -- Time: O(N)
+      -- Time: O(1)
 
       function Peek return Element;
       -- Returns the Element at the top of the stack without altering the stack

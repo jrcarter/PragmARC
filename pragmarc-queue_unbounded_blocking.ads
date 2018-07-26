@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2013 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Blocking queue for concurrent use
 -- Attempts to Get from an empty queue block until another task adds an Element to the queue
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
 -- 2002 Oct 01     J. Carter          V1.4--Added Context to Iterate; use mode out to allow scalars
@@ -61,7 +62,7 @@ package PragmARC.Queue_Unbounded_Blocking is
       function Length return Natural;
       -- Returns the number of Elements in the queue
       --
-      -- Time: O(N)
+      -- Time: O(1)
 
       function Peek return Element;
       -- Returns the Element at the head of the queue without altering the queue
