@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2002 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Pascal-like set type and operations
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2002 Sep 01     J. Carter          V1.1--Added renamed functions
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -62,7 +63,6 @@ package PragmARC.Set_Discrete is
 private -- PragmARC.Set_Discrete
    type Set_List is array (Element) of Boolean;
    for Set_List'Component_Size use 1;
-   pragma Pack (Set_List);
 
    type Set is record
       Value : Set_List := Set_List'(others => False);

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jul 15     J. Carter          V1.1--Added Wait_Until_All_Idle
 -- 2016 Jul 01     J. Carter          V1.0--Initial version
 --
@@ -53,7 +54,9 @@ package body PragmARC.Job_Pools is
    type Job_Task_Handle is access Job_Task;
 
    procedure Start_Job (Info : in Job_Info; Key : out Key_Handle) is
+      pragma Warnings (Off);
       Local   : Job_Task_Handle;
+      pragma Warnings (On);
       Total   : Natural;
       Idle    : Natural;
       Pending : Natural;

@@ -1,10 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.3--Cleanup compiler warnings
+-- 2017 Jul 15     J. Carter          V1.2--Added tasking
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part and formatting changes
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -17,6 +19,7 @@ procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positiv
                                       Num_No_Change_Generations : in     Positive :=    10;
                                       Mutation_Probability      : in     Float    :=     0.1;
                                       Num_Elite_Saved           : in     Natural  :=    10;
+                                      Num_Tasks                 : in     Positive :=     1;
                                       Best                      :    out Gene;
                                       Fit                       :    out Float)
 is
@@ -39,7 +42,7 @@ is
    end "<";
 
    package Quick_Sort is new PragmARC.Sort_Quick_In_Place (Element => Member, Index => Positive, Sort_Set => Population_List);
-   procedure Sort (Set : in out Population_List) renames Quick_Sort.Sort_Sequential;
+   procedure Sort (Set : in out Population_List; Max_Tasks : in Natural := Num_Tasks - 1) renames Quick_Sort.Sort_Parallel;
 
    procedure Reproduce (List : in out Population_List) is
       New_Pop : Population_List (List'range);
@@ -47,49 +50,89 @@ is
       subtype Index is Positive range List'First .. List'First + List'Length / 2 - 1;
       -- Only the top half of the population get to mate.
 
-      Prob_Gen  : Ada.Numerics.Float_Random.Generator;
+      Last_Task : Natural := 0;
 
-      function Choose_Index return Index is -- Pick an Index based on probability of mating.
-         function Probability (I : Index) return Float is
-            Total_Chances : constant Float := Float ( (Index'Last * (Index'Last + 1) ) / 2);
-            Chances       : constant Float := Float (Index'Last - I + 1);
-         begin -- Probability
-            return Chances / Total_Chances;
-         end Probability;
+      function Task_Num return Positive is
+        -- Empty
+      begin -- Task_Num
+         Last_Task := Last_Task + 1;
 
-         Prob      : Float := Ada.Numerics.Float_Random.Random (Prob_Gen);
-         Cum_Prob  : Float := 0.0;
-      begin -- Choose_Index
-         Find : for I in Index loop
-            Cum_Prob := Cum_Prob + Probability (I);
+         return Last_Task;
+      end Task_Num;
 
-            if Prob < Cum_Prob then
-               return I;
-            end if;
-         end loop Find;
+      task type Breeder (Num : Positive := Task_Num);
+      type Breeder_List is array (1 .. Num_Tasks) of Breeder;
 
-         return Index'Last; -- If Random returns 1.0, which means use the last value.
-      end Choose_Index;
+      Genes_Per_Task : constant Positive := (Index'Last - Index'First + 1) / Num_Tasks;
 
-      Left  : Index;
-      Right : Index;
-   begin -- Reproduce
-      Ada.Numerics.Float_Random.Reset (Gen => Prob_Gen);
+      task body Breeder is
+         Prob_Gen : Ada.Numerics.Float_Random.Generator;
 
-      All_Pairs : for I in New_Pop'First .. New_Pop'Last - Num_Elite_Saved loop
-         Left  := Choose_Index;
-         Right := Choose_Index;
-         New_Pop (I).Individual := Mate (List (Left).Individual, List (Right).Individual);
+         function Choose_Index return Index is -- Pick an Index based on probability of mating.
+            function Probability (I : Index) return Float is
+               Total_Chances : constant Float := Float ( (Index'Last * (Index'Last + 1) ) / 2);
+               Chances       : constant Float := Float (Index'Last - I + 1);
+            begin -- Probability
+               return Chances / Total_Chances;
+            end Probability;
 
-         if Ada.Numerics.Float_Random.Random (Prob_Gen) < Mutation_Probability then
-            Mutate (Individual => New_Pop (I).Individual);
+            Prob : constant Float := Ada.Numerics.Float_Random.Random (Prob_Gen);
+
+            Cum_Prob  : Float := 0.0;
+         begin -- Choose_Index
+            Find : for I in Index loop
+               Cum_Prob := Cum_Prob + Probability (I);
+
+               if Prob < Cum_Prob then
+                  return I;
+               end if;
+            end loop Find;
+
+            return Index'Last; -- If Random returns 1.0, which means use the last value.
+         end Choose_Index;
+
+         First : constant Positive := (Num - 1) * Genes_Per_Task + 1;
+
+         Last    : Positive := Num * Genes_Per_Task;
+         Left    : Index;
+         Right   : Index;
+         New_Guy : Member;
+      begin -- Breeder
+         Ada.Numerics.Float_Random.Reset (Gen => Prob_Gen);
+
+         if Num = Num_Tasks then
+            Last := Index'Last;
          end if;
 
-         New_Pop (I).Fitness := Fitness (New_Pop (I).Individual);
-      end loop All_Pairs;
+         All_Pairs : for I in First .. Last loop
+            Left := Choose_Index;
+
+            Get_Right : loop
+               Right := Choose_Index;
+
+               exit Get_Right when Right /= Left;
+            end loop Get_Right;
+
+            New_Guy.Individual := Mate (List (Left).Individual, List (Right).Individual);
+
+            if Ada.Numerics.Float_Random.Random (Prob_Gen) < Mutation_Probability then
+               Mutate (Individual => New_Guy.Individual);
+            end if;
+
+            New_Guy.Fitness := Fitness (New_Guy.Individual);
+            New_Pop (I) := New_Guy;
+         end loop All_Pairs;
+      end Breeder;
+   begin -- Reproduce
+      Breed : declare
+         Breeders : Breeder_List;
+         pragma Unreferenced (Breeders);
+      begin -- Breed
+         null;
+      end Breed;
 
       New_Pop (New_Pop'Last - Num_Elite_Saved + 1 .. New_Pop'Last) := List (List'First .. List'First + Num_Elite_Saved - 1);
-      Sort (New_Pop);
+      Sort (Set => New_Pop);
       List := New_Pop;
    end Reproduce;
 
@@ -101,7 +144,7 @@ begin -- PragmARC.Genetic_Algorithm
       List (I).Fitness    := Fitness (List (I).Individual);
    end loop Fill;
 
-   Sort (List);
+   Sort (Set => List);
    Current := Best_State'(Individual => List (List'First).Individual, Count => 1);
 
    All_Generations : for I in 1 .. Max_Generations loop

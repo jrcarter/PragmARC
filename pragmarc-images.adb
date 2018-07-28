@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2006 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2006 Mar 01     J. Carter          V1.1--Added Float_Image
 -- 2004 Apr 01     J. Carter          V1.0--Initial version
 --
@@ -57,8 +58,6 @@ package body PragmARC.Images is
       when 2 .. 9 | 11 .. 16 =>
          Start := 1 + Index (Image, "#");
          Stop  := Image'Last - 1;
-      when others =>
-         raise Program_Error;
       end case;
 
       return Adjust (Image (Start .. Stop), Width, Negative, Zero_Filled);
@@ -82,29 +81,27 @@ package body PragmARC.Images is
       when 2 .. 9 | 11 .. 16 =>
          Start := 1 + Index (Image, "#");
          Stop  := Image'Last - 1;
-      when others =>
-         raise Program_Error;
       end case;
 
       return Adjust (Image (Start .. Stop), Width, False, Zero_Filled);
    end Modular_Image;
-   
+
    function Float_Image
       (Value : Number; Fore : Field := 2; Aft : Field := Number'digits - 1; Exp : Field := 3; Zero_Filled : Boolean := False)
    return String is
       package Number_IO is new Float_IO (Number);
-      
+
       Image : String (1 .. 3 * Field'Last + 3);
       Start : Natural;
       Width : Field := Fore + Aft + 1;
    begin -- Float_Image
       Number_IO.Put (To => Image, Item => abs Value, Aft => Aft, Exp => Exp);
       Start := Index_Non_Blank (Image);
-      
+
       if Exp > 0 then
          Width := Width + Exp + 1;
       end if;
-      
+
       return Adjust (Image (Start .. Image'Last), Width, Value < 0.0, Zero_Filled);
    end Float_Image;
 end PragmARC.Images;
@@ -123,4 +120,4 @@ end PragmARC.Images;
 -- this unit does not by itself cause the resulting executable to be
 -- covered by the GNU General Public License. This exception does not
 -- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License. 
+-- covered by the GNU Public License.

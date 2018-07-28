@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
 --
@@ -34,7 +35,7 @@ package body PragmARC.Unbounded_Integers is
    function El_Or_0 (List : Digit_List; Index : Positive) return Digit_Value is
       -- Empty declarative part
    begin -- El_Or_0
-      if Index in 1 .. List.Last_Index then
+      if Index <= List.Last_Index then
          return List.Element (Index);
       end if;
 
@@ -44,7 +45,7 @@ package body PragmARC.Unbounded_Integers is
    procedure Insert (List : in out Digit_List; Index : in Positive; Value : in Digit_Value) is
       -- Empty declarative part
    begin -- Insert
-      if Index in 1 .. List.Last_Index then
+      if Index <= List.Last_Index then
          List.Replace_Element (Index => Index, New_Item => Value);
       else
          if Index > List.Last_Index + 1 then

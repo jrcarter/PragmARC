@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -49,7 +50,7 @@ package body PragmARC.Queue_Unbounded_Unprotected is
 
    procedure Iterate (Over : in out Handle) is
       procedure Action (Item : in out Element; Pos : in Implementation.Position; Continue : out Boolean) is
-         -- Empty
+         pragma Unreferenced (Pos);
       begin -- Action
          Action (Item => Item, Continue => Continue);
       end Action;

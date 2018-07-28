@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Functions for integers.
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2006 Mar 01     J. Carter          V1.0--Integer functions moved here
 --
@@ -15,7 +16,7 @@ package body PragmARC.Math.Integer_Functions is
       Remainder : Natural;
    begin -- GCD
       Reduce : loop
-         if Min <= 0 then
+         if Min = 0 then
             return Max;
          end if;
 

@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.5--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.4--Changed comment for empty declarative part
 -- 2004 Apr 01     J. Carter          V1.3--Use Images for image functions
 -- 2001 May 01     J. Carter          V1.2--Added expanded Image capabilities
@@ -16,7 +17,6 @@ with Ada.Text_Io;
 with PragmARC.Images.Image;
 with PragmARC.Mixed_Case;
 
-use Ada;
 use Ada.Characters.Handling;
 use Ada.Strings;
 use Ada.Strings.Fixed;
@@ -128,7 +128,7 @@ package body PragmARC.Date_Handler is
 
       Local_Hour : Natural := Hour;
    begin -- Hour_Image_12
-      if Hour <= 0 then
+      if Hour = 0 then
          Local_Hour := 12;
       elsif Hour > 12 then
          Local_Hour := Hour - 12;
@@ -162,7 +162,7 @@ package body PragmARC.Date_Handler is
          return Seconds_Image (Minute_Duration'First, Zero_Fill, Aft);
       end if;
 
-      if Aft <= 0 then
+      if Aft = 0 then
          return Image (Integer (Seconds), 0, 2, Zero_Fill);
       end if;
 

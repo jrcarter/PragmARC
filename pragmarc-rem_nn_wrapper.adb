@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V2.4--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V2.3--Random_Range moved to PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V2.2--Changed comment for empty declarative part and formatting
 -- 2016 Mar 15     J. Carter          V2.1--Added Random_Weights and improved reading and writing weights
@@ -139,6 +140,7 @@ package body PragmARC.REM_NN_Wrapper is
       Desired         : Desired_Set := Desired_Set'(others => Output_Set'(others => 0.0) );
       Target          : Output_Set  := Output_Set'(others => 0.0); -- Current D infinity
       Final           : Finalizer;
+      pragma Unreferenced (Final);
 
       Current_Pattern : Positive;
 
@@ -408,6 +410,7 @@ package body PragmARC.REM_NN_Wrapper is
             type Agent_List is array (1 .. Tasks) of Input_Agent;
 
             Agent : Agent_List;
+            pragma Unreferenced (Agent);
          begin -- Input_Tasks
             null;
          end Input_Tasks;
@@ -438,6 +441,7 @@ package body PragmARC.REM_NN_Wrapper is
                type Agent_List is array (1 .. Tasks) of Hidden_Agent;
 
                Agent : Agent_List;
+               pragma Unreferenced (Agent);
             begin -- Hidden_Tasks
                null;
             end Hidden_Tasks;
@@ -468,6 +472,7 @@ package body PragmARC.REM_NN_Wrapper is
             type Agent_List is array (1 .. Tasks) of Output_Agent;
 
             Agent : Agent_List;
+            pragma Unreferenced (Agent);
          begin -- Output_Tasks
             null;
          end Output_Tasks;
@@ -507,6 +512,7 @@ package body PragmARC.REM_NN_Wrapper is
             type Agent_List is array (1 .. Tasks) of Output_Agent;
 
             Agent : Agent_List;
+            pragma Unreferenced (Agent);
          begin -- Output_Tasks
             null;
          end Output_Tasks;
@@ -536,6 +542,7 @@ package body PragmARC.REM_NN_Wrapper is
                type Agent_List is array (1 .. Tasks) of Hidden_Agent;
 
                Agent : Agent_List;
+               pragma Unreferenced (Agent);
             begin -- Hidden_Tasks
                null;
             end Hidden_Tasks;
@@ -762,6 +769,8 @@ package body PragmARC.REM_NN_Wrapper is
       end Output;
 
       procedure Finalize (Object : in out Finalizer) is
+         pragma Unreferenced (Object);
+
          procedure Free is new Ada.Unchecked_Deallocation (Object => Input_Node_Set,  Name => Input_Set_Ptr);
          procedure Free is new Ada.Unchecked_Deallocation (Object => Hidden_Node_Set, Name => Hidden_Set_Ptr);
          procedure Free is new Ada.Unchecked_Deallocation (Object => OutPut_Node_Set, Name => OutPut_Set_Ptr);

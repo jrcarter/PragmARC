@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part and formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -10,7 +11,6 @@ with PragmARC.Ansi_Tty_Control;
 with PragmARC.Get_Line;
 with Ada.Text_Io;
 
-use Ada;
 package body PragmARC.Menu_Handler is
    function Process (Menu : Menu_Info) return Choice_Id is
       Choice_Column_Place  : constant := 20; -- Column for user's choice entry
@@ -97,8 +97,6 @@ package body PragmARC.Menu_Handler is
             Error_Message;
          end Get_Choice;
       end loop Valid_Selection;
-
-      return Selection;
    end Process;
 end PragmARC.Menu_Handler;
 --
