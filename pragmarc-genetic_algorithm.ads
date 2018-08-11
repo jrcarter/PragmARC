@@ -29,6 +29,7 @@ procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positiv
                                       Num_No_Change_Generations : in     Positive :=    10;
                                       Mutation_Probability      : in     Float    :=     0.1;
                                       Num_Elite_Saved           : in     Natural  :=    10;
+                                      Num_Tasks                 : in     Positive :=     1;
                                       Best                      :    out Gene;
                                       Fit                       :    out Float);
 -- Evolves a population of Population_Size individuals for at most Max_Generations generations.
