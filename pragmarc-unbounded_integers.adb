@@ -227,36 +227,65 @@ package body PragmARC.Unbounded_Integers is
    end "-";
 
    function "*" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+      use Digit_Lists;
+      use type Digit_Value;
+
       Result : Unbounded_Integer;
-      D      : Calculation_Value;
-      S      : Calculation_Value;
-      K      : Positive;
+      Sum : Calculation_Value := 0;
+      Prev_Sum : Calculation_Value := 0;
+      Carry : Calculation_Value := 0;
+      L_Max : constant Positive := Left.Digit.Last_Index;
+      R_Max : constant Positive := Right.Digit.Last_Index;
+      L_I_Start : Natural := 0;
+      L_I_Stop  : Natural := 0;
+
+      function Get (UI : Unbounded_Integer; Index : Natural) return Calculation_Value is
+      begin
+         return Calculation_Value (Digit_Lists.Element (UI.Digit, Index + 1));
+      end Get;
+
+      procedure Set (UI : in out Unbounded_Integer; Index : Natural; Value : Calculation_Value) is
+      begin
+         Digit_Lists.Replace_Element (UI.Digit, Index + 1, Digit_Value (Value mod Radix));
+      end Set;
+
    begin -- "*"
       if Left = Zip or Right = Zip then
          return Zip;
       end if;
 
-      All_Left_Digits : for J in 1 .. Left.Digit.Last_Index loop
-         D := 0;
-         K := J;
-
-         All_Right_Digits : for I in 1 .. Right.Digit.Last_Index + 1 loop
-            D := D / Radix; -- Carry from the result of the multiplication of the previous pair of digits
-
-            if I <= Right.Digit.Last_Index then
-               D := D + Calculation_Value (Left.Digit.Element (J) ) * Calculation_Value (Right.Digit.Element (I) );
-            end if; -- D now equals Left (J) * Right (I) + Carry
-
-            S := Calculation_Value (El_Or_0 (Result.Digit, K) ) + D rem Radix; -- Add D to the evolving product
-            Insert (List => Result.Digit, Index => K, Value => Digit_Value (S rem Radix) );
-            K := K + 1;
-            Insert (List => Result.Digit, Index => K, Value => El_Or_0 (Result.Digit, K) + Digit_Value (S / Radix) );
-         end loop All_Right_Digits;
-      end loop All_Left_Digits;
-
       Result.Negative := Left.Negative /= Right.Negative;
-      Reduce_Digits (Value => Result);
+      Set_Length (Container => Result.Digit, Length => Ada.Containers.Count_Type (L_Max + R_Max));
 
+      All_Result_Digits: for K in 0 .. Integer (Digit_Lists.Length (Result.Digit)) - 2 loop
+         if K < R_Max then
+            L_I_Start := 0;
+         else
+            L_I_Start := L_I_Start + 1;
+         end if;
+
+         if K < L_Max then
+            L_I_Stop := K;
+         else
+            L_I_Stop := L_Max - 1;
+         end if;
+
+         Sum_For_Position_K: for L_I in L_I_Start .. L_I_Stop loop
+            Prev_Sum := Sum;
+            Sum := Sum + (Get (Left, L_I) * Get (Right, K - L_I));
+
+            if Sum < Prev_Sum then
+               Carry := Carry + Radix;
+            end if;
+         end loop Sum_For_Position_K;
+
+         Set (Result, K, Sum rem Radix);
+         Sum := (Sum / Radix) + Carry;
+         Carry := 0;
+      end loop All_Result_Digits;
+
+      Set (Result, L_Max + R_Max - 1, Sum);
+      Reduce_Digits (Value => Result);
       return Result;
    end "*";
 
@@ -266,9 +295,9 @@ package body PragmARC.Unbounded_Integers is
                      Remainder :    out Unbounded_Integer)
    is
       procedure Divide_Special (Left      : in     Unbounded_Integer;
-                     		Right     : in     Unbounded_Integer;
-                     		Quotient  :    out Unbounded_Integer;
-                     		Remainder :    out Unbounded_Integer);
+                                Right     : in     Unbounded_Integer;
+                                Quotient  :    out Unbounded_Integer;
+                                Remainder :    out Unbounded_Integer);
       -- For the case where Left.Digit.Last_Index in Right.Digit.Last_Index .. Right.Digit.Last_Index + 1
 
       procedure Shift_Left (Value : in out Unbounded_Integer; Places : in Natural);
@@ -282,9 +311,9 @@ package body PragmARC.Unbounded_Integers is
       -- Onto := Onto + Shift_Left (From, Onto.Digit.Last_index)
 
       procedure Divide_Special (Left      : in     Unbounded_Integer;
-                     		Right     : in     Unbounded_Integer;
-                     		Quotient  :    out Unbounded_Integer;
-                     		Remainder :    out Unbounded_Integer)
+                                Right     : in     Unbounded_Integer;
+                                Quotient  :    out Unbounded_Integer;
+                                Remainder :    out Unbounded_Integer)
       is
          Big_Radix   : Unbounded_Integer;
          Radix_Right : Unbounded_Integer;
@@ -720,15 +749,21 @@ package body PragmARC.Unbounded_Integers is
                                        'Q' => 26, 'R' => 27, 'S' => 28, 'T' => 29, 'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33,
                                        'Y' => 34, 'Z' => 35);
 
-      Start : constant Positive := Ada.Strings.Fixed.Index (Work, "#") + 1;
+      Start : Positive := Ada.Strings.Fixed.Index (Work, "#") + 1;
       Based : constant Boolean  := Start > Work'First;
       Stop  : constant Positive := Work'Last - Boolean'Pos (Based);
 
       Base   : Unbounded_Integer;
       Result : Unbounded_Integer;
+      First  : Integer := Work'First;
    begin -- Value
+      if Work (Work'First) = '-' then
+         First := First + 1;
+         Start := Start + 1;
+      end if;
+
       if Based then
-         Base := To_Unbounded_Integer (Integer'Value (Work (Work'First .. Start - 2) ) );
+         Base := To_Unbounded_Integer (Integer'Value (Work (First .. Start - 2) ) );
       else
          Base := To_Unbounded_Integer (10);
       end if;
@@ -740,9 +775,13 @@ package body PragmARC.Unbounded_Integers is
          when Upper_Case =>
             Result := Base * Result + To_Unbounded_Integer (Letter (Work (I) ) );
          when others =>
-            raise Constraint_Error with "Invalid character in Image";
+            raise Constraint_Error with "Invalid character '" & Work (I) & "' in Image at index" & Integer'Image (I);
          end case;
       end loop All_Digits;
+
+      if Work (Work'First) = '-' then
+         Result.Negative := True;
+      end if;
 
       return Result;
    end Value;

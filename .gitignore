@@ -1,0 +1,39 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.pyc
+
+# Compiled Dynamic libraries
+*.so
+*.dSYM
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# WDK and Visual Studio directories and files.
+*.err
+build*.log
+*.wrn
+objchk*
+objfre*
+Debug
+Release
+x64
+*.vcxproj.user
+*.VC.*
+
+# Backup files
+*~
+*.BAK
+
+# Mac OS X desktop file.
+.DS_Store
+
+# Ada detritus.
+*.ali
+
+# Local targets:
+compile_all
