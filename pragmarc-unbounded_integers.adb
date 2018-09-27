@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2018 Oct 01     J. Carter          V1.3--Handle negative numbers in Value
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
@@ -720,15 +721,25 @@ package body PragmARC.Unbounded_Integers is
                                        'Q' => 26, 'R' => 27, 'S' => 28, 'T' => 29, 'U' => 30, 'V' => 31, 'W' => 32, 'X' => 33,
                                        'Y' => 34, 'Z' => 35);
 
-      Start : constant Positive := Ada.Strings.Fixed.Index (Work, "#") + 1;
+      Start : Positive := Ada.Strings.Fixed.Index (Work, "#") + 1;
+
       Based : constant Boolean  := Start > Work'First;
       Stop  : constant Positive := Work'Last - Boolean'Pos (Based);
 
+      First  : Positive := Work'First;
       Base   : Unbounded_Integer;
       Result : Unbounded_Integer;
    begin -- Value
+      if Work (First) = '-' then
+         First := First + 1;
+
+         if not Based then
+            Start := Start + 1;
+         end if;
+      end if;
+
       if Based then
-         Base := To_Unbounded_Integer (Integer'Value (Work (Work'First .. Start - 2) ) );
+         Base := To_Unbounded_Integer (Integer'Value (Work (First .. Start - 2) ) );
       else
          Base := To_Unbounded_Integer (10);
       end if;
@@ -740,9 +751,11 @@ package body PragmARC.Unbounded_Integers is
          when Upper_Case =>
             Result := Base * Result + To_Unbounded_Integer (Letter (Work (I) ) );
          when others =>
-            raise Constraint_Error with "Invalid character in Image";
+            raise Constraint_Error with "Invalid character in Image: " & Work (I);
          end case;
       end loop All_Digits;
+
+      Result.Negative := Work (Work'First) = '-'; -- We can't do this before because multiplication above will lose it
 
       return Result;
    end Value;
