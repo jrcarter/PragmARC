@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2018 Oct 15     J. Carter          V1.4--Faster multiplication algorithm from Doug Rogers
 -- 2018 Oct 01     J. Carter          V1.3--Handle negative numbers in Value
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
@@ -228,34 +229,64 @@ package body PragmARC.Unbounded_Integers is
    end "-";
 
    function "*" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
-      Result : Unbounded_Integer;
-      D      : Calculation_Value;
-      S      : Calculation_Value;
-      K      : Positive;
+      L_Max : constant Positive := Left.Digit.Last_Index;
+      R_Max : constant Positive := Right.Digit.Last_Index;
+
+      Result   : Unbounded_Integer;
+      Sum      : Calculation_Value := 0;
+      Prev_Sum : Calculation_Value := 0;
+      Carry    : Calculation_Value := 0;
+      L_Start  : Natural           := 0;
+      L_Stop   : Natural           := 0;
+
+      function Get (From : Unbounded_Integer; Column : Natural) return Calculation_Value is
+         -- Empty declarative part
+      begin
+         return Calculation_Value (From.Digit.Element (Column + 1) );
+      end Get;
+
+      procedure Set (Into : in out Unbounded_Integer; Column : Natural; Value : Calculation_Value) is
+         -- Empty declarative part
+      begin
+         Into.Digit.Replace_Element (Index => Column + 1, New_Item => Digit_Value (Value rem Radix) );
+      end Set;
    begin -- "*"
       if Left = Zip or Right = Zip then
          return Zip;
       end if;
 
-      All_Left_Digits : for J in 1 .. Left.Digit.Last_Index loop
-         D := 0;
-         K := J;
-
-         All_Right_Digits : for I in 1 .. Right.Digit.Last_Index + 1 loop
-            D := D / Radix; -- Carry from the result of the multiplication of the previous pair of digits
-
-            if I <= Right.Digit.Last_Index then
-               D := D + Calculation_Value (Left.Digit.Element (J) ) * Calculation_Value (Right.Digit.Element (I) );
-            end if; -- D now equals Left (J) * Right (I) + Carry
-
-            S := Calculation_Value (El_Or_0 (Result.Digit, K) ) + D rem Radix; -- Add D to the evolving product
-            Insert (List => Result.Digit, Index => K, Value => Digit_Value (S rem Radix) );
-            K := K + 1;
-            Insert (List => Result.Digit, Index => K, Value => El_Or_0 (Result.Digit, K) + Digit_Value (S / Radix) );
-         end loop All_Right_Digits;
-      end loop All_Left_Digits;
-
       Result.Negative := Left.Negative /= Right.Negative;
+      Result.Digit.Set_Length (Length => Ada.Containers.Count_Type (L_Max + R_Max) );
+
+      -- This calculates each digit of the result in turn from the digit products that contribute to it
+      All_Result_Digits: for K in 0 .. L_Max + R_Max - 2 loop -- These are column numbers, starting at zero
+         if K < R_Max then
+            L_Start := 0;
+         else
+            L_Start := L_Start + 1;
+         end if;
+
+         if K < L_Max then
+            L_Stop := K;
+         else
+            L_Stop := L_Max - 1;
+         end if;
+
+         Sum_For_K: for L in L_Start .. L_Stop loop
+            Prev_Sum := Sum;
+            Sum := Sum + Get (Left, L) * Get (Right, K - L);
+
+            if Sum < Prev_Sum then
+               Carry := Carry + Radix;
+            end if;
+         end loop Sum_For_K;
+
+         Set (Into => Result, Column => K, Value => Sum);
+         Sum := Sum / Radix + Carry;
+         Carry := 0;
+      end loop All_Result_Digits;
+
+      Set (Into => Result, Column => L_Max + R_Max - 1, Value => Sum);
       Reduce_Digits (Value => Result);
 
       return Result;
@@ -267,9 +298,9 @@ package body PragmARC.Unbounded_Integers is
                      Remainder :    out Unbounded_Integer)
    is
       procedure Divide_Special (Left      : in     Unbounded_Integer;
-                     		Right     : in     Unbounded_Integer;
-                     		Quotient  :    out Unbounded_Integer;
-                     		Remainder :    out Unbounded_Integer);
+                                Right     : in     Unbounded_Integer;
+                                Quotient  :    out Unbounded_Integer;
+                                Remainder :    out Unbounded_Integer);
       -- For the case where Left.Digit.Last_Index in Right.Digit.Last_Index .. Right.Digit.Last_Index + 1
 
       procedure Shift_Left (Value : in out Unbounded_Integer; Places : in Natural);
@@ -283,9 +314,9 @@ package body PragmARC.Unbounded_Integers is
       -- Onto := Onto + Shift_Left (From, Onto.Digit.Last_index)
 
       procedure Divide_Special (Left      : in     Unbounded_Integer;
-                     		Right     : in     Unbounded_Integer;
-                     		Quotient  :    out Unbounded_Integer;
-                     		Remainder :    out Unbounded_Integer)
+                                Right     : in     Unbounded_Integer;
+                                Quotient  :    out Unbounded_Integer;
+                                Remainder :    out Unbounded_Integer)
       is
          Big_Radix   : Unbounded_Integer;
          Radix_Right : Unbounded_Integer;
