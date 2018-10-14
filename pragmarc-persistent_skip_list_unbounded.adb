@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2018 Oct 15     J. Carter          V1.1--Correct an error when opening an existing list with Write_On_Modify True
 -- 2014 Oct 01     J. Carter          V1.0--Initial version
 --
 with Ada.Directories;
@@ -33,7 +34,7 @@ package body PragmARC.Persistent_Skip_List_Unbounded is
                exit All_Items when Element_IO.End_Of_File (File);
 
                Element_IO.Read (File => File, Item => Item);
-               Result.Insert (Item => Item);
+               Result.List.Insert (Item => Item);
             end loop All_Items;
 
             Element_IO.Close (File => File);
