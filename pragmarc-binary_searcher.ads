@@ -1,16 +1,17 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Binary search of an ordered list
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.0--Require integer Index
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Three_Way;
 generic -- PragmARC.Binary_Searcher
    type Element is limited private;
-   type Index is (<>);
+   type Index is range <>;
    type List is array (Index range <>) of Element;
 
    with function Compare (Left : Element; Right : Element) return Three_Way.Relation_Id is <>;

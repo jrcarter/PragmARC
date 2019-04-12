@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Apr 01     J. Carter          V1.2--Require integer index
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 --------------------------------------------------------------------------------------
@@ -13,6 +14,7 @@
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Sort_Insertion;
+with System;
 package body PragmARC.Sort_Quick_In_Place is
    procedure Exchange (Left : in out Element; Right : in out Element) is
       Temp : Element;
@@ -25,11 +27,18 @@ package body PragmARC.Sort_Quick_In_Place is
 
    -- Median of 3 pivot selection
    procedure Get_Pivot (Set : in out Sort_Set; Pivot : in out Element) is
-      Mid_Index : constant Index := Index'Val ( (Index'Pos (Set'First) + Index'Pos (Set'Last) ) / 2);
+      type Big is range System.Min_Int .. System.Max_Int;
 
+      Mid_Index   : Index;
       Left_Value  : Element;
       Right_Value : Element;
    begin -- Get_Pivot
+      if Big'Last - Big (Set'First) > Big (Set'Last) then
+         Mid_Index := Index (Big (Set'First) / 2 + Big (Set'Last) / 2);
+      else
+         Mid_Index := Index ( (Big (Set'First) + Big (Set'Last) ) / 2);
+      end if;
+
       Left_Value  := Set (Set'First);
       Pivot       := Set (Mid_Index);
       Right_Value := Set (Set'Last);
@@ -71,13 +80,13 @@ package body PragmARC.Sort_Quick_In_Place is
          Small : loop -- Increase Front until it points to something >= Pivot
             exit Small when Set (Front) >= Pivot;
 
-            Front := Index'Succ (Front);
+            Front := Front + 1;
          end loop Small;
 
          Big : loop -- Decrease Back until it points to something <= Pivot
             exit Big when Pivot >= Set (Back);
 
-            Back := Index'Pred (Back);
+            Back := Back - 1;
          end loop Big;
 
          if Front <= Back then -- Found out of order pair: Set (Front) >= Pivot and Set (Back) <= Pivot
@@ -85,14 +94,14 @@ package body PragmARC.Sort_Quick_In_Place is
                Exchange (Left => Set (Front), Right => Set (Back) );
             end if;
 
-            Front := Index'Succ (Front);
-            Back  := Index'Pred (Back);
+            Front := Front + 1;
+            Back  := Back - 1;
          end if;
 
          exit Both when Front > Back;
       end loop Both;
 
-      Exchange (Left => Set (Index'Pred (Set'Last) ), Right => Set (Front) ); -- Put Pivot in its place
+      Exchange (Left => Set (Set'Last - 1), Right => Set (Front) ); -- Put Pivot in its place
    end Partition;
 
    procedure Easy_Cases (Set : in out Sort_Set; Finished : out Boolean) is
@@ -137,17 +146,17 @@ package body PragmARC.Sort_Quick_In_Place is
       end if;
 
       Get_Pivot (Set => Set, Pivot => Pivot);
-      Front := Index'Succ (Set'First);              -- Set (Set'First) is known to be <= Pivot
-      Back  := Index'Pred (Index'Pred (Set'Last) ); -- Set (Set'Last)  is known to be >= Pivot & Set (Set'Last - 1) is the Pivot
+      Front := Set'First + 1;  -- Set (Set'First) is known to be <= Pivot
+      Back  := Set'Last - 2;   -- Set (Set'Last)  is known to be >= Pivot & Set (Set'Last - 1) is the Pivot
 
       Partition (Set => Set, Front => Front, Back => Back, Pivot => Pivot);
 
-      if Index'Pos (Front) - Index'Pos (Set'First) < Index'Pos (Set'Last) - Index'Pos (Front) then -- Sort shorter set first
-         Sort_Sequential (Set => Set (Set'First          .. Index'Pred (Front) ) );
-         Sort_Sequential (Set => Set (Index'Succ (Front) .. Set'Last) );
+      if Front - Set'First < Set'Last - Front then       -- Sort shorter set first
+         Sort_Sequential (Set => Set (Set'First .. Front - 1) );
+         Sort_Sequential (Set => Set (Front + 1 .. Set'Last) );
       else
-         Sort_Sequential (Set => Set (Index'Succ (Front) .. Set'Last) );
-         Sort_Sequential (Set => Set (Set'First          .. Index'Pred (Front) ) );
+         Sort_Sequential (Set => Set (Front + 1 .. Set'Last) );
+         Sort_Sequential (Set => Set (Set'First .. Front - 1) );
       end if;
    end Sort_Sequential;
 
@@ -180,15 +189,14 @@ package body PragmARC.Sort_Quick_In_Place is
          end if;
 
          Get_Pivot (Set => Set (First .. Last), Pivot => Pivot);
-         Front := Index'Succ (First); -- Set (First) is known to be <= Pivot
-         Back  := Index'Pred (Index'Pred (Last) );
-         -- Set (Last) is known to be >= Pivot & Set (Last - 1) is the Pivot
+         Front := First + 1; -- Set (First) is known to be <= Pivot
+         Back  := Last - 2;  -- Set (Last) is known to be >= Pivot & Set (Last - 1) is the Pivot
 
          Partition (Set => Set, Front => Front, Back => Back, Pivot => Pivot);
          Task_Control.Decrement;
 
          Make_Sorter : declare
-            Left : Sorter (First => First, Last => Index'Pred (Front) );
+            Left : Sorter (First => First, Last => Front - 1);
          begin -- Make_Sorter
             Sort (First => Index'Succ (Front), Last => Last);
          end Make_Sorter;

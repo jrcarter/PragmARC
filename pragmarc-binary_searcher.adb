@@ -1,12 +1,17 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.0--Require integer Index
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
+with System;
+
 package body PragmARC.Binary_Searcher is
    function Search (Item : Element; Within : List) return Result_Info is
+      type Big is range System.Min_Int .. System.Max_Int;
+
       Low  : Index := Within'First;
       High : Index := Within'Last;
       Mid  : Index;
@@ -26,9 +31,13 @@ package body PragmARC.Binary_Searcher is
       end if;
 
       Find : loop
-         exit Find when Low = High or Low = Index'Pred (High);
+         exit Find when Low in High - 1 .. High;
 
-         Mid := Index'Val ( (Index'Pos (Low) + Index'Pos (High) ) / 2);
+         if Big'Last - Big (Low) < Big (High) then
+            Mid := Index (Big (Low) / 2 + Big (High) / 2);
+         else
+            Mid := Index ( (Big (Low) + Big (High) ) / 2);
+         end if;
 
          case Compare (Item, Within (Mid) ) is
          when Three_Way.Less =>

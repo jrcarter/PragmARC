@@ -1,15 +1,16 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic radix sort
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.1--Sequences indexed by integers
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 generic -- PragmARC.Sort_Radix
    type Element  is mod <>;
-   type Index    is (<>);
+   type Index    is range <>;
    type Sort_Set is array (Index range <>) of Element;
 procedure PragmARC.Sort_Radix (Set : in out Sort_Set);
 pragma Pure (PragmARC.Sort_Radix);

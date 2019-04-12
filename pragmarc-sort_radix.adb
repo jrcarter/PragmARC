@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.2--Sequences indexed by integers
 -- 2016 Jun 01     J. Carter          V1.1--Changed formatting
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -25,11 +26,11 @@ begin -- PragmARC.Sort_Radix
          if (Set (J) and Mask) = 0 then -- Bit is zero
             Zero (Zero_Index) := Set (J);
             Num_Zeroes := Num_Zeroes + 1;
-            Zero_Index := Index'Succ (Zero_Index);
+            Zero_Index := Zero_Index + 1;
          else -- Bit is one
             One (One_Index) := Set (J);
             Num_Ones := Num_Ones + 1;
-            One_Index := Index'Succ (One_Index);
+            One_Index := One_Index + 1;
          end if;
       end loop All_Elements;
 
@@ -38,8 +39,8 @@ begin -- PragmARC.Sort_Radix
       elsif Num_Ones = 0 then
          Set := Zero;
       else
-         Set := Zero (Zero'First .. Index'Val (Index'Pos (Zero'First) + Num_Zeroes - 1) ) &
-                One  (One'First  .. Index'Val (Index'Pos (One'First)  + Num_Ones   - 1) );
+         Set := Zero (Zero'First .. Zero'First + Index (Num_Zeroes) - 1) &
+                One  (One'First  .. One'First  + Index (Num_Ones)   - 1);
       end if;
 
       Mask := 2 * Mask; -- Move on to next bit

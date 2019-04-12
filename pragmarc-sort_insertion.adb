@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic insertion sort
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.2--Sequences indexed by integers
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ------------------------------------------------------------------
@@ -25,15 +26,15 @@ begin -- PragmARC.Sort_Insertion
       return;
    end if;
 
-   Search : for I in Index'Succ (Set'First) .. Set'Last loop -- Invariant: Set (Set'First .. Index'Pred (I) ) is sorted
+   Search : for I in Set'First + 1 .. Set'Last loop -- Invariant: Set (Set'First .. I - 1) is sorted
       Temp := Set (I);
       J := I;
 
       Insert : loop
-         exit Insert when J <= Set'First or else Temp >= Set (Index'Pred (J) );
+         exit Insert when J <= Set'First or else Temp >= Set (J - 1);
 
-         Set (J) := Set (Index'Pred (J) );
-         J := Index'Pred (J);
+         Set (J) := Set (J - 1);
+         J := J - 1;
       end loop Insert;
 
       Set (J) := Temp;

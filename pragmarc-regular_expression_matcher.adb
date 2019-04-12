@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Apr 15     J. Carter          V1.5--Sequences indexed by integers; add anchor items to patterns
 -- 2018 Aug 01     J. Carter          V1.4--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.2--Added exception handler to Destroy
@@ -49,11 +50,11 @@ package body PragmARC.Regular_Expression_Matcher is
             if Pattern (Pattern_Index) = Any_Item then
                if not Processed.Ptr (Expanded_Index).Un_Negated then
                   raise Illegal_Pattern;
-               else
-                  Processed.Ptr (Expanded_Index).Kind := Any;
-                  Last_Index := Expanded_Index;
-                  Expanded_Index := Expanded_Index + 1;
                end if;
+
+               Processed.Ptr (Expanded_Index).Kind := Any;
+               Last_Index := Expanded_Index;
+               Expanded_Index := Expanded_Index + 1;
             elsif Pattern (Pattern_Index) = Escape_Item then
                State := Escape_Pattern;
             elsif Pattern (Pattern_Index) = Not_Item then
@@ -76,6 +77,22 @@ package body PragmARC.Regular_Expression_Matcher is
                State := Building_Class;
             elsif Pattern (Pattern_Index) = Stop_Class_Item then
                raise Illegal_Pattern;
+            elsif Pattern (Pattern_Index) = Begin_Set_Item then
+               if Pattern_Index /= Pattern'First then
+                  raise Illegal_Pattern;
+               end if;
+
+               Processed.Ptr (Expanded_Index).Kind := Beginning;
+               Last_Index := Expanded_Index;
+               Expanded_Index := Expanded_Index + 1;
+            elsif Pattern (Pattern_Index) = End_Set_Item then
+               if Pattern_Index /= Pattern'Last then
+                  raise Illegal_Pattern;
+               end if;
+
+               Processed.Ptr (Expanded_Index).Kind := Ending;
+               Last_Index := Expanded_Index;
+               Expanded_Index := Expanded_Index + 1;
             else -- A literal
                Processed.Ptr (Expanded_Index).Kind := Literal;
                Processed.Ptr (Expanded_Index).Value := Pattern (Pattern_Index);
@@ -110,7 +127,7 @@ package body PragmARC.Regular_Expression_Matcher is
          end case;
 
          if Pattern_Index < Pattern'Last then
-            Pattern_Index := Index'Succ (Pattern_Index);
+            Pattern_Index := Pattern_Index + 1;
          elsif State /= Building_Pattern then
             raise Illegal_Pattern;
          else
@@ -176,14 +193,14 @@ package body PragmARC.Regular_Expression_Matcher is
                return Result'(Found => True, Start => S_First, Length => Match_Length);
             elsif Pattern.Ptr (Expanded_Index).Closure then
                Count_Matches : for Index in Source_Index .. S_Last loop
-                  exit Count_Matches when not Match (P_Index => Expanded_Index, S_Index => Index);
+                  exit Count_Matches when not Match (Expanded_Index, Index);
 
                   Total_Matches := Total_Matches + 1;
                end loop Count_Matches;
 
                -- Check for having matched all of Source
-               if Index'Pos (Source_Index) + Total_Matches > Index'Pos (S_Last) then
-                  if Pattern.Ptr (Expanded_Index + 1).Kind = Stop then
+               if Integer (Source_Index) + Total_Matches > Integer (S_Last) then
+                  if Pattern.Ptr (Expanded_Index + 1).Kind = Stop or Pattern.Ptr (Expanded_Index + 1).Kind = Ending then
                      return Result'(Found => True, Start => S_First, Length => Match_Length + Total_Matches);
                   else
                      Total_Matches := Total_Matches - 1;
@@ -193,7 +210,7 @@ package body PragmARC.Regular_Expression_Matcher is
                Reduce_Matches : loop
                   exit Reduce_Matches when Total_Matches <= 0;
 
-                  Temp_Index := Index'Val (Index'Pos (Source_Index) + Total_Matches);
+                  Temp_Index := Index (Integer (Source_Index) + Total_Matches);
                   Location := Locate (Expanded_Index + 1, P_Last, Temp_Index, S_Last);
 
                   if Location.Found then
@@ -202,11 +219,19 @@ package body PragmARC.Regular_Expression_Matcher is
                      Total_Matches := Total_Matches - 1;
                   end if;
                end loop Reduce_Matches;
-            elsif Match (P_Index => Expanded_Index, S_Index => Source_Index) then
+            elsif Pattern.Ptr (Expanded_Index).Kind = Beginning then
+               if Source_Index /= Source'First then
+                  return Result'(Found => False);
+               end if;
+
+               return Locate (Expanded_Index + 1, P_Last, S_First, S_Last);
+            elsif Pattern.Ptr (Expanded_Index).Kind = Ending then
+               return Result'(Found => False);
+            elsif Match (Expanded_Index, Source_Index) then
                Match_Length := Match_Length + 1;
 
                if Source_Index < S_Last then
-                  Source_Index := Index'Succ (Source_Index);
+                  Source_Index := Source_Index + 1;
                else
                   P_Index := Expanded_Index + 1;
 
@@ -217,7 +242,9 @@ package body PragmARC.Regular_Expression_Matcher is
             end if;
          end loop Check_All;
 
-         if P_Index > P_Last or else Pattern.Ptr (P_Index).Kind = Stop then
+         if P_Index > P_Last or else
+            (Pattern.Ptr (P_Index).Kind = Stop or (Pattern.Ptr (P_Index).Kind = Ending and Source_Index = S_Last) )
+         then
             return Result'(Found => True, Start => S_First, Length => Match_Length);
          else -- Exhausted Source before Pattern; only matches if rest of Pattern is all closures
             Check_Rest : for Expanded_Index in P_Index .. P_Last loop
