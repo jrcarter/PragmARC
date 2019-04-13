@@ -10,29 +10,7 @@
 -- 2001 Feb 01     J. Carter          V1.1--Improve robustness and return length of pattern matched
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
-with Ada.Unchecked_Deallocation;
-
 package body PragmARC.Regular_Expression_Matcher is
-   procedure Destroy (Pattern : in out Processed_Pattern) is
-      procedure Free is new Unchecked_Deallocation (Object => Class_Info,           Name => Class_Ptr);
-      procedure Free is new Unchecked_Deallocation (Object => Expanded_Pattern_Set, Name => Processed_Pattern_Ptr);
-   begin -- Destroy
-      if Pattern.Ptr = null then
-         return;
-      end if;
-
-      Free_Classes : for I in Pattern.Ptr'range loop
-         Free (X => Pattern.Ptr (I).Class_Data);
-      end loop Free_Classes;
-
-      Free (X => Pattern.Ptr);
-   exception -- Destroy
-   when others =>
-      null;
-   end Destroy;
-
-   procedure Finalize (Object : in out Processed_Pattern) renames Destroy;
-
    procedure Process (Pattern : in Item_Set; Processed : in out Processed_Pattern) is
       type State_Id is (Building_Pattern, Building_Class, Escape_Pattern, Escape_Class);
 
@@ -40,38 +18,49 @@ package body PragmARC.Regular_Expression_Matcher is
       Pattern_Index  : Index    := Pattern'First;
       Expanded_Index : Positive := 1;
       Last_Index     : Natural  := 0;
+      Pattern_Item   : Expanded_Pattern_Item;
    begin -- Process
-      Destroy (Pattern => Processed);
-      Processed.Ptr := new Expanded_Pattern_Set (1 .. Pattern'Length + 1);
+      Processed.List.Clear;
+      Processed.List.Append (New_Item => (others => <>), Count => Ada.Containers.Count_Type (Pattern'Length + 1) );
 
       Build : loop
          case State is
          when Building_Pattern =>
-            if Pattern (Pattern_Index) = Any_Item then
-               if not Processed.Ptr (Expanded_Index).Un_Negated then
+            if Pattern (Pattern_Index) = Any_Item then -- The *_Item formal constants are not static, so we can't use case here
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+
+               if not Pattern_Item.Un_Negated then
                   raise Illegal_Pattern;
                end if;
 
-               Processed.Ptr (Expanded_Index).Kind := Any;
+               Pattern_Item.Kind := Any;
+               Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                Last_Index := Expanded_Index;
                Expanded_Index := Expanded_Index + 1;
             elsif Pattern (Pattern_Index) = Escape_Item then
                State := Escape_Pattern;
             elsif Pattern (Pattern_Index) = Not_Item then
-               if Pattern_Index < Pattern'Last and Processed.Ptr (Expanded_Index).Un_Negated then
-                  Processed.Ptr (Expanded_Index).Un_Negated := False;
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+
+               if Pattern_Index < Pattern'Last and Pattern_Item.Un_Negated then
+                  Pattern_Item.Un_Negated := False;
+                  Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                else
                   raise Illegal_Pattern;
                end if;
             elsif Pattern (Pattern_Index) = Closure_Item then
-               if Pattern_Index < Pattern'Last and not Processed.Ptr (Expanded_Index).Closure then
-                  Processed.Ptr (Expanded_Index).Closure := True;
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+
+               if Pattern_Index < Pattern'Last and not Pattern_Item.Closure then
+                  Pattern_Item.Closure := True;
+                  Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                else
                   raise Illegal_Pattern;
                end if;
             elsif Pattern (Pattern_Index) = Start_Class_Item then
-               Processed.Ptr (Expanded_Index).Kind := Class;
-               Processed.Ptr (Expanded_Index).Class_Data := new Class_Info (Max_Elems => Pattern'Length - 2);
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+               Pattern_Item.Kind := Class;
+               Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                Last_Index := Expanded_Index;
                Expanded_Index := Expanded_Index + 1;
                State := Building_Class;
@@ -82,7 +71,9 @@ package body PragmARC.Regular_Expression_Matcher is
                   raise Illegal_Pattern;
                end if;
 
-               Processed.Ptr (Expanded_Index).Kind := Beginning;
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+               Pattern_Item.Kind := Beginning;
+               Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                Last_Index := Expanded_Index;
                Expanded_Index := Expanded_Index + 1;
             elsif Pattern (Pattern_Index) = End_Set_Item then
@@ -90,12 +81,16 @@ package body PragmARC.Regular_Expression_Matcher is
                   raise Illegal_Pattern;
                end if;
 
-               Processed.Ptr (Expanded_Index).Kind := Ending;
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+               Pattern_Item.Kind := Ending;
+               Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                Last_Index := Expanded_Index;
                Expanded_Index := Expanded_Index + 1;
             else -- A literal
-               Processed.Ptr (Expanded_Index).Kind := Literal;
-               Processed.Ptr (Expanded_Index).Value := Pattern (Pattern_Index);
+               Pattern_Item := Processed.List.Element(Expanded_Index);
+               Pattern_Item.Kind := Literal;
+               Pattern_Item.Value := Pattern (Pattern_Index);
+               Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
                Last_Index := Expanded_Index;
                Expanded_Index := Expanded_Index + 1;
             end if;
@@ -103,26 +98,30 @@ package body PragmARC.Regular_Expression_Matcher is
             if Pattern (Pattern_Index) = Escape_Item then
                State := Escape_Class;
             elsif Pattern (Pattern_Index) = Stop_Class_Item then
-               if Processed.Ptr (Last_Index).Class_Data.Num_Elems > 0 then
+               Pattern_Item := Processed.List.Element(Last_Index);
+
+               if Pattern_Item.Class_Data.Last_Index > 0 then
                   State := Building_Pattern;
                else
                   raise Illegal_Pattern;
                end if;
             else -- A literal
-               Processed.Ptr (Last_Index).Class_Data.Num_Elems := Processed.Ptr (Last_Index).Class_Data.Num_Elems + 1;
-               Processed.Ptr (Last_Index).Class_Data.Element (Processed.Ptr (Last_Index).Class_Data.Num_Elems) :=
-                  Pattern (Pattern_Index);
+               Pattern_Item := Processed.List.Element(Last_Index);
+               Pattern_Item.Class_Data.Append (New_Item => Pattern (Pattern_Index) );
+               Processed.List.Replace_Element (Index => Last_Index, New_Item => Pattern_Item);
             end if;
          when Escape_Pattern =>
-            Processed.Ptr (Expanded_Index).Kind := Literal;
-            Processed.Ptr (Expanded_Index).Value := Pattern (Pattern_Index);
+            Pattern_Item := Processed.List.Element (Expanded_Index);
+            Pattern_Item.Kind := Literal;
+            Pattern_Item.Value := Pattern (Pattern_Index);
+            Processed.List.Replace_Element (Index => Expanded_Index, New_Item => Pattern_Item);
             Last_Index := Expanded_Index;
             Expanded_Index := Expanded_Index + 1;
             State := Building_Pattern;
          when Escape_Class =>
-            Processed.Ptr (Last_Index).Class_Data.Num_Elems := Processed.Ptr (Last_Index).Class_Data.Num_Elems + 1;
-            Processed.Ptr (Last_Index).Class_Data.Element (Processed.Ptr (Last_Index).Class_Data.Num_Elems) :=
-               Pattern (Pattern_Index);
+            Pattern_Item := Processed.List.Element (Last_Index);
+            Pattern_Item.Class_Data.Append (New_Item => Pattern (Pattern_Index) );
+            Processed.List.Replace_Element (Index => Last_Index, New_Item => Pattern_Item);
             State := Building_Class;
          end case;
 
@@ -131,6 +130,14 @@ package body PragmARC.Regular_Expression_Matcher is
          elsif State /= Building_Pattern then
             raise Illegal_Pattern;
          else
+            Delete_Unused : for I in 1 .. Processed.List.Last_Index loop
+               if Processed.List.Element (I).Kind = Stop then
+                  Processed.List.Delete (Index => I + 1, Count => Ada.Containers.Count_Type (Processed.List.Last_Index - I) );
+
+                  exit Delete_Unused;
+               end if;
+            end loop Delete_Unused;
+
             return;
          end if;
       end loop Build;
@@ -143,27 +150,27 @@ package body PragmARC.Regular_Expression_Matcher is
       Local : Result;
 
       function Match (P_Index : Positive; S_Index : Index) return Boolean is -- Matches one Pattern element with one Item
-         -- Empty
+         Pattern_Item : constant Expanded_Pattern_Item := Pattern.List.Element (P_Index);
       begin -- Match
-         case Pattern.Ptr (P_Index).Kind is
+         case Pattern_Item.Kind is
          when Literal =>
-            if Pattern.Ptr (P_Index).Un_Negated then
-               return Pattern.Ptr (P_Index).Value = Source (S_Index);
+            if Pattern_Item.Un_Negated then
+               return Pattern_Item.Value = Source (S_Index);
             else
-               return Pattern.Ptr (P_Index).Value /= Source (S_Index);
+               return Pattern_Item.Value /= Source (S_Index);
             end if;
          when Class =>
-            if Pattern.Ptr (P_Index).Un_Negated then
-               Search_True : for Elem_Num in 1 .. Pattern.Ptr (P_Index).Class_Data.Num_Elems loop
-                  if Pattern.Ptr (P_Index).Class_Data.Element (Elem_Num) = Source (S_Index) then
+            if Pattern_Item.Un_Negated then
+               Search_True : for Elem_Num in 1 .. Pattern_Item.Class_Data.Last_Index loop
+                  if Pattern_Item.Class_Data.Element (Elem_Num) = Source (S_Index) then
                      return True;
                   end if;
                end loop Search_True;
 
                return False;
             else
-               Search_False : for Elem_Num in 1 .. Pattern.Ptr (P_Index).Class_Data.Num_Elems loop
-                  if Pattern.Ptr (P_Index).Class_Data.Element (Elem_Num) = Source (S_Index) then
+               Search_False : for Elem_Num in 1 .. Pattern_Item.Class_Data.Last_Index loop
+                  if Pattern_Item.Class_Data.Element (Elem_Num) = Source (S_Index) then
                      return False;
                   end if;
                end loop Search_False;
@@ -177,9 +184,10 @@ package body PragmARC.Regular_Expression_Matcher is
          end case;
       end Match;
 
-      function Locate (P_First : Positive; P_Last : Positive; S_First : Index; S_Last : Index'Base) return Result is
+      function Locate (P_First : Positive; P_Last : Positive; S_First : Index) return Result is
       -- Matches the pattern given by Pattern.Ptr (P_First .. P_Last) to the "string" given by
       -- Source (S_First .. S_Last).  Match is "anchored;" that is, it must match starting at S_First in Source
+         S_Last : constant Index'Base := Source'Last;
 
          Source_Index  : Index    := S_First;
          Total_Matches : Natural  := 0;
@@ -187,11 +195,14 @@ package body PragmARC.Regular_Expression_Matcher is
          Temp_Index    : Index;
          P_Index       : Positive := P_Last;
          Match_Length  : Natural  := 0;
+         Pattern_Item  : Expanded_Pattern_Item;
       begin -- Locate
          Check_All : for Expanded_Index in P_First .. P_Last loop
-            if Pattern.Ptr (Expanded_Index).Kind = Stop then
+            Pattern_Item := Pattern.List.Element (Expanded_Index);
+
+            if Pattern_Item.Kind = Stop then
                return Result'(Found => True, Start => S_First, Length => Match_Length);
-            elsif Pattern.Ptr (Expanded_Index).Closure then
+            elsif Pattern_Item.Closure then
                Count_Matches : for Index in Source_Index .. S_Last loop
                   exit Count_Matches when not Match (Expanded_Index, Index);
 
@@ -200,7 +211,9 @@ package body PragmARC.Regular_Expression_Matcher is
 
                -- Check for having matched all of Source
                if Integer (Source_Index) + Total_Matches > Integer (S_Last) then
-                  if Pattern.Ptr (Expanded_Index + 1).Kind = Stop or Pattern.Ptr (Expanded_Index + 1).Kind = Ending then
+                  Pattern_Item := Pattern.List.Element (Expanded_Index + 1);
+
+                  if Pattern_Item.Kind = Stop or Pattern_Item.Kind = Ending then
                      return Result'(Found => True, Start => S_First, Length => Match_Length + Total_Matches);
                   else
                      Total_Matches := Total_Matches - 1;
@@ -211,7 +224,7 @@ package body PragmARC.Regular_Expression_Matcher is
                   exit Reduce_Matches when Total_Matches <= 0;
 
                   Temp_Index := Index (Integer (Source_Index) + Total_Matches);
-                  Location := Locate (Expanded_Index + 1, P_Last, Temp_Index, S_Last);
+                  Location := Locate (Expanded_Index + 1, P_Last, Temp_Index);
 
                   if Location.Found then
                      return Result'(Found => True, Start => S_First, Length => Match_Length + Total_Matches + Location.Length);
@@ -219,13 +232,13 @@ package body PragmARC.Regular_Expression_Matcher is
                      Total_Matches := Total_Matches - 1;
                   end if;
                end loop Reduce_Matches;
-            elsif Pattern.Ptr (Expanded_Index).Kind = Beginning then
+            elsif Pattern_Item.Kind = Beginning then
                if Source_Index /= Source'First then
                   return Result'(Found => False);
                end if;
 
-               return Locate (Expanded_Index + 1, P_Last, S_First, S_Last);
-            elsif Pattern.Ptr (Expanded_Index).Kind = Ending then
+               return Locate (Expanded_Index + 1, P_Last, S_First);
+            elsif Pattern_Item.Kind = Ending then
                return Result'(Found => False);
             elsif Match (Expanded_Index, Source_Index) then
                Match_Length := Match_Length + 1;
@@ -242,13 +255,17 @@ package body PragmARC.Regular_Expression_Matcher is
             end if;
          end loop Check_All;
 
-         if P_Index > P_Last or else
-            (Pattern.Ptr (P_Index).Kind = Stop or (Pattern.Ptr (P_Index).Kind = Ending and Source_Index = S_Last) )
-         then
+         if P_Index <= P_Last then
+            Pattern_Item := Pattern.List.Element (P_Index);
+         end if;
+
+         if P_Index > P_Last or else (Pattern_Item.Kind = Stop or (Pattern_Item.Kind = Ending and Source_Index = S_Last) ) then
             return Result'(Found => True, Start => S_First, Length => Match_Length);
          else -- Exhausted Source before Pattern; only matches if rest of Pattern is all closures
             Check_Rest : for Expanded_Index in P_Index .. P_Last loop
-               if not Pattern.Ptr (Expanded_Index).Closure and Pattern.Ptr (Expanded_Index).Kind /= Stop then
+               Pattern_Item := Pattern.List.Element (Expanded_Index);
+
+               if not Pattern_Item.Closure and Pattern_Item.Kind /= Stop then
                   return Result'(Found => False);
                end if;
             end loop Check_Rest;
@@ -261,26 +278,24 @@ package body PragmARC.Regular_Expression_Matcher is
       end Locate;
    begin -- Location
       if Source'Length = 0 then
-         case Pattern.Ptr (Pattern.Ptr'First).Kind is
+         case Pattern.List.Element (1).Kind is
          when Beginning =>
-            if Pattern.Ptr'Length = 1 or else
-               (Pattern.Ptr (Pattern.Ptr'First + 1).Kind = Stop or Pattern.Ptr (Pattern.Ptr'First + 1).Kind = Ending)
+            if Pattern.List.Last_Index = 1 or else (Pattern.List.Element (2).Kind = Stop or Pattern.List.Element (2).Kind = Ending)
             then
                return Result'(Found => True, Start => Source'First, Length => 0);
             end if;
 
-            return Locate -- Beginning followed by only closures (followed by an optional Ending) will match
-               (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Source'First, S_Last => Source'Last);
+            return Locate (1, Pattern.List.Last_Index, Source'First);
+            -- Beginning followed by only closures (followed by an optional Ending) will match
          when Ending =>
             return Result'(Found => True, Start => Source'First, Length => 0);
          when others => -- Only closures (followed by an optional Ending) will match
-            return Locate
-               (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Source'First, S_Last => Source'Last);
+            return Locate (1, Pattern.List.Last_Index, Source'First);
          end case;
       end if;
 
       Search : for Position in Source'range loop
-         Local := Locate (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Position, S_Last => Source'Last);
+         Local := Locate (1, Pattern.List.Last_Index, Position);
 
          if Local.Found then
             return Local;

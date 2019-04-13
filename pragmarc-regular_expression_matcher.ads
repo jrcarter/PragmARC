@@ -35,9 +35,8 @@
 -- 2001 Feb 01     J. Carter          V1.1--Improve robustness and return length of pattern matched
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
-with Ada.Finalization;
+private with Ada.Containers.Vectors;
 
-use Ada;
 generic -- PragmARC.Regular_Expression_Matcher
    type Item is private;
    type Index is range <>;
@@ -85,30 +84,27 @@ package PragmARC.Regular_Expression_Matcher is
    -- Applies Process to Pattern, passes the result to Location (Processed_Pattern), and Destroys the processed pattern
    -- Returns the result of calling Location (Processed_Pattern)
 private -- PragmARC.Regular_Expression_Matcher
-   type Kind_Id is (Literal, Class, Any, Stop, Beginning, Ending); -- Kind of pattern element
-   type Element_Set is array (Positive range <>) of Item; -- Holds the items of a class
+   use Ada;
 
-   type Class_Info (Max_Elems : Positive) is record
-      Num_Elems : Natural := 0;
-      Element   : Element_Set (1 .. Max_Elems);
-   end record;
-   type Class_Ptr is access Class_Info;
+   type Kind_Id is (Literal, Class, Any, Stop, Beginning, Ending); -- Kind of pattern element
+
+   package Item_Lists is new Containers.Vectors (Index_Type => Positive, Element_Type => Item);
+
+   subtype Class_Info is Item_Lists.Vector; -- Holds the items of a class
 
    type Expanded_Pattern_Item is record -- A pattern element
-      Kind       : Kind_Id   := Stop;
-      Un_Negated : Boolean   := True;
-      Closure    : Boolean   := False;
+      Kind       : Kind_Id := Stop;
+      Un_Negated : Boolean := True;
+      Closure    : Boolean := False;
       Value      : Item;
-      Class_Data : Class_Ptr := null;
-   end record;
-   type Expanded_Pattern_Set is array (Positive range <>) of Expanded_Pattern_Item;
-   type Processed_Pattern_Ptr is access Expanded_Pattern_Set;
-
-   type Processed_Pattern is new Finalization.Limited_Controlled with record
-      Ptr : Processed_Pattern_Ptr;
+      Class_Data : Class_Info;
    end record;
 
-   procedure Finalize (Object : in out Processed_Pattern);
+   package Expanded_Lists is new Ada.Containers.Vectors (Index_Type => Positive, Element_Type => Expanded_Pattern_Item);
+
+   type Processed_Pattern is record
+      List : Expanded_Lists.Vector;
+   end record;
 end PragmARC.Regular_Expression_Matcher;
 --
 -- This is free software; you can redistribute it and/or modify it under

@@ -7,15 +7,13 @@
 -- History:
 -- 2019 Apr 15     J. Carter          V1.0--Provide ranges in classes
 --
-with Ada.Strings.Fixed;
-
 package body PragmARC.Character_Regular_Expression_Matcher is
    function Expanded_Ranges (Pattern : String) return String is
-      function Expanded_Ranges (Start : Positive) return String;
-      -- Expands any ranges in Pattern (Start .. Pattern'Last) with Start > Pattern'First and Pattern (Start) part of a class
+      function Expanded_Ranges (Start : Positive; In_Class : Boolean := False) return String;
+      -- Expands any ranges in Pattern (Start .. Pattern'Last)
       -- Calls itself after expanding a range
 
-      function Expanded_Ranges (Start : Positive) return String is
+      function Expanded_Ranges (Start : Positive; In_Class : Boolean := False) return String is
          function Expanded (Low : Character; High : Character) return String;
          -- Returns all Characters in Low .. High in order
 
@@ -31,12 +29,12 @@ package body PragmARC.Character_Regular_Expression_Matcher is
             return Result;
          end Expanded;
 
-         Class : Boolean := True;
+         Class : Boolean := In_Class;
       begin -- Expanded_Ranges
          Check_All : for I in Start .. Pattern'Last loop
             case Pattern (I) is
             when Start_Class_Item =>
-               if not Class and Pattern (I - 1) /= Escape_Item then
+               if not Class and (I = Pattern'First or else Pattern (I - 1) /= Escape_Item) then
                   Class := True;
                end if;
             when Stop_Class_Item =>
@@ -53,7 +51,7 @@ package body PragmARC.Character_Regular_Expression_Matcher is
                   then
                      return Pattern (Start .. I - 2) &
                             Expanded (Pattern (I - 1), Pattern (I + 1) ) &
-                            Expanded_Ranges (Pattern (I + 2 .. Pattern'Last) );
+                            Expanded_Ranges (I + 2, True);
                   end if;
                end if;
             when others =>
@@ -63,22 +61,8 @@ package body PragmARC.Character_Regular_Expression_Matcher is
 
          return Pattern (Start .. Pattern'Last); -- No ranges to expand
       end Expanded_Ranges;
-
-      Index : Natural := Pattern'First;
    begin -- Expanded_Ranges
-      Find_Class : loop
-         Index := Ada.Strings.Fixed.Index (Pattern (Index .. Pattern'Last), (1 => Start_Class_Item) );
-
-         if Index = 0 then
-            return Pattern; -- No classes in Pattern
-         end if;
-
-         if Index = Pattern'First or else Pattern (Index - 1) /= Escape_Item then -- Start of a class
-            return Pattern (Pattern'First .. Index) & Expanded_Ranges (Index + 1);
-         end if;
-
-         Index := Index + 1;
-      end loop Find_Class;
+      return Expanded_Ranges (Pattern'First);
    end Expanded_Ranges;
 
    procedure Process (Pattern : in String; Processed : in out Processed_Pattern) is
