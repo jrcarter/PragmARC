@@ -177,7 +177,7 @@ package body PragmARC.Regular_Expression_Matcher is
          end case;
       end Match;
 
-      function Locate (P_First : Positive; P_Last : Positive; S_First : Index; S_Last : Index) return Result is
+      function Locate (P_First : Positive; P_Last : Positive; S_First : Index; S_Last : Index'Base) return Result is
       -- Matches the pattern given by Pattern.Ptr (P_First .. P_Last) to the "string" given by
       -- Source (S_First .. S_Last).  Match is "anchored;" that is, it must match starting at S_First in Source
 
@@ -260,6 +260,25 @@ package body PragmARC.Regular_Expression_Matcher is
          return Result'(Found => False);
       end Locate;
    begin -- Location
+      if Source'Length = 0 then
+         case Pattern.Ptr (Pattern.Ptr'First).Kind is
+         when Beginning =>
+            if Pattern.Ptr'Length = 1 or else
+               (Pattern.Ptr (Pattern.Ptr'First + 1).Kind = Stop or Pattern.Ptr (Pattern.Ptr'First + 1).Kind = Ending)
+            then
+               return Result'(Found => True, Start => Source'First, Length => 0);
+            end if;
+
+            return Locate -- Beginning followed by only closures (followed by an optional Ending) will match
+               (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Source'First, S_Last => Source'Last);
+         when Ending =>
+            return Result'(Found => True, Start => Source'First, Length => 0);
+         when others => -- Only closures (followed by an optional Ending) will match
+            return Locate
+               (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Source'First, S_Last => Source'Last);
+         end case;
+      end if;
+
       Search : for Position in Source'range loop
          Local := Locate (P_First => Pattern.Ptr'First, P_Last => Pattern.Ptr'Last, S_First => Position, S_Last => Source'Last);
 
