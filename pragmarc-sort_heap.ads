@@ -12,7 +12,7 @@
 --
 generic -- PragmARC.Sort_Heap
    type Element  is private;
-   type Index    is range <>;
+   type Index    is range <>; -- Lower bound should be 1
    type Sort_Set is array (Index range <>) of Element;
 
    with function "<" (Left : Element; Right : Element) return Boolean is <>;

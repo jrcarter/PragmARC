@@ -5,18 +5,20 @@
 -- Binary search of an ordered list
 --
 -- History:
+-- 2019 Jun 01     J. Carter          V1.1--Require Index'First = 1
 -- 2019 Apr 15     J. Carter          V1.0--Require integer Index
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with PragmARC.Three_Way;
 generic -- PragmARC.Binary_Searcher
    type Element is limited private;
-   type Index is range <>;
+   type Index is range <>; -- Lower bound of 1; see pragma Assert below
    type List is array (Index range <>) of Element;
 
    with function Compare (Left : Element; Right : Element) return Three_Way.Relation_Id is <>;
 package PragmARC.Binary_Searcher is
    pragma Pure;
+   pragma Assert (Index'First = 1);
 
    type Outside_Id is (First, Last);
 

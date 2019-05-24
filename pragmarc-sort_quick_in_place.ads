@@ -5,6 +5,7 @@
 -- Generic quick sort
 --
 -- History:
+-- 2019 Jun 01     J. Carter          V1.2--Require Index'First = 1
 -- 2019 Apr 01     J. Carter          V1.1--Require integer index
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 --------------------------------------------------------------------------------------
@@ -14,11 +15,13 @@
 --
 generic -- PragmARC.Sort_Quick_In_Place
    type Element  is private;
-   type Index    is range <>;
+   type Index    is range <>; -- Lower bound of 1; see pragma Assert below
    type Sort_Set is array (Index range <>) of Element;
 
    with function "<" (Left : Element; Right : Element) return Boolean is <>;
 package PragmARC.Sort_Quick_In_Place is
+   pragma Assert (Index'First = 1);
+
    procedure Sort_Sequential (Set : in out Sort_Set);
    -- Sorts Set.
    --

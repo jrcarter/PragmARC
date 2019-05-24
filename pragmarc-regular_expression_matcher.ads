@@ -31,6 +31,7 @@
 --                        ceded by Closure_Item
 --
 -- History:
+-- 2019 Jun 01     J. Carter          V1.3--Require Index'First = 1
 -- 2019 Apr 15     J. Carter          V1.2--Sequences indexed by integers; add anchor items to patterns
 -- 2001 Feb 01     J. Carter          V1.1--Improve robustness and return length of pattern matched
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -39,7 +40,7 @@ private with Ada.Containers.Vectors;
 
 generic -- PragmARC.Regular_Expression_Matcher
    type Item is private;
-   type Index is range <>;
+   type Index is range <>; -- Lower bound of 1; see pragma Assert below
    type Item_Set is array (Index range <>) of Item;
 
    Any_Item         : Item;
@@ -54,6 +55,7 @@ generic -- PragmARC.Regular_Expression_Matcher
    with function "=" (Left : Item; Right : Item) return Boolean is <>;
 package PragmARC.Regular_Expression_Matcher is
    --pragma Preelaborate;
+   pragma Assert (Index'First = 1);
 
    Illegal_Pattern : exception; -- Raised when an invalid pattern is processed
 
