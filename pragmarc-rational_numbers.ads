@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Rational numbers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2019 Aug 15     J. Carter          V1.3--Apply Base to non-fractional images; improve Sqrt convergence
 -- 2017 Apr 15     J. Carter          V1.2--Added Sqrt and improved "**"
 -- 2014 Jun 01     J. Carter          V1.1--Improved Image
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
@@ -53,13 +54,12 @@ package PragmARC.Rational_Numbers is
    function Image (Value : Rational; As_Fraction : Boolean := False; Base : Base_Number := 10; Decorated : Boolean := False)
    return String;
    -- Returns the image of Value
-   -- If As_Fraction, result is in the format Numerator/Denominator; otherwise, result is in the format of a base-10 real literal
+   -- If As_Fraction, result is in the format Numerator/Denominator; otherwise, result is in the format of a real literal
    -- No initial blank for non-negative values
-   -- Base and Decorated are only meaningful when As_Fraction
-   -- If Decorated, the image includes the base in numeric-literal format: 16#FFFFFFFFFFFFFFFFFFFFFFFF#/16#7#
+   -- If Decorated, the image includes the base in numeric-literal format: 16#FFFFFFFFFFFFFFFFFFFFFFFF#/16#7#, 2#1.1#
    -- If not As_Fraction
    --    if abs Value < 1.0, result will have at most 1,000 significant digits
-   --    otherwise, result will have at most 1,000 digits to the right of the decimal point
+   --    otherwise, result will have at most 1,000 digits to the right of the radix point
 
    function Value (Image : String) return Rational;
    -- Image must be one of:

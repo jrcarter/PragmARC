@@ -1,10 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
--- Rational numbers bounded only by Integer'Last and available memory
---
 -- History:
+-- 2019 Aug 15     J. Carter          V1.2--Apply Base to non-fractional images; improve Sqrt convergence
 -- 2017 Apr 15     J. Carter          V1.1--Removed GCD and LCM (now in Unbounded_Integers) and added Sqrt
 -- 2014 Apr 01     J. Carter          V1.0--Initial release
 --
@@ -211,7 +210,8 @@ package body PragmARC.Rational_Numbers is
 
    function Image (Value : Rational; As_Fraction : Boolean := False; Base : Base_Number := 10; Decorated : Boolean := False)
    return String is
-      Ten : constant Unbounded_Integer := To_Unbounded_Integer (10);
+      Radix    : constant Unbounded_Integer              := To_Unbounded_Integer (Integer (Base) );
+      Int_Base : constant Unbounded_Integers.Base_Number := Unbounded_Integers.Base_Number (Base);
 
       Work   : Unbounded_Integer := abs Value.Numerator;
       Q      : Unbounded_Integer;
@@ -220,41 +220,54 @@ package body PragmARC.Rational_Numbers is
       use Ada.Strings.Unbounded;
    begin -- Image
       if As_Fraction then
-         return Image (Value.Numerator,   Unbounded_Integers.Base_Number (Base), Decorated) & '/' &
-                Image (Value.Denominator, Unbounded_Integers.Base_Number (Base), Decorated);
+         return Image (Value.Numerator, Int_Base, Decorated) & '/' & Image (Value.Denominator, Int_Base, Decorated);
       end if;
 
       if Value.Numerator < UI0 then
          Append (Source => Result, New_Item => '-');
       end if;
 
+      if Decorated then
+         Append (Source => Result, New_Item => Image (Radix) & '#');
+      end if;
+
       Q := Work / Value.Denominator;
 
-      Append (Source => Result, New_Item => Image (Q) & '.');
+      Append (Source => Result, New_Item => Image (Q, Base => Int_Base) & '.');
 
       Work := Work - Q * Value.Denominator;
 
       if Work = UI0 then
-         return To_String (Result) & '0';
+         Append (Source => Result, New_Item => '0');
+
+         if Decorated then
+            Append (Source => Result, New_Item => '#');
+         end if;
+
+         return To_String (Result);
       end if;
 
       Zeros : loop
          exit Zeros when Q /= UI0;
 
-         Work := Ten * Work;
+         Work := Radix * Work;
          Q := Work / Value.Denominator;
-         Append (Source => Result, New_Item => Image (Q) );
+         Append (Source => Result, New_Item => Image (Q, Base => Int_Base) );
          Work := Work - Q * Value.Denominator;
       end loop Zeros;
 
       Count : for I in 1 .. 1_000 loop
          exit Count when Work = UI0;
 
-         Work := Ten * Work;
+         Work := Radix * Work;
          Q := Work / Value.Denominator;
-         Append (Source => Result, New_Item => Image (Q) );
+         Append (Source => Result, New_Item => Image (Q, Base => Int_Base) );
          Work := Work - Q * Value.Denominator;
       end loop Count;
+
+      if Decorated then
+         Append (Source => Result, New_Item => '#');
+      end if;
 
       return To_String (Result);
    end Image;
@@ -333,7 +346,7 @@ package body PragmARC.Rational_Numbers is
                                       (Number => Value ("524288.0"), Square => Value ("274877906944.0") ) );
 
    function Sqrt (Right : Rational; Accuracy : Rational) return Rational is
-      A : constant Rational := abs Accuracy;
+      A : constant Rational := abs Accuracy * Right;
 
       R : Rational := Right; -- Right after reduction
       F : Rational := One;   -- Factor after reduction
