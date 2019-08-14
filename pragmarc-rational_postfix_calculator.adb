@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Aug 15     J. Carter          V1.1--Make use of improved accuracy in Rational_Numbers.Sqrt
 -- 2017 Apr 15     J. Carter          V1.0--Initial release
 --
 with Ada.Characters.Handling;
@@ -23,7 +24,7 @@ function PragmARC.Rational_Postfix_Calculator return PragmARC.Rational_Numbers.R
 
    package Real_Stack is new Stack_Unbounded (Element => Real);
 
-   Accuracy_Factor : constant Real := Value ("0.0002");
+   Accuracy_Factor : constant Real := Value ("0.00001");
 
    Display_Line : constant Positive :=  5;
    Input_Line   : constant Positive := 10;
@@ -127,8 +128,9 @@ begin -- PragmARC.Rational_Postfix_Calculator
                end Power;
             elsif Com_Str = "SQRT" then -- Square root
                Get_Unary_Operand (Stack => Stack, Left => Left);
-               Text_Io.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line & "Processing SQRT; this can take a while");
-               Result := Sqrt (Left, Left * Accuracy_Factor);
+               Text_Io.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line &
+                                    "Processing SQRT; this can take a while");
+               Result := Sqrt (Left, Accuracy_Factor);
                Process_Result (Stack => Stack, Result => Result);
 --          elsif Com_Str = "EXP" then -- Power of 'e'
 --            Get_Unary_Operand (Stack => Stack, Left => Left);
