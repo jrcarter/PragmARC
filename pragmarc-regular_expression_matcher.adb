@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2019 Sep 01     J. Carter          V1.6--Simplify class-matching logic
 -- 2019 Apr 15     J. Carter          V1.5--Sequences indexed by integers; add anchor items to patterns
 -- 2018 Aug 01     J. Carter          V1.4--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
@@ -160,23 +161,13 @@ package body PragmARC.Regular_Expression_Matcher is
                return Pattern_Item.Value /= Source (S_Index);
             end if;
          when Class =>
-            if Pattern_Item.Un_Negated then
-               Search_True : for Elem_Num in 1 .. Pattern_Item.Class_Data.Last_Index loop
-                  if Pattern_Item.Class_Data.Element (Elem_Num) = Source (S_Index) then
-                     return True;
-                  end if;
-               end loop Search_True;
+            Search_Match : for Elem_Num in 1 .. Pattern_Item.Class_Data.Last_Index loop
+               if Pattern_Item.Class_Data.Element (Elem_Num) = Source (S_Index) then
+                  return Pattern_Item.Un_Negated;
+               end if;
+            end loop Search_Match;
 
-               return False;
-            else
-               Search_False : for Elem_Num in 1 .. Pattern_Item.Class_Data.Last_Index loop
-                  if Pattern_Item.Class_Data.Element (Elem_Num) = Source (S_Index) then
-                     return False;
-                  end if;
-               end loop Search_False;
-
-               return True;
-            end if;
+            return not Pattern_Item.Un_Negated;
          when Any =>
             return True;
          when others =>

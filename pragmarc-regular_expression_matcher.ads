@@ -9,8 +9,7 @@
 --
 --     The begin item     Consists of Begin_Set_Item     Makes the rest of the pattern have to match at the start of Source
 --
---     The end item       Consists of End_Set_Item       Makes the pattern have to match the last item in S
---ource
+--     The end item       Consists of End_Set_Item       Makes the pattern have to match the last item in Source
 --     The wild item      Consists of the item Any_Item  Matches any item
 --
 --     An escaped item    Consists of an item preceded   Changes the item into a literal
