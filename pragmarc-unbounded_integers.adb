@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2019 Sep 01     J. Carter          V1.5--Improve division
 -- 2018 Oct 15     J. Carter          V1.4--Faster multiplication algorithm from Doug Rogers
 -- 2018 Oct 01     J. Carter          V1.3--Handle negative numbers in Value
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
@@ -309,10 +310,6 @@ package body PragmARC.Unbounded_Integers is
       procedure Drop_Significant (Value : in out Unbounded_Integer; Remaining : in Positive);
       -- Deletes the most significant digits from Value until there are Remaining digits left
 
-      procedure Append (Onto : in out Unbounded_Integer; From : in Unbounded_Integer);
-      -- Appends the digits of From onto the end of Onto
-      -- Onto := Onto + Shift_Left (From, Onto.Digit.Last_index)
-
       procedure Divide_Special (Left      : in     Unbounded_Integer;
                                 Right     : in     Unbounded_Integer;
                                 Quotient  :    out Unbounded_Integer;
@@ -385,14 +382,6 @@ package body PragmARC.Unbounded_Integers is
             Value.Digit.Delete_Last;
          end loop Delete;
       end Drop_Significant;
-
-      procedure Append (Onto : in out Unbounded_Integer; From : in Unbounded_Integer) is
-         -- Empty declarative region
-      begin -- Append
-         Append_Digits : for I in 1 .. From.Digit.Last_Index loop
-            Onto.Digit.Append (New_Item => From.Digit.Element (I) );
-         end loop Append_Digits;
-      end Append;
 
       Abs_Left    : Unbounded_Integer := Left;
       Abs_Right   : Unbounded_Integer := Right;
@@ -501,12 +490,12 @@ package body PragmARC.Unbounded_Integers is
       Divide_Special (Left => Left_P, Right => Abs_Right, Quotient => Quotient_P, Remainder => Remainder_P);
 
       -- S := S + Shift_Left (Remainder_P, S.Digit.Last_Index)
-      Append (Onto => S, From => Remainder_P);
+      S.Digit.Append (New_Item => Remainder_P.Digit);
 
       Divide (Left => S, Right => Abs_Right, Quotient => Quotient, Remainder => Remainder);
 
       -- Quotient := Quotient + Shift_Left (Quotient_P, Quotient.Digit.Last_Index)
-      Append (Onto => Quotient, From => Quotient_P);
+      Quotient.Digit.Append (New_Item => Quotient_P.Digit);
    end Divide;
 
    function "/" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
@@ -717,7 +706,7 @@ package body PragmARC.Unbounded_Integers is
          exit All_Digits when Work = Zip;
 
          Temp := Work / U_Base;
-         Digit := Work - U_Base * Temp; -- Digit := Work rem U_Base; -- This saves a division since we need both div and rem
+         Digit := Work - Temp * U_Base;
          Work := Temp;
          Ada.Strings.Unbounded.Insert (Source => Result, Before => 1, New_Item => Letter (Digit.Digit.First_Element) );
       end loop All_Digits;
