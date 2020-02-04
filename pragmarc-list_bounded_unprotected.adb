@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Feb 15     J. Carter          V1.3--Make more Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.2--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -101,7 +102,7 @@ package body PragmARC.List_Bounded_Unprotected is
       return (ID => List.ID, Pos => Null_Position);
    end Off_List;
 
-   function Next (Pos : Position; List : Handle) return Position is
+   function Next (List : Handle; Pos : Position) return Position is
       -- Empty
    begin -- Next
       if Pos.ID /= List.ID then
@@ -115,7 +116,7 @@ package body PragmARC.List_Bounded_Unprotected is
       end if;
    end Next;
 
-   function Prev (Pos : Position; List : Handle) return Position is
+   function Prev (List : Handle; Pos : Position) return Position is
       -- Empty
    begin -- Prev
       if Pos.ID /= List.ID then

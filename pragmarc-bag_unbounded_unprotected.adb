@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Feb 15     J. Carter          V1.3--Make more Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -25,7 +26,7 @@ package body PragmARC.Bag_Unbounded_Unprotected is
       Implementation.Clear (Bag.List);
    end Clear;
 
-   procedure Add (Item : in Element; Into : in out Handle) is
+   procedure Add (Into : in out Handle; Item : in Element) is
       Pos : Implementation.Position;
    begin -- Add
       Implementation.Insert (Into => Into.List, Item => Item, Before => Implementation.First (Into.List), New_Pos => Pos);
@@ -61,7 +62,7 @@ package body PragmARC.Bag_Unbounded_Unprotected is
       return (Found => False);
    end Find;
 
-   procedure Delete (Item : in Element; From : in out Handle) is
+   procedure Delete (From : in out Handle; Item : in Element) is
       Temp : Search_Result := Find (Item, From);
    begin -- Delete
       if Temp.Found then
@@ -69,7 +70,7 @@ package body PragmARC.Bag_Unbounded_Unprotected is
       end if;
    end Delete;
 
-   procedure Update (Item : in Element; Bag : in out Handle) is
+   procedure Update (Bag : in out Handle; Item : in Element) is
       Temp : constant Search_Result := Find (Item, Bag);
    begin -- Update
       if Temp.Found then
@@ -77,7 +78,7 @@ package body PragmARC.Bag_Unbounded_Unprotected is
       end if;
    end Update;
 
-   function Find (Key : Element; Bag : Handle) return Find_Result is
+   function Find (Bag : Handle; Key : Element) return Find_Result is
       Temp : constant Search_Result := Find (Key, Bag);
    begin -- Find
       if Temp.Found then

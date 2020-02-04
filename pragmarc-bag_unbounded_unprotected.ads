@@ -1,10 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for sequential use only.
 --
 -- History:
+-- 2020 Feb 15     J. Carter          V1.2--Make more Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.1--Make Size O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ package PragmARC.Bag_Unbounded_Unprotected is
    --
    -- Postcondition: Empty (Bag)
 
-   procedure Add (Item : in Element; Into : in out Handle);
+   procedure Add (Into : in out Handle; Item : in Element);
    -- Adds Item to Into.
    -- Raises Storage_Exhausted if we cannot obtain memory to store Item in Into.
    -- Into is unchanged if Storage_Exhausted is raised
@@ -47,7 +48,7 @@ package PragmARC.Bag_Unbounded_Unprotected is
    --
    -- Postcondition: not Empty (Into)
 
-   procedure Delete (Item : in Element; From : in out Handle);
+   procedure Delete (From : in out Handle; Item : in Element);
    -- If From contains an Element X such that X = Item, deletes X from From;
    -- otherwise, has no effect.
    -- If From contains more than one such Element, deletes one of these Elements.
@@ -56,7 +57,7 @@ package PragmARC.Bag_Unbounded_Unprotected is
    --
    -- Postcondition: Length (before[From]) >= Length (after[From])
 
-   procedure Update (Item : in Element; Bag : in out Handle);
+   procedure Update (Bag : in out Handle; Item : in Element);
    -- If Bag contains an Element X such that X = Item, performs X := Item;
    -- otherwise, has no effect.
    -- If Bag contains more than one such Element, updates one of these Elements.
@@ -72,7 +73,7 @@ package PragmARC.Bag_Unbounded_Unprotected is
       end case;
    end record;
 
-   function Find (Key : Element; Bag : Handle) return Find_Result;
+   function Find (Bag : Handle; Key : Element) return Find_Result;
    -- If Bag contains an Element X such that X = Key, returns (Found => True, Item => X);
    -- otherwise, returns (Found => False).
    -- If Bag contains more than one such Element, returns one of these Elements

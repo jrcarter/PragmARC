@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Feb 15     J. Carter          V1.2--Make more Object.Operation friendly
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -14,31 +15,31 @@ package body PragmARC.List_Bounded is
       procedure Clear is
          -- Empty
       begin -- Clear
-         Implementation.Clear (List => List);
+         List.Clear;
       end Clear;
 
       function First return Position is
          -- Empty
       begin -- First
-         return Position (Implementation.First (List) );
+         return Position (List.First);
       end First;
 
       function Last return Position is
          -- Empty
       begin -- Last
-         return Position (Implementation.Last (List) );
+         return Position (List.Last);
       end Last;
 
       function Off_List return Position is
          -- Empty
       begin -- Off_List
-         return Position (Implementation.Off_List (List) );
+         return Position (List.Off_List);
       end Off_List;
 
       function Next (Pos : Position) return Position is
          -- Empty
       begin -- Next
-         return Position (Implementation.Next (Implementation.Position (Pos), List) );
+         return Position (List.Next (Implementation.Position (Pos) ) );
       exception -- Next
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -47,7 +48,7 @@ package body PragmARC.List_Bounded is
       function Prev (Pos : Position) return Position is
          -- Empty
       begin -- Prev
-         return Position (Implementation.Prev (Implementation.Position (Pos), List) );
+         return Position (List.Prev (Implementation.Position (Pos) ) );
       exception -- Prev
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -56,7 +57,7 @@ package body PragmARC.List_Bounded is
       procedure Insert (Item : in Element; Before : in Position; New_Pos : out Position) is
          Result : Implementation.Position;
       begin -- Insert
-         Implementation.Insert (Into => List, Item => Item, Before => Implementation.Position (Before), New_Pos => Result);
+         List.Insert (Item => Item, Before => Implementation.Position (Before), New_Pos => Result);
          New_Pos := Position (Result);
       exception -- Insert
       when Implementation.Invalid_Position =>
@@ -66,7 +67,7 @@ package body PragmARC.List_Bounded is
       procedure Append (Item : in Element; After : in Position; New_Pos : out Position) is
          Result : Implementation.Position;
       begin -- Append
-         Implementation.Append (Into => List, Item => Item, After => Implementation.Position (After), New_Pos => Result);
+         List.Append (Item => Item, After => Implementation.Position (After), New_Pos => Result);
          New_Pos := Position (Result);
       exception -- Append
       when Implementation.Invalid_Position =>
@@ -76,7 +77,7 @@ package body PragmARC.List_Bounded is
       procedure Delete (Pos : in out Position) is
          -- Empty
       begin -- Delete
-         Implementation.Delete (From => List, Pos => Implementation.Position (Pos) );
+         List.Delete (Pos => Implementation.Position (Pos) );
       exception -- Delete
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -85,7 +86,7 @@ package body PragmARC.List_Bounded is
       function Get (Pos : Position) return Element is
          -- Empty
       begin -- Get
-         return Implementation.Get (List, Implementation.Position (Pos) );
+         return List.Get (Implementation.Position (Pos) );
       exception -- Get
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -94,7 +95,7 @@ package body PragmARC.List_Bounded is
       procedure Put (Pos : in Position; Item : in Element) is
          -- Empty
       begin -- Put
-         Implementation.Put (Into => List, Pos => Implementation.Position (Pos), Item => Item);
+         List.Put (Pos => Implementation.Position (Pos), Item => Item);
       exception -- Put
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -103,19 +104,19 @@ package body PragmARC.List_Bounded is
       function Is_Empty return Boolean is
          -- Empty
       begin -- Is_Empty
-         return Implementation.Is_Empty (List);
+         return List.Is_Empty;
       end Is_Empty;
 
       function Is_Full return Boolean is
          -- Empty
       begin -- Is_Full
-         return Implementation.Is_Full (List);
+         return List.Is_Full;
       end Is_Full;
 
       function Length return Natural is
          -- Empty
       begin -- Length
-         return Implementation.Length (List);
+         return List.Length;
       end Length;
 
       procedure Iterate (Action : access procedure (Item : in out Element; Pos : In Position; Continue : out Boolean) ) is

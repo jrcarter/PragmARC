@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Feb 15     J. Carter          V1.2--Make more Object.Operation friendly
 -- 2016 Jun 01     J. Carter          V1.1--Changed comments for empty declarative parts
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 --------------------------------------------------------------------
@@ -16,31 +17,31 @@ package body PragmARC.Bag_Unbounded is
       procedure Add (Item : in Element) is
          -- Empty
       begin -- Add
-         Implementation.Add (Item => Item, Into => Bag);
+         Bag.Add (Item => Item);
       end Add;
 
       procedure Clear is
          -- Empty
       begin -- Clear
-         Implementation.Clear (Bag => Bag);
+         Bag.Clear;
       end Clear;
 
       procedure Delete (Item : in Element) is
          -- Empty
       begin -- Delete
-         Implementation.Delete (Item => Item, From => Bag);
+         Bag.Delete (Item => Item);
       end Delete;
 
       function Empty return Boolean is
          -- Empty
       begin -- Empty
-         return Implementation.Empty (Bag);
+         return Bag.Empty;
       end Empty;
 
       function Find (Key : Element) return Find_Result is
          Result : Implementation.Find_Result;
       begin -- Find
-         Result := Implementation.Find (Key, Bag);
+         Result := Bag.Find (Key);
 
          if Result.Found then
             return (Found => True, Item => Result.Item);
@@ -58,13 +59,13 @@ package body PragmARC.Bag_Unbounded is
       function Size return Natural is
          -- Empty
       begin -- Size
-         return Implementation.Size (Bag);
+         return Bag.Size;
       end Size;
 
       procedure Update (Item : in Element) is
          -- Empty
       begin -- Update
-         Implementation.Update (Item => Item, Bag => Bag);
+         Bag.Update (Item => Item);
       end Update;
    end Handle;
 end PragmARC.Bag_Unbounded;
