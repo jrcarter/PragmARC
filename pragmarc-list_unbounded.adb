@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Mar 15     J. Carter          V1.2--Make List_Unbounded_Unprotected's Next and Prev Object.Operation friendly
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ package body PragmARC.List_Unbounded is
       function Next (Pos : Position) return Position is
          -- Empty
       begin -- Next
-         return Position (Implementation.Next (Implementation.Position (Pos), List) );
+         return Position (List.Next (Implementation.Position (Pos) ) );
       exception -- Next
       when Implementation.Invalid_Position =>
          raise Invalid_Position;
@@ -50,7 +51,7 @@ package body PragmARC.List_Unbounded is
       function Prev (Pos : Position) return Position is
          -- Empty
       begin -- Prev
-         return Position (Implementation.Prev (Implementation.Position (Pos), List) );
+         return Position (List.Prev (Implementation.Position (Pos) ) );
       exception -- Prev
       when Implementation.Invalid_Position =>
          raise Invalid_Position;

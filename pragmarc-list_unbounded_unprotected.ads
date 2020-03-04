@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- General purpose list for sequential use
@@ -7,6 +7,7 @@
 -- Positions are used to manipulate a list
 --
 -- History:
+-- 2020 Mar 15     J. Carter          V1.2--Make Next and Prev Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
 ---------------------------------------------------------------------------------------------------
@@ -67,8 +68,8 @@ package PragmARC.List_Unbounded_Unprotected is
    -- Time: O(1)
 
    -- Operations to obtain valid positions from valid positions:
-   function Next (Pos : Position; List : Handle) return Position; -- raise Invalid_Position
-   function Prev (Pos : Position; List : Handle) return Position; -- raise Invalid_Position
+   function Next (List : Handle; Pos : Position) return Position; -- raise Invalid_Position
+   function Prev (List : Handle; Pos : Position) return Position; -- raise Invalid_Position
    -- Next and Prev raise Invalid_Position if Pos is invalid
    --
    -- Time: O(1)

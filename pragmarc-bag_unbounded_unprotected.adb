@@ -3,6 +3,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2020 Mar 15     J. Carter          V1.4--Make List_Unbounded_Unprotected's Next and Prev Object.Operation friendly
 -- 2020 Feb 15     J. Carter          V1.3--Make more Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
@@ -56,7 +57,7 @@ package body PragmARC.Bag_Unbounded_Unprotected is
             return (Found => True, Pos => Pos);
          end if;
 
-         Pos := Implementation.Next (Pos, Bag.List);
+         Pos := Bag.List.Next (Pos);
       end loop Search;
 
       return (Found => False);

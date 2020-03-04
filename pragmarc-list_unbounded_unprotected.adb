@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Mar 15     J. Carter          V1.4--Make Next and Prev Object.Operation friendly
 -- 2018 Aug 01     J. Carter          V1.3--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
@@ -59,7 +60,7 @@ package body PragmARC.List_Unbounded_Unprotected is
          exit Copy when From_Pos = Off_List (From);
 
          Append (Into => To, Item => Get (From, From_Pos), After => Last (To), New_Pos => New_Pos);
-         From_Pos := Next (From_Pos, From);
+         From_Pos := From.Next (From_Pos);
       end loop Copy;
    end Assign;
 
@@ -119,7 +120,7 @@ package body PragmARC.List_Unbounded_Unprotected is
    end Check_Valid;
    pragma Inline (Check_Valid);
 
-   function Next (Pos : Position; List : Handle) return Position is
+   function Next (List : Handle; Pos : Position) return Position is
       -- Empty
    begin -- Next
       Check_Valid (List => List, Pos => Pos);
@@ -127,7 +128,7 @@ package body PragmARC.List_Unbounded_Unprotected is
       return Position'(List_Id => Pos.List_Id, Ptr => Pos.Ptr.Next);
    end Next;
 
-   function Prev (Pos : Position; List : Handle) return Position is
+   function Prev (List : Handle; Pos : Position) return Position is
       -- Empty
    begin -- Prev
       Check_Valid (List => List, Pos => Pos);
@@ -260,7 +261,7 @@ package body PragmARC.List_Unbounded_Unprotected is
 
          exit All_Nodes when not Continue;
 
-         Pos := Next (Pos, Over);
+         Pos := Over.Next (Pos);
       end loop All_Nodes;
    end Iterate;
 
