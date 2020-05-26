@@ -1,8 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
+-- 2020 Jun 01     J. Carter          V1.2--Use existing Too_Short exception rather than a local exception
 -- 2016 Jul 01     J. Carter          V1.1--Made type B_String tagged and non-limited
 -- 2015 Nov 15     J. Carter          V1.0--Initial release
 --
@@ -40,7 +41,7 @@ package body PragmARC.B_Strings is
       -- From.Len > To.Max_Length
 
       if Drop = Ada.Strings.Error then
-         raise Too_Long;
+         raise Too_Short;
       end if;
 
       To.Len := To.Max_Length;
@@ -69,7 +70,7 @@ package body PragmARC.B_Strings is
       -- From'Length > To.Max_Length
 
       if Drop = Ada.Strings.Error then
-         raise Too_Long;
+         raise Too_Short;
       end if;
 
       To.Len := To.Max_Length;

@@ -1,12 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- Bounded, variable-length strings that are hopefully more usable than
 -- Ada.Strings.Bounded provides
--- Based on an idea by Robert Duff presented on comp.lang.ada, which didn't work
+-- MOdified from an idea by Robert Duff presented on comp.lang.ada, which works in Ada 12 but not in earlier versions
 --
 -- History:
+-- 2020 Jun 01     J. Carter          V1.4--Use existing Too_Short exception rather than a local exception
 -- 2016 Jul 01     J. Carter          V1.3--Made type B_String tagged and non-limited
 -- 2016 Mar 15     J. Carter          V1.2--Default discriminant doesn't work as Duff claimed, at least with GNAT
 -- 2016 Feb 15     J. carter          V1.1--Forgot "+" for To_B_String
@@ -30,12 +31,10 @@ package PragmARC.B_Strings is
 
    function Length (Source : B_String) return Natural;
 
-   Too_Long : exception;
-
    procedure Assign (To : in out B_String; From : in B_String; Drop : in Ada.Strings.Truncation := Ada.Strings.Error);
    -- Gives To the same value as From
-   -- If Drop = Error and Length (From) > To.Max_Length, raises Too_Long
-   -- To is unchanged if Too_Long is raised
+   -- If Drop = Error and Length (From) > To.Max_Length, raises Too_Short
+   -- To is unchanged if Too_Short is raised
    -- Default assignment (":=") only works for objects with the same value of Max_Length
    -- Assign works for any 2 B_Strings
 
