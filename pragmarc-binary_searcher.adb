@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2019 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
 -- History:
--- 2019 Apr 15     J. Carter          V1.0--Require integer Index
+-- 2020 Jul 15     J. Carter          V1.2--Improve calculation of Mid
+-- 2019 Apr 15     J. Carter          V1.1--Require integer Index
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
 with System;
@@ -34,7 +35,7 @@ package body PragmARC.Binary_Searcher is
          exit Find when Low in High - 1 .. High;
 
          if Big'Last - Big (Low) < Big (High) then
-            Mid := Index (Big (Low) / 2 + Big (High) / 2);
+            Mid := Index (Big (Low) + Big (High - Low) / 2);
          else
             Mid := Index ( (Big (Low) + Big (High) ) / 2);
          end if;
