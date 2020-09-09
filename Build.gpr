@@ -1,0 +1,12 @@
+
+project Build is
+
+  for source_dirs use (".");
+  for object_dir  use "obj";
+  for exec_dir    use ".";
+
+  package builder is
+    for switches ("ada") use ("-O3", "-gnat12");
+  end builder;
+
+end Build;

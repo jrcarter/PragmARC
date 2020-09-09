@@ -1,0 +1,4 @@
+*.stderr
+*.stdout
+*.ali
+obj/*
