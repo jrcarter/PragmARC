@@ -3,12 +3,13 @@
 -- **************************************************************************
 --
 -- History:
--- 2019 Sep 01     J. Carter          V1.5--Improve division
--- 2018 Oct 15     J. Carter          V1.4--Faster multiplication algorithm from Doug Rogers
--- 2018 Oct 01     J. Carter          V1.3--Handle negative numbers in Value
--- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
--- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
--- 2014 Apr 01     J. Carter          V1.0--Initial release
+-- 2020 Sep 09     Daniel Norte Moraes V1.6--Added Generic_Bounded_Integers with hint from J. Carter
+-- 2019 Sep 01     J. Carter           V1.5--Improve division
+-- 2018 Oct 15     J. Carter           V1.4--Faster multiplication algorithm from Doug Rogers
+-- 2018 Oct 01     J. Carter           V1.3--Handle negative numbers in Value
+-- 2018 Aug 01     J. Carter           V1.2--Cleanup compiler warnings
+-- 2017 Apr 15     J. Carter           V1.1--Added GCD and LCM
+-- 2014 Apr 01     J. Carter           V1.0--Initial release
 --
 with Ada.Characters.Handling;
 with Ada.Strings.Fixed;
@@ -87,6 +88,9 @@ package body PragmARC.Generic_Bounded_Integers is
       Result.Digit.Replace_Element (Index => 1, New_Item => Digit_Value (Abs_Value rem Radix) );
 
       if Abs_Value >= Radix then
+         if Result.Digit.Capacity < 2 then
+            raise Constraint_Error with " Overflow Capacity";
+         end if;
          Result.Digit.Append (New_Item => Digit_Value (Abs_Value / Radix) );
       end if;
 
@@ -159,7 +163,11 @@ package body PragmARC.Generic_Bounded_Integers is
 
       Sum := Sum / Radix;
 
-      if Sum /= 0 then -- Carry into final digit
+      if Result.Digit.Capacity < ada.Containers.Count_Type(Max_MSD + 1) then
+         if Sum /= 0 then -- Carry into final digit
+            raise Constraint_Error with " Number Overflow ";
+         end if;
+      else -- Carry into final digit if capacity allow this. :-)
          Insert (List => Result.Digit, Index => Max_MSD + 1, Value => Digit_Value (Sum) );
       end if;
 
@@ -233,12 +241,19 @@ package body PragmARC.Generic_Bounded_Integers is
       L_Max : constant Positive := Left.Digit.Last_Index;
       R_Max : constant Positive := Right.Digit.Last_Index;
 
+      -- A_Capacity        : constant Positive := Positive(Left.Digit.Capacity);
+      -- Overflow_Capacity : constant Boolean := A_Capacity <= (L_Max + R_Max);
+
       Result   : bounded_Integer;
       Sum      : Calculation_Value := 0;
       Prev_Sum : Calculation_Value := 0;
       Carry    : Calculation_Value := 0;
       L_Start  : Natural           := 0;
       L_Stop   : Natural           := 0;
+
+      R_Capacity        : constant Positive := Positive(Result.Digit.Capacity);
+      Overflow_Capacity : constant Boolean := R_Capacity < (L_Max + R_Max);
+      -- Overflow_Capacity : constant Boolean := R_Capacity <= (L_Max + R_Max);
 
       function Get (From : bounded_Integer; Column : Natural) return Calculation_Value is
          -- Empty declarative part
@@ -257,8 +272,12 @@ package body PragmARC.Generic_Bounded_Integers is
       end if;
 
       Result.Negative := Left.Negative /= Right.Negative;
-      Result.Digit.Set_Length (Length => Ada.Containers.Count_Type (L_Max + R_Max) );
 
+      if not Overflow_Capacity then
+         Result.Digit.Set_Length (Length => Ada.Containers.Count_Type (L_Max + R_Max) );
+      else
+         Result.Digit.Set_Length (Length => Ada.Containers.Count_Type (R_Capacity) );
+      end if;
       -- This calculates each digit of the result in turn from the digit products that contribute to it
       All_Result_Digits: for K in 0 .. L_Max + R_Max - 2 loop -- These are column numbers, starting at zero
          if K < R_Max then
@@ -287,9 +306,15 @@ package body PragmARC.Generic_Bounded_Integers is
          Carry := 0;
       end loop All_Result_Digits;
 
-      Set (Into => Result, Column => L_Max + R_Max - 1, Value => Sum);
-      Reduce_Digits (Value => Result);
+      if Overflow_Capacity then
+         if Sum /= 0 then
+            raise Constraint_Error with " Number Overflow " ;
+         end if;
+      else
+         Set (Into => Result, Column => L_Max + R_Max - 1, Value => Sum);
+      end if;
 
+      Reduce_Digits (Value => Result);
       return Result;
    end "*";
 
@@ -322,7 +347,7 @@ package body PragmARC.Generic_Bounded_Integers is
          Q           : Calculation_Value;
       begin -- Divide_Special
          Insert (List => Big_Radix.Digit, Index => 2, Value => 1); -- Big_Radix = Radix
-         Radix_Right := Big_Radix * Right;
+         Radix_Right := Big_Radix * Right; -- TODO:  verify capacity
 
          if Left >= Radix_Right then
             Divide (Left => Left - Radix_Right, Right => Right, Quotient => Quotient, Remainder => Remainder);
@@ -423,17 +448,17 @@ package body PragmARC.Generic_Bounded_Integers is
 
          return;
       end if;
-
+      -- *A
       if Abs_Left.Digit.Last_Index <= 2 and Abs_Right.Digit.Last_Index <= 2 then -- Both values will fit in Calculation_Value
          Left_Digit := Calculation_Value (Abs_Left.Digit.First_Element);
 
-         if Abs_Left.Digit.Last_Index > 1 then
+         if Abs_Left.Digit.Last_Index > 1 then  -- TODO: capacity >= 1 ok
             Left_Digit := Left_Digit + Calculation_Value (Abs_Left.Digit.Element (2) ) * Radix;
          end if;
 
          Right_Digit := Calculation_Value (Abs_Right.Digit.First_Element);
 
-         if Abs_Right.Digit.Last_Index > 1 then
+         if Abs_Right.Digit.Last_Index > 1 then -- TODO: capacity >= 1 ok
             Right_Digit := Right_Digit + Calculation_Value (Abs_Right.Digit.Element (2) ) * Radix;
          end if;
 
@@ -442,10 +467,20 @@ package body PragmARC.Generic_Bounded_Integers is
             Remain : constant Calculation_Value := Left_Digit - Result * Right_Digit;
          begin -- Build_Results
             Insert (List => Quotient.Digit, Index => 1, Value => Digit_Value (Result rem Radix) );
-            Insert (List => Quotient.Digit, Index => 2, Value => Digit_Value (Result / Radix) );
+
+            if Quotient.Digit.Capacity > 1 then
+               Insert (List => Quotient.Digit, Index => 2, Value => Digit_Value (Result / Radix) );
+            elsif Digit_Value (Result / Radix) /= 0 then
+               raise Constraint_Error with " Quotient Overflow ";
+            end if;
 
             Insert (List => Remainder.Digit, Index => 1, Value => Digit_Value (Remain rem Radix) );
-            Insert (List => Remainder.Digit, Index => 2, Value => Digit_Value (Remain / Radix) );
+
+            if Remainder.Digit.Capacity > 1 then
+               Insert (List => Remainder.Digit, Index => 2, Value => Digit_Value (Remain / Radix) );
+            elsif Digit_Value (Remain / Radix) /= 0 then
+               raise Constraint_Error with " Remainder Overflow ";
+            end if;
 
             Reduce_Digits (Value => Quotient);
             Reduce_Digits (Value => Remainder);
@@ -466,19 +501,26 @@ package body PragmARC.Generic_Bounded_Integers is
             if Factor_Digit < Radix / 2 then
                Factor_Digit := (Radix / 2) / Factor_Digit + 1;
                Insert (List => Factor.Digit, Index => 1, Value => Digit_Value (Factor_Digit rem Radix) );
-               Insert (List => Factor.Digit, Index => 2, Value => Digit_Value (Factor_Digit / Radix) );
+
+               if Factor.Digit.Capacity > 1 then
+                  Insert (List => Factor.Digit, Index => 2, Value => Digit_Value (Factor_Digit / Radix) );
+               elsif Digit_Value (Factor_Digit / Radix) /= 0 then
+                  raise Constraint_Error with " Factor Overflow ";
+               end if;
+
                Reduce_Digits (Value => Factor);
                Abs_Left := Factor * Abs_Left;
                Abs_Right := Factor * Abs_Right;
             end if;
          end Adjust;
       end if;
-
+      -- below is only used if Last_Index > 2 see *A. this itsef hold capacity > 2 too
       if Abs_Left.Digit.Last_Index in Abs_Right.Digit.Last_Index .. Abs_Right.Digit.Last_Index + 1 then
          Divide_Special (Left => Abs_Left, Right => Abs_Right, Quotient => Quotient, Remainder => Remainder);
 
          return;
       end if;
+      -- TODO: verify when capacity > 2
 
       Left_P := Abs_Left;
       Shift_Left (Value => Left_P, Places => Abs_Left.Digit.Last_Index - Abs_Right.Digit.Last_Index - 1);
@@ -689,7 +731,7 @@ package body PragmARC.Generic_Bounded_Integers is
 
       U_Base : constant bounded_Integer := To_bounded_Integer (Integer (Base) );
 
-      Result : Ada.Strings.Unbounded.Unbounded_String;
+      Result : Ada.Strings.Unbounded.Unbounded_String := Ada.Strings.Unbounded.To_Unbounded_String("");
       Digit  : bounded_Integer;
       Work   : bounded_Integer := abs Value;
       Temp   : bounded_Integer;
@@ -815,6 +857,13 @@ package body PragmARC.Generic_Bounded_Integers is
    begin -- LCM
       return (Left * Right) / GCD (Left, Right);
    end LCM;
+
+   function Max_Binary_Digits_Info return positive is
+      -- Empty
+   begin -- Max_Binary_Digits_Info
+      return Max_Capacity * Digit_Size;
+   end Max_Binary_Digits_Info;
+
 end PragmARC.Generic_Bounded_Integers;
 --
 -- This is free software; you can redistribute it and/or modify it under

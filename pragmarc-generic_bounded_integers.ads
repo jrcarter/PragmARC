@@ -12,7 +12,7 @@ private with Ada.Containers.Bounded_Vectors;
 private with System;
 
 generic
-   MaxDigits : Positive;
+   Max_Binary_Digits : Positive;
 package PragmARC.Generic_Bounded_Integers is
    type Bounded_Integer is private;
    -- Default initial value is zero
@@ -64,16 +64,24 @@ package PragmARC.Generic_Bounded_Integers is
 
    function LCM (Left : Bounded_Integer; Right : Bounded_Integer) return Bounded_Integer;
    -- Least common multiple
+
+   function Max_Binary_Digits_Info return positive;
+
 private -- PragmARC.Bounded_Integers
+   use type Ada.Containers.Count_Type;
+
    type Calculation_Value is mod System.Max_Binary_Modulus;
 
    Digit_Size : constant := Calculation_Value'Size / 2;
+   Digit_Decimal_Size1 : constant Natural := Max_Binary_Digits / Digit_Size;
+   Digit_Decimal_Size2 : constant Natural := Max_Binary_Digits mod Digit_Size;
+   Max_Capacity : constant Positive := (if Digit_Decimal_Size2 /= 0 then Digit_Decimal_Size1 + 1 else Digit_Decimal_Size1 );
 
    type Digit_Value is mod 2 ** Digit_Size;
 
    package Digit_Lists is new Ada.Containers.Bounded_Vectors (Index_Type => Positive, Element_Type => Digit_Value);
 
-   subtype Digit_List is Digit_Lists.Vector(Ada.Containers.Count_Type(MaxDigits));
+   subtype Digit_List is Digit_Lists.Vector(Ada.Containers.Count_Type(Max_Capacity));
 
    function Single_Zero return Digit_List;
    -- Returns a list of one digit, which is zero
