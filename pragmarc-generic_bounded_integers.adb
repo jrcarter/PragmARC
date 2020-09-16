@@ -864,6 +864,13 @@ package body PragmARC.Generic_Bounded_Integers is
       return Max_Capacity * Digit_Size;
    end Max_Binary_Digits_Info;
 
+   function Max_Decimal_Digits_Info return positive is
+      -- Empty
+   begin
+      -- 0.315464876 = log2/log9 :-)
+      return Positive (Max_Capacity * Positive(Digit_Size * 0.315464876));
+   end Max_Decimal_Digits_Info;
+
 end PragmARC.Generic_Bounded_Integers;
 --
 -- This is free software; you can redistribute it and/or modify it under

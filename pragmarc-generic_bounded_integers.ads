@@ -2,7 +2,7 @@
 -- Copyright (C) 2017 by PragmAda Software Engineering.  All rights reserved.
 -- **************************************************************************
 --
--- Integers bounded only by Integer'Last and available memory
+-- Integers bounded by Max_Binary_Digits Generic param. :-)
 --
 -- History:
 -- 2017 Apr 15     J. Carter          V1.1--Added GCD and LCM
@@ -67,6 +67,8 @@ package PragmARC.Generic_Bounded_Integers is
 
    function Max_Binary_Digits_Info return positive;
 
+   function Max_Decimal_Digits_Info return positive;
+
 private -- PragmARC.Bounded_Integers
    use type Ada.Containers.Count_Type;
 
@@ -75,9 +77,10 @@ private -- PragmARC.Bounded_Integers
    Digit_Size : constant := Calculation_Value'Size / 2;
    Digit_Decimal_Size1 : constant Natural := Max_Binary_Digits / Digit_Size;
    Digit_Decimal_Size2 : constant Natural := Max_Binary_Digits mod Digit_Size;
-   Max_Capacity : constant Positive := (if Digit_Decimal_Size2 /= 0 then Digit_Decimal_Size1 + 1 else Digit_Decimal_Size1 );
+   Max_Capacity : constant Positive := Digit_Decimal_Size1 + (if Digit_Decimal_Size2 /= 0 then 1 else 0 );
 
-   type Digit_Value is mod 2 ** Digit_Size;
+   type Digit_Value is mod 2 ** Digit_Size
+      with Default_Value => 0;
 
    package Digit_Lists is new Ada.Containers.Bounded_Vectors (Index_Type => Positive, Element_Type => Digit_Value);
 
@@ -89,7 +92,8 @@ private -- PragmARC.Bounded_Integers
    type Bounded_Integer is record
       Negative : Boolean    := False;
       Digit    : Digit_List := Single_Zero;
-   end record;
+   end record
+   with preelaborable_initialization;
 end PragmARC.Generic_Bounded_Integers;
 --
 -- This is free software; you can redistribute it and/or modify it under
