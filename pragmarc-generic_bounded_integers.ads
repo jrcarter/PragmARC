@@ -79,12 +79,12 @@ private -- PragmARC.Bounded_Integers
    type Calculation_Value is mod System.Max_Binary_Modulus;
 
    Digit_Size : constant := Calculation_Value'Size / 2;
-   
+
    Max_Capacity : constant Positive := Positive ( Long_Long_Float'Ceiling
       (Long_Long_Float (Max_Binary_Digits) / Long_Long_Float (Digit_Size)));
 
-   type Digit_Value is mod 2 ** Digit_Size
-      with Default_Value => 0;
+   type Digit_Value is mod 2 ** Digit_Size;
+
 
    package Digit_Lists is new Ada.Containers.Bounded_Vectors (Index_Type => Positive, Element_Type => Digit_Value);
 
