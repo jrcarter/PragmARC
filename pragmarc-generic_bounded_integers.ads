@@ -13,7 +13,9 @@ private with System;
 
 generic
    Max_Binary_Digits : Positive;
-package PragmARC.Generic_Bounded_Integers is
+package PragmARC.Generic_Bounded_Integers
+
+is
    type Bounded_Integer is private;
    -- Default initial value is zero
 
@@ -75,9 +77,8 @@ private -- PragmARC.Bounded_Integers
    type Calculation_Value is mod System.Max_Binary_Modulus;
 
    Digit_Size : constant := Calculation_Value'Size / 2;
-   Digit_Decimal_Size1 : constant Natural := Max_Binary_Digits / Digit_Size;
-   Digit_Decimal_Size2 : constant Natural := Max_Binary_Digits mod Digit_Size;
-   Max_Capacity : constant Positive := Digit_Decimal_Size1 + (if Digit_Decimal_Size2 /= 0 then 1 else 0 );
+   Max_Capacity : constant Positive := (Max_Binary_Digits / Digit_Size) +
+      (if Max_Binary_Digits mod Digit_Size /= 0 then 1 else 0 );
 
    type Digit_Value is mod 2 ** Digit_Size
       with Default_Value => 0;

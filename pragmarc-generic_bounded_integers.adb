@@ -64,7 +64,7 @@ package body PragmARC.Generic_Bounded_Integers is
       -- Empty declarative part
    begin -- Reduce_Digits
       Reduce : loop
-         exit Reduce when Value.Digit.Last_Index = 1 or Value.Digit.Last_Element /= 0;
+         exit Reduce when Value.Digit.Last_Index = 1 or else Value.Digit.Last_Element /= 0;
 
          Value.Digit.Delete_Last;
       end loop Reduce;
@@ -241,9 +241,6 @@ package body PragmARC.Generic_Bounded_Integers is
       L_Max : constant Positive := Left.Digit.Last_Index;
       R_Max : constant Positive := Right.Digit.Last_Index;
 
-      -- A_Capacity        : constant Positive := Positive(Left.Digit.Capacity);
-      -- Overflow_Capacity : constant Boolean := A_Capacity <= (L_Max + R_Max);
-
       Result   : bounded_Integer;
       Sum      : Calculation_Value := 0;
       Prev_Sum : Calculation_Value := 0;
@@ -346,8 +343,9 @@ package body PragmARC.Generic_Bounded_Integers is
          Right_Digit : Calculation_Value;
          Q           : Calculation_Value;
       begin -- Divide_Special
+         -- don't need verify Capacity because Divide_Special run only when Capacity > 2
          Insert (List => Big_Radix.Digit, Index => 2, Value => 1); -- Big_Radix = Radix
-         Radix_Right := Big_Radix * Right; -- TODO:  verify capacity
+         Radix_Right := Big_Radix * Right;
 
          if Left >= Radix_Right then
             Divide (Left => Left - Radix_Right, Right => Right, Quotient => Quotient, Remainder => Remainder);
@@ -436,7 +434,7 @@ package body PragmARC.Generic_Bounded_Integers is
       end if;
 
       Reduce : loop -- Move the point left until one of the operands is not a multiple of Radix: 1000 / 50 = 100 / 5
-         exit Reduce when Abs_Left.Digit.First_Element /= 0 or Abs_Right.Digit.First_Element /= 0;
+         exit Reduce when Abs_Left.Digit.First_Element /= 0 or else Abs_Right.Digit.First_Element /= 0;
 
          Abs_Left.Digit.Delete_First;
          Abs_Right.Digit.Delete_First;
@@ -449,16 +447,16 @@ package body PragmARC.Generic_Bounded_Integers is
          return;
       end if;
       -- *A
-      if Abs_Left.Digit.Last_Index <= 2 and Abs_Right.Digit.Last_Index <= 2 then -- Both values will fit in Calculation_Value
+      if Abs_Left.Digit.Last_Index <= 2 and then Abs_Right.Digit.Last_Index <= 2 then -- Both values will fit in Calculation_Value
          Left_Digit := Calculation_Value (Abs_Left.Digit.First_Element);
 
-         if Abs_Left.Digit.Last_Index > 1 then  -- TODO: capacity >= 1 ok
+         if Abs_Left.Digit.Last_Index > 1 then  -- capacity > 1 is true when Last_Index > 1 :-)
             Left_Digit := Left_Digit + Calculation_Value (Abs_Left.Digit.Element (2) ) * Radix;
          end if;
 
          Right_Digit := Calculation_Value (Abs_Right.Digit.First_Element);
 
-         if Abs_Right.Digit.Last_Index > 1 then -- TODO: capacity >= 1 ok
+         if Abs_Right.Digit.Last_Index > 1 then -- capacity > 1 is true when Last_Index > 1 :-)
             Right_Digit := Right_Digit + Calculation_Value (Abs_Right.Digit.Element (2) ) * Radix;
          end if;
 
@@ -730,7 +728,8 @@ package body PragmARC.Generic_Bounded_Integers is
                                            30 => "U", 31 => "V", 32 => "W", 33 => "X", 34 => "Y", 35 => "Z");
 
       U_Base : constant bounded_Integer := To_bounded_Integer (Integer (Base) );
-
+      -- if missing To_Unbounded_String("") below, some compilers can
+      -- generate 'storage_error' exception. :-) Enjoy!
       Result : Ada.Strings.Unbounded.Unbounded_String := Ada.Strings.Unbounded.To_Unbounded_String("");
       Digit  : bounded_Integer;
       Work   : bounded_Integer := abs Value;
