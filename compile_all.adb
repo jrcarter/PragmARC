@@ -74,6 +74,7 @@ with PragmARC.Us_Deck;
 with PragmARC.Vector_Conversions;
 with PragmARC.Word_Input;
 with PragmARC.Wrapping;
+with PragmARC.Generic_Bounded_Integers;
 
 procedure Compile_All is
    -- null;

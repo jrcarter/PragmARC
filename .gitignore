@@ -2,3 +2,7 @@
 *.stdout
 *.ali
 obj/*
+**/*.stderr
+**/*.stdout
+**/*.ali
+**/*.o
