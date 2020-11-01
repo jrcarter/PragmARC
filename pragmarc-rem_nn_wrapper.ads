@@ -1,5 +1,6 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- A Recursive Error Minimization (REM) neural network
@@ -9,16 +10,20 @@
 -- Set Num_Patterns to 1 to use a previously trained network
 -- Default values for all other parameters should be satisfactory
 --
--- Note: with GNAT, a unit that instantiates REM_NN_Wrapper.REM_NN should not use an optimization level above -O1
---
 -- History:
+-- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
+----------------------------------------------------------------------------
 -- 2016 Mar 15     J. Carter          V2.2--Added Random_Weights
 -- 2015 Nov 01     J. Carter          V2.1--Removed unused generic parameter
 -- 2014 Jul 01     J. Carter          V2.0--Improved interface
 -- 2014 Jun 01     J. Carter          V1.1--Added concurrency and GNAT warning
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
+pragma Assertion_Policy (Check);
+pragma Unsuppress (All_Checks);
+
 with System;
+
 package PragmARC.REM_NN_Wrapper is
    type Real is digits System.Max_Digits; -- Inputs and outputs of the network
    subtype Natural_Real  is Real range 0.0              .. Real'Safe_Last;
@@ -37,7 +42,7 @@ package PragmARC.REM_NN_Wrapper is
       Thinning_Active             : Boolean := True;
 
       -- Network parameters
-      Beta : Positive_Real := 0.1; -- Learning rate; 0.1 has always been satisfactory so far
+      Beta : Positive_Real := 0.1; -- Learning rate; 0.1 is usually satisfactory, but values up to 0.5 are often OK
 
       -- Recursive means' characteristic lengths:
       P : Positive_Real := 16.0 * Real'Max (Real'Max (Real (Num_Patterns), Real (Num_Input_Nodes) ), Real (Num_Output_Nodes) );
@@ -64,6 +69,8 @@ package PragmARC.REM_NN_Wrapper is
       -- Gets an input pattern & associated desired output pattern for this pattern #
       -- Called by Prepare_For_Training and Respond
    package REM_NN is
+      pragma Assert (Num_Hidden_Nodes > 0 or Input_To_Output_Connections, "REM_NN: Invalid architecture");
+
       subtype Input_ID  is Positive range 1 .. Num_Input_Nodes;
       subtype Hidden_ID is Positive range 1 .. Num_Hidden_Nodes;
       subtype Output_ID is Positive range 1 .. Num_Output_Nodes;
@@ -123,26 +130,5 @@ package PragmARC.REM_NN_Wrapper is
 
       procedure Train (Num_Tasks : in Positive := 1);
       -- Propagates error & derivative backward through the network, & updates the network's weights
-
-      Invalid_Architecture : exception;
-      -- This package can be initialized with Num_Hidden_Nodes = 0 and Input_To_Output_Connections = False
-      -- That combination represents an invalid network architecture
-      -- The initialization of this package checks for this condition, and raises Invalid_Architecture if it exists
    end REM_NN;
 end PragmARC.REM_NN_Wrapper;
---
--- This is free software; you can redistribute it and/or modify it under
--- terms of the GNU General Public License as published by the Free Software
--- Foundation; either version 2, or (at your option) any later version.
--- This software is distributed in the hope that it will be useful, but WITH
--- OUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
--- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
--- for more details. Free Software Foundation, 59 Temple Place - Suite
--- 330, Boston, MA 02111-1307, USA.
---
--- As a special exception, if other files instantiate generics from this
--- unit, or you link this unit with other files to produce an executable,
--- this unit does not by itself cause the resulting executable to be
--- covered by the GNU General Public License. This exception does not
--- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License.

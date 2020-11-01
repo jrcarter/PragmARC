@@ -1,8 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2016 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
+----------------------------------------------------------------------------
 -- 2016 Jun 01     J. Carter          V2.1--Added license text, corrected Skip_Line, and set EOL per file
 -- 2016 Mar 01     J. Carter          V2.0--Use Sequential_IO so no extra EOLs when a file is closed
 -- 2016 Feb 15     J. Carter          V1.0--Initial version
@@ -47,42 +50,31 @@ package body PragmARC.Text_IO is
       Character_IO.Close (File => File.File);
    end Close;
 
-   function Is_Open (File : File_Handle) return Boolean is
-      -- Empty
-   begin -- Is_Open
-      return Character_IO.Is_Open (File.File);
-   end Is_Open;
+   function Is_Open (File : in File_Handle) return Boolean is
+      (Character_IO.Is_Open (File.File) );
+
+   function Mode (File : in File_Handle) return Character_IO.File_Mode is
+      (Character_IO.Mode (File.File) );
 
    procedure New_Line (File : in out File_Handle; Spacing : in Positive := 1) is
-      function EOL_String return String;
-      -- Returns the EOL string for File.EOL
-
-      function EOL_String return String is
-         -- Empty
-      begin -- EOL_String
-         case File.EOL is
-         when DOS_Windows_EOL =>
-            return DOS_Windows_String;
-         when Mac_EOL =>
-            return Mac_String;
-         when Unix_EOL =>
-            return Unix_String;
-         end case;
-      end EOL_String;
-
-      EOL : constant String := EOL_String;
+      EOL : constant String := (case File.EOL is
+                                when DOS_Windows_EOL => DOS_Windows_String,
+                                when Mac_EOL         => Mac_String,
+                                when Unix_EOL        => Unix_String);
    begin -- New_Line
       All_Lines : for I in 1 .. Spacing loop
-         All_Characters : for J in EOL'Range loop
-            Character_IO.Write (File => File.File, Item => EOL (J) );
+         All_Characters : for C of EOL loop
+            Character_IO.Write (File => File.File, Item => C);
          end loop All_Characters;
       end loop All_Lines;
    end New_Line;
 
-   function Get_C (File : File_Handle) return Character;
+   function Get_C (File : in out File_Handle) return Character with
+      Pre => File.Is_Open and then File.Mode = In_File;
    -- Gets the next Character from File, including EOL Characters
 
-   procedure Put_Back_C (File : in out File_Handle; Item : in Character);
+   procedure Put_Back_C (File : in out File_Handle; Item : in Character) with
+      Pre => File.Empty or else raise Program_Error with "Put_Back_C: Buffer not empty";
    -- Makes Item the Character that Get_C will return next
 
    procedure Skip_Line (File : in out File_Handle; Spacing : in Positive := 1) is
@@ -91,9 +83,10 @@ package body PragmARC.Text_IO is
       EOF   : Boolean := True; -- Indicates if End_Error should be reraised
    begin -- Skip_Line
       All_Lines : for I in 1 .. Spacing loop
+         EOF := I < Spacing;
+
          Find_EOL : loop
             Char1 := Get_C (File);
-            EOF := I < Spacing;
 
             exit Find_EOL when Char1 = Ada.Characters.Latin_1.LF;
 
@@ -116,19 +109,16 @@ package body PragmARC.Text_IO is
       -- Otherwise we have a final line without a line terminator, or with a Mac line terminator, and we've skipped that line
    end Skip_Line;
 
-   function End_Of_Line (File : File_Handle) return Boolean is
+   function End_Of_Line (File : in out File_Handle) return Boolean is
       Char : constant Character := Get_C (File);
    begin -- End_Of_Line
-      Put_Back_C (File => File.Handle.Ptr.all, Item => Char);
+      Put_Back_C (File => File, Item => Char);
 
       return Char = Ada.Characters.Latin_1.CR or Char = Ada.Characters.Latin_1.LF;
    end End_Of_Line;
 
-   function End_Of_File (File : File_Handle) return Boolean is
-      -- Empty
-   begin -- End_Of_File
-      return Character_IO.End_Of_File (File => File.File);
-   end End_Of_File;
+   function End_Of_File (File : in File_Handle) return Boolean is
+      (Character_IO.End_Of_File (File => File.File) );
 
    procedure Get (File : in out File_Handle; Item : out Character) is
       Char : Character;
@@ -165,22 +155,22 @@ package body PragmARC.Text_IO is
    procedure Put (File : in out File_Handle; Item : in String) is
       -- Empty
    begin -- Put
-      All_Characters : for I in Item'Range loop
-         Character_IO.Write (File => File.File, Item => Item (I) );
+      All_Characters : for C of Item loop
+         Character_IO.Write (File => File.File, Item => C);
       end loop All_Characters;
    end Put;
 
-   function Get_Line (File : File_Handle) return String is
+   function Get_Line (File : in out File_Handle) return String is
       Line : String (1 .. 1000);
       Last : Natural;
    begin -- Get_Line
-      Get_Line (File => File.Handle.Ptr.all, Item => Line, Last => Last);
+      Get_Line (File => File, Item => Line, Last => Last);
 
       if Last < Line'Last then
          return Line (Line'First .. Last);
       end if;
 
-      return Line & Get_Line (File);
+      return Line & File.Get_Line;
    end Get_Line;
 
    procedure Get_Line (File : in out File_Handle; Item : out String; Last : out Natural) is
@@ -212,15 +202,14 @@ package body PragmARC.Text_IO is
       New_Line (File => File);
    end Put_Line;
 
-   function Get_C (File : File_Handle) return Character is
-      F      : File_Handle renames File.Handle.Ptr.all;
+   function Get_C (File : in out File_Handle) return Character is
       Result : Character;
    begin -- Get_C
-      if F.Empty then
-         Character_IO.Read (File => F.File, Item => Result);
+      if File.Empty then
+         Character_IO.Read (File => File.File, Item => Result);
       else
-         Result := F.Buffer;
-         F.Empty := True;
+         Result := File.Buffer;
+         File.Empty := True;
       end if;
 
       return Result;
@@ -229,27 +218,7 @@ package body PragmARC.Text_IO is
    procedure Put_Back_C (File : in out File_Handle; Item : in Character) is
       -- Empty
    begin -- Put_Back_C
-      if not File.Empty then
-         raise Program_Error with "Put_Back_C: Buffer not empty";
-      end if;
-
       File.Buffer := Item;
       File.Empty := False;
    end Put_Back_C;
 end PragmARC.Text_IO;
---
--- This is free software; you can redistribute it and/or modify it under
--- terms of the GNU General Public License as published by the Free Software
--- Foundation; either version 2, or (at your option) any later version.
--- This software is distributed in the hope that it will be useful, but WITH
--- OUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
--- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
--- for more details. Free Software Foundation, 59 Temple Place - Suite
--- 330, Boston, MA 02111-1307, USA.
---
--- As a special exception, if other files instantiate generics from this
--- unit, or you link this unit with other files to produce an executable,
--- this unit does not by itself cause the resulting executable to be
--- covered by the GNU General Public License. This exception does not
--- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License.

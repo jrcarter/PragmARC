@@ -1,12 +1,18 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2000 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Three way comparison operation
 --
 -- History:
+-- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
+----------------------------------------------------------------------------
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
+pragma Assertion_Policy (Check);
+pragma Unsuppress (All_Checks);
+
 package PragmARC.Three_Way is
    pragma Pure;
 
@@ -17,22 +23,8 @@ package PragmARC.Three_Way is
 
       with function "<" (Left : Item; Right : Item) return Boolean is <>;
       with function "=" (Left : Item; Right : Item) return Boolean is <>;
-   function Compare (Left : Item; Right : Item) return Relation_Id;
-   -- Returns Less if Left < Right; Equal if Left = Right; Greater otherwise
+   function Compare (Left : Item; Right : Item) return Relation_Id with
+      Post => Compare'Result =  (if Left < Right then Less
+                                 elsif Left = Right then Equal
+                                 else Greater);
 end PragmARC.Three_Way;
---
--- This is free software; you can redistribute it and/or modify it under
--- terms of the GNU General Public License as published by the Free Software
--- Foundation; either version 2, or (at your option) any later version.
--- This software is distributed in the hope that it will be useful, but WITH
--- OUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
--- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
--- for more details. Free Software Foundation, 59 Temple Place - Suite
--- 330, Boston, MA 02111-1307, USA.
---
--- As a special exception, if other files instantiate generics from this
--- unit, or you link this unit with other files to produce an executable,
--- this unit does not by itself cause the resulting executable to be
--- covered by the GNU General Public License. This exception does not
--- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License.

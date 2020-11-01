@@ -1,8 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
+----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V2.4--Cleanup compiler warnings
 -- 2016 Jun 01     J. Carter          V2.3--Random_Range moved to PragmARC.Real_Random_Ranges
 -- 2016 Jun 01     J. Carter          V2.2--Changed comment for empty declarative part and formatting
@@ -17,11 +20,12 @@ with Ada.Numerics.Generic_Elementary_Functions;
 with Ada.Sequential_IO;
 with Ada.Unchecked_Deallocation;
 
-with PragmARC.Real_Random_Ranges;
-with PragmARC.Universal_Random;
+with PragmARC.Randomness.Real_Ranges;
+with PragmARC.Randomness.Universal;
 
-use Ada;
 package body PragmARC.REM_NN_Wrapper is
+   use Ada;
+
    package body REM_NN is
       subtype Pattern_ID is Positive range 1 .. Num_Patterns;
       type Desired_Set is array (Pattern_ID) of Output_Set;
@@ -152,8 +156,8 @@ package body PragmARC.REM_NN_Wrapper is
 
       package Connection_IO is new Sequential_IO (Element_Type => Weight_Info);
 
-      package Random is new Universal_Random (Supplied_Real => Real);
-      package Ranges is new Real_Random_Ranges (Supplied_Real => Real);
+      package Random is new Randomness.Universal (Supplied_Real => Real);
+      package Ranges is new Randomness.Real_Ranges (Supplied_Real => Real);
       package Real_Math is new Numerics.Generic_Elementary_Functions (Float_Type => Real);
 
       protected Control is
@@ -188,18 +192,14 @@ package body PragmARC.REM_NN_Wrapper is
 
       -- New_Rm: Calculate the new value of a Recursive Mean
       function New_Rm (Length : Positive_Real; Old_Value : Real; New_Value : Real) return Real is
-         -- Empty
-      begin -- New_Rm
-         return (1.0 - 1.0 / Length) * Old_Value + (1.0 / Length) * New_Value;
-      end New_Rm;
+         ( (1.0 - 1.0 / Length) * Old_Value + (1.0 / Length) * New_Value);
 
       -- Update_values: Update the values related to a connection
       procedure Update_Values (Sender_Out   : in Real;
                                Receiver_Out : in Real;
                                E_Star       : in Real;
                                H_Star       : in Real;
-                               Weight       : in out Weight_Group
-                              )
+                               Weight       : in out Weight_Group)
       is
          Delta_W_Lim : constant := 100.0;
          Psi_Lim     : constant := 100.0;
@@ -221,6 +221,7 @@ package body PragmARC.REM_NN_Wrapper is
          if Thinning_Active then
             Psi := Real'Min (Real'Max (2.0 * Sender_Out * Receiver_Out * Weight.Weight, -Psi_Lim), Psi_Lim);
             Denom := (2.0 * Sender_Out * Receiver_Out) ** 2;
+
             if Denom < Denom_Lim then
                Weight.G := New_Rm (Cycle_S,
                                    Weight.G,
@@ -557,10 +558,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Input;
 
          function Get_Output (From : Node_Handle) return Real is
-            -- Empty
-         begin -- Get_Output
-            return From.Output;
-         end Get_Output;
+            (From.Output);
       end Input;
 
       package body Hidden is
@@ -581,10 +579,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Respond;
 
          function Get_Output (From : Node_Handle) return Real is
-            -- Empty
-         begin -- Get_Output
-            return From.Output;
-         end Get_Output;
+            (From.Output);
 
          procedure Train (Node : in out Node_Handle; ID : in Hidden_ID) is
             Star : Star_Group;
@@ -633,10 +628,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Weight;
 
          function Get_Weight (Node : Node_Handle; From : Input_ID) return Weight_Group is
-            -- Empty
-         begin -- Get_Weight
-            return Node.Weight (From);
-         end Get_Weight;
+            (Node.Weight (From) );
 
          procedure Set_Bias_Weight (Node : in out Node_Handle; Weight : in Weight_Group) is
             -- Empty
@@ -645,10 +637,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Bias_Weight;
 
          function Get_Bias_Weight (Node : Node_Handle) return Weight_Group is
-            -- Empty
-         begin -- Get_Bias_Weight
-            return Node.Bias;
-         end Get_Bias_Weight;
+            (Node.Bias);
       end Hidden;
 
       package body Output is
@@ -726,10 +715,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Train;
 
          function Get_Stars (Node : Node_Handle; From : Hidden_ID) return Star_Group is
-            -- Empty
-         begin -- Get_Stars
-            return Node.Hidden_Star (From);
-         end Get_Stars;
+            (Node.Hidden_Star (From) );
 
          procedure Set_Input_Weight (Node : in out Node_Handle; From : in Input_ID; Weight : in Weight_Group) is
             -- Empty
@@ -738,10 +724,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Input_Weight;
 
          function Get_Input_Weight (Node : Node_Handle; From : Input_ID) return Weight_Group is
-            -- Empty
-         begin -- Get_Input_Weight
-            return Node.Input_Weight (From);
-         end Get_Input_Weight;
+            (Node.Input_Weight (From) );
 
          procedure Set_Hidden_Weight (Node : in out Node_Handle; From : in Hidden_ID; Weight : in Weight_Group) is
             -- Empty
@@ -750,10 +733,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Hidden_Weight;
 
          function Get_Hidden_Weight (Node : Node_Handle; From : Hidden_ID) return Weight_Group is
-            -- Empty
-         begin -- Get_Hidden_Weight
-            return Node.Hidden_Weight (From);
-         end Get_Hidden_Weight;
+            (Node.Hidden_Weight (From) );
 
          procedure Set_Bias_Weight (Node : in out Node_Handle; Weight : in Weight_Group) is
             -- Empty
@@ -762,10 +742,7 @@ package body PragmARC.REM_NN_Wrapper is
          end Set_Bias_Weight;
 
          function Get_Bias_Weight (Node : Node_Handle) return Weight_Group is
-            -- Empty
-         begin -- Get_Bias_Weight
-            return Node.Bias;
-         end Get_Bias_Weight;
+            (Node.Bias);
       end Output;
 
       procedure Finalize (Object : in out Finalizer) is
@@ -780,26 +757,6 @@ package body PragmARC.REM_NN_Wrapper is
          Free (OutPut_Node_Ptr);
       end Finalize;
    begin -- REM_NN
-      if Num_Hidden_Nodes <= 0 and then not Input_To_Output_Connections then
-         raise Invalid_Architecture;
-      end if;
-
       Random.Randomize;
    end REM_NN;
 end PragmARC.REM_NN_Wrapper;
---
--- This is free software; you can redistribute it and/or modify it under
--- terms of the GNU General Public License as published by the Free Software
--- Foundation; either version 2, or (at your option) any later version.
--- This software is distributed in the hope that it will be useful, but WITH
--- OUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
--- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
--- for more details. Free Software Foundation, 59 Temple Place - Suite
--- 330, Boston, MA 02111-1307, USA.
---
--- As a special exception, if other files instantiate generics from this
--- unit, or you link this unit with other files to produce an executable,
--- this unit does not by itself cause the resulting executable to be
--- covered by the GNU General Public License. This exception does not
--- however invalidate any other reasons why the executable file might be
--- covered by the GNU Public License.

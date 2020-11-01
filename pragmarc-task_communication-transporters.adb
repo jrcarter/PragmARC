@@ -9,10 +9,12 @@
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
-package body PragmARC.Wrapping is
-   function Wrap_Pred (Value : Item) return Item is
-      (if Value = Item'First then Item'Last else Item'Pred (Value) );
-
-   function Wrap_Succ (Value : Item) return Item is
-      (if Value = Item'Last then Item'First else Item'Succ (Value) );
-end PragmARC.Wrapping;
+package body PragmARC.Task_Communication.Transporters is
+   task body Transporter is
+      -- Empty
+   begin -- Transporter
+      Forever : loop
+         Put (Data => Get);
+      end loop Forever;
+   end Transporter;
+end PragmARC.Task_Communication.Transporters;
