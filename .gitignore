@@ -5,3 +5,4 @@ messages.txt
 *.ali
 *.o
 *-loc.xml
+*.cswi
