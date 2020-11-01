@@ -1,0 +1,7 @@
+name = "pragmarc"
+description = "Shiny new project"
+version = "0.0.0"
+
+authors = ["Per Sandberg"]
+maintainers = ["Per Sandberg <per.s.sandberg@bahnhof.se>"]
+maintainers-logins = ["persan"]

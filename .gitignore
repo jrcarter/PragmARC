@@ -1,0 +1,7 @@
+gpsauto.cgpr
+messages.txt
+*.stderr
+*.stdout
+*.ali
+*.o
+*-loc.xml
