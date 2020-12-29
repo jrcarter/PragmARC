@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- A simplified cross between a list and a queue to be used as a deck of cards in card games
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.1--Removed limited and Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2012 Dec 01     J. Carter          V1.2--Added Insert
@@ -18,7 +19,7 @@ pragma Unsuppress (All_Checks);
 generic -- PragmARC.Cards.Decks.General
    type Card is private; -- A deck of cards
 package PragmARC.Cards.Decks.General is
-   type Handle (Max_Cards : Positive) is tagged limited private;
+   type Handle (Max_Cards : Positive) is tagged private;
    -- A Handle can hold at most Max_Cards cards
    -- A Handle is initially empty
 
@@ -82,13 +83,6 @@ package PragmARC.Cards.Decks.General is
    --
    -- Time: O(1)
 
-   procedure Assign (To : in out Handle; From : in Handle) with
-      Pre  => To.Max_Cards >= From.Size or else raise Too_Short,
-      Post => To = From;
-   -- Gives To the same value as From
-   --
-   -- Time: O(N)
-
    function "=" (Left : Handle; Right : Handle) return Boolean;
    -- Returns True if Left and Right contain the same deck; False otherwise
    --
@@ -96,7 +90,7 @@ package PragmARC.Cards.Decks.General is
 private -- PragmARC.Deck_Handler
    type Deck_Set is array (Positive range <>) of Card;
 
-   type Handle (Max_Cards : Positive) is tagged limited record
+   type Handle (Max_Cards : Positive) is tagged record
       Count : Natural := 0;
       Value : Deck_Set (1 .. Max_Cards);
    end record;

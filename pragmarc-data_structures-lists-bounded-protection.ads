@@ -9,6 +9,7 @@
 -- This is based on Ada.Containers.Bounded_Doubly_Linked_Lists and all the restrictions of that apply
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Make Length O(1)
@@ -27,9 +28,7 @@ with System;
 
 generic -- PragmARC.Data_Structures.Lists.Bounded.Protection
    type Element is private;
-package PragmARC.Data_Structures.Lists.Bounded.Protection is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Lists.Bounded.Protection with Preelaborate is
    package Implementation is new Ada.Containers.Bounded_Doubly_Linked_Lists (Element_Type => Element);
 
    type Position is private;

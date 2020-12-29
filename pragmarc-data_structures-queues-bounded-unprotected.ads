@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,8 @@
 -- Each queue has a preset maximum size
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
@@ -20,24 +22,20 @@
 pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
-with Ada.Containers.Bounded_Doubly_Linked_Lists;
+with Ada.Containers;
+
+private with Ada.Containers.Bounded_Doubly_Linked_Lists;
 
 generic -- PragmARC.Data_Structures.Queues.Bounded.Unprotected
    type Element is private;
-package PragmARC.Data_Structures.Queues.Bounded.Unprotected is
-   pragma Preelaborate;
-
-   type Handle (Max_Size : Ada.Containers.Count_Type) is tagged limited private; -- Initial value: emtpy
+package PragmARC.Data_Structures.Queues.Bounded.Unprotected with Preelaborate is
+   type Handle (Max_Size : Ada.Containers.Count_Type) is tagged private; -- Initial value: emtpy
 
    procedure Clear (Queue : in out Handle) with
       Post => Queue.Is_Empty;
    -- Makes Queue empty
    -- Contents of Queue are lost
    -- All queues are initially empty
-
-   procedure Assign (To : out Handle; From : in Handle) with
-      Pre => Integer (To.Max_Size) >= From.Length or else raise Too_Short;
-   -- Makes To a copy of From
 
    procedure Put (Into : in out Handle; Item : in Element) with
       Pre  => not Into.Is_Full or else raise Full,
@@ -69,7 +67,7 @@ package PragmARC.Data_Structures.Queues.Bounded.Unprotected is
 private -- PragmARC.Data_Structures.Queues.Bounded.Unprotected
    package Implementation is new Ada.Containers.Bounded_Doubly_Linked_Lists (Element_Type => Element);
 
-   type Handle (Max_Size : Ada.Containers.Count_Type) is tagged limited record
+   type Handle (Max_Size : Ada.Containers.Count_Type) is tagged record
       List : Implementation.List (Capacity => Max_Size);
    end record;
 end PragmARC.Data_Structures.Queues.Bounded.Unprotected;

@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.1--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
@@ -25,15 +26,6 @@ package body PragmARC.Data_Structures.Stacks.Unbounded.Unprotected is
    begin -- Clear
       Stack.List.Clear;
    end Clear;
-
-   procedure Assign (To : out Handle; From : in Handle) is
-      -- Empty
-   begin -- Assign
-      To.List.Assign (Source => From.List);
-   exception -- Assign
-   when Storage_Error =>
-      raise Storage_Exhausted;
-   end Assign;
 
    function Is_Empty (Stack : Handle) return Boolean is
       (Stack.List.Is_Empty);

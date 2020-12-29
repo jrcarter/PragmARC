@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.1--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Oct 01     J. Carter          V1.3--Random_Int moved to PragmARC.Real_Random_Ranges
@@ -95,13 +96,6 @@ package body PragmARC.Cards.Decks.General is
 
    function Value (From : Handle; Position : Positive) return Card is
       (From.Value (Position) );
-
-   procedure Assign (To : in out Handle; From : in Handle) is
-      -- Empty
-   begin -- Assign
-      To.Count := From.Count;
-      To.Value (1 .. To.Count) := From.Value (1 .. From.Count);
-   end Assign;
 
    function "=" (Left : Handle; Right : Handle) return Boolean is
       (Left.Count = Right.Count and then Left.Value (1 .. Left.Count) = Right.Value (1 .. Right.Count) );

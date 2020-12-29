@@ -6,8 +6,9 @@
 -- Root of the Matching hierarchy
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V1.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V1.0--Initial Ada-12 version
 --
-package PragmARC.Matching is
-   pragma Pure;
+package PragmARC.Matching with Pure is
+   -- Empty
 end PragmARC.Matching;

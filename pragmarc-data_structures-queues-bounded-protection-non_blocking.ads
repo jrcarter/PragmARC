@@ -7,6 +7,7 @@
 -- Each queue has a preset maximum size
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -27,9 +28,7 @@ with System;
 
 generic -- PragmARC.Data_Structures.Queues.Bounded.Protection.Non_Blocking
    type Element is private;
-package PragmARC.Data_Structures.Queues.Bounded.Protection.Non_Blocking is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Queues.Bounded.Protection.Non_Blocking with Preelaborate is
    package Implementation is new Unprotected (Element => Element);
 
    protected type Handle (Max_Size : Ada.Containers.Count_Type; Ceiling_Priority : System.Any_Priority) is -- Initial value: emtpy

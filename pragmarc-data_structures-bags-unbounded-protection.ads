@@ -6,6 +6,7 @@
 -- Generic unbounded-bag ADT for general use.
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.1--Make Size O(1)
@@ -29,9 +30,7 @@ generic -- PragmARC.Data_Structures.Bags.Unbounded.Protection
    with function "=" (Left : Element; Right : Element) return Boolean is <>;
    -- Returns True if Left and Right are equal; returns False otherwise.
    -- "=" is often implemented to compare only part of the elements (the Key).
-package PragmARC.Data_Structures.Bags.Unbounded.Protection is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Bags.Unbounded.Protection with Preelaborate is
    package Implementation is new PragmARC.Data_Structures.Bags.Unbounded.Unprotected (Element => Element, "=" => "=");
 
    type Find_Result (Found : Boolean := False) is record -- Type returned by Find

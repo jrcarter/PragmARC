@@ -6,8 +6,9 @@
 -- Root of the Unbounded_Numbers hierarchy
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V1.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V1.0--Initial Ada-12 version
 --
-package PragmARC.Unbounded_Numbers is
-   pragma Pure;
+package PragmARC.Unbounded_Numbers with Pure is
+   -- Empty
 end PragmARC.Unbounded_Numbers;

@@ -6,6 +6,7 @@
 -- General purpose stack for general use
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Make Length O(1)
@@ -27,9 +28,7 @@ with System;
 
 generic -- PragmARC.Data_Structures.Stacks.Unbounded.Protection
    type Element is private;
-package PragmARC.Data_Structures.Stacks.Unbounded.Protection is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Stacks.Unbounded.Protection with Preelaborate is
    package Implementation is new Unprotected (Element => Element);
 
    protected type Handle (Ceiling_Priority : System.Any_Priority := System.Default_Priority) is -- Initial value: empty

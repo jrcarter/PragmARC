@@ -1,11 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Pascal-like set type and operations
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.2--Corrected comments
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
@@ -17,9 +19,7 @@ pragma Unsuppress (All_Checks);
 
 generic -- PragmARC.Data_Structures.Sets.Discrete
    type Element is (<>);
-package PragmARC.Data_Structures.Sets.Discrete is
-   pragma Pure;
-
+package PragmARC.Data_Structures.Sets.Discrete with Pure is
    type Set is tagged private; -- Initial value: empty
 
    Empty : constant Set; -- No members
@@ -28,7 +28,7 @@ package PragmARC.Data_Structures.Sets.Discrete is
    function "+" (Left : Set; Right : Set) return Set; -- Union
    function Union (Left : Set; Right : Set) return Set renames "+";
 
-   -- These two perform the union in the Set and a Set consisting in the Element
+   -- These two perform the union of the Set and a Set consisting of the Element
    function "+" (Left : Set;     Right : Element) return Set;
    function "+" (Left : Element; Right : Set)     return Set;
    function Union (Left : Set;     Right : Element) return Set renames "+";
@@ -40,7 +40,7 @@ package PragmARC.Data_Structures.Sets.Discrete is
    function "-" (Left : Set; Right : Set) return Set; -- Difference
    function Difference (Left : Set; Right : Set) return Set renames "-";
 
-   function "-" (Left : Set; Right : Element) return Set; -- Performs the difference in Left and a Set consisting in Right
+   function "-" (Left : Set; Right : Element) return Set; -- Performs the difference of Left and a Set consisting of Right
    function Difference (Left : Set; Right : Element) return Set renames "-";
 
    function "/" (Left : Set; Right : Set) return Set; -- Symmetric difference
@@ -65,7 +65,7 @@ package PragmARC.Data_Structures.Sets.Discrete is
    type Member_List is array (Positive range <>) of Element;
 
    function New_Set (List : Member_List) return Set;
-   -- Allows a sort in Set literal:
+   -- Allows a sort of Set literal:
    -- My_Set := New_Set ( (An_Element, Another_Element, Yet_A_3rd_Element) );
 
    function Size (Group : Set) return Natural; -- Number in members

@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.1--Further Sqrt improvement
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Aug 15     J. Carter          V1.2--Apply Base to non-fractional images; improve Sqrt convergence
@@ -322,8 +323,6 @@ package body PragmARC.Unbounded_Numbers.Rationals is
                                       (Number => Value ("524288.0"), Square => Value ("274877906944.0") ) );
 
    function Sqrt (Right : Rational; Accuracy : Rational) return Rational is
-      A : constant Rational := abs Accuracy * Right;
-
       R : Rational := Right; -- Right after reduction
       F : Rational := One;   -- Factor after reduction
       X : Rational;
@@ -353,11 +352,11 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       X := R / Two;
 
       All_Iterations : for I in 1 .. 15 loop
-         Y := X ** 2 - R;
+         Y := R / X;
 
-         exit All_Iterations when abs Y < A;
+         exit All_Iterations when abs (Y - X) < Accuracy * X;
 
-         X := (X + R / X) / Two;
+         X := (X + Y) / Two;
       end loop All_Iterations;
 
       return F * X;

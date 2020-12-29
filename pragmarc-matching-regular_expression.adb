@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.1--Corrected handling of Ending item
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Sep 01     J. Carter          V1.6--Simplify class-matching logic
@@ -259,7 +260,7 @@ package body PragmARC.Matching.Regular_Expression is
             Check_Rest : for Expanded_Index in P_Index .. P_Last loop
                Pattern_Item := Pattern.List.Element (Expanded_Index);
 
-               if not Pattern_Item.Closure and Pattern_Item.Kind /= Stop then
+               if not Pattern_Item.Closure and Pattern_Item.Kind not in Stop | Ending then
                   return Result'(Found => False);
                end if;
             end loop Check_Rest;
@@ -295,6 +296,10 @@ package body PragmARC.Matching.Regular_Expression is
             return Local;
          end if;
       end loop Search;
+
+      if Pattern.List.Element (1).Kind = Ending then
+         return Result'(Found => True, Start => Source'Last + 1, Length => 0);
+      end if;
 
       return Result'(Found => False);
    end Location;

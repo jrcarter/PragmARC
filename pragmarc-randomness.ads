@@ -10,8 +10,9 @@
 -- generators of known, good quality, should portability or the algorithm be a concern.
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V1.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V1.0--Initial Ada-12 version
 --
-package PragmARC.Randomness is
-   pragma Pure;
+package PragmARC.Randomness with Pure is
+   -- Empty
 end PragmARC.Randomness;

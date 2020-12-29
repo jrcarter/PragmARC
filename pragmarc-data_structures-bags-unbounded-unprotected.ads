@@ -1,11 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for sequential use only.
 --
 -- History:
+-- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2020 Feb 15     J. Carter          V1.2--Make more Object.Operation friendly
@@ -20,7 +22,7 @@
 pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
-with Ada.Containers.Doubly_Linked_Lists;
+private with Ada.Containers.Doubly_Linked_Lists;
 
 generic -- PragmARC.Data_Structures.Bags.Unbounded.Unprotected
    type Element is private;
@@ -28,17 +30,8 @@ generic -- PragmARC.Data_Structures.Bags.Unbounded.Unprotected
    with function "=" (Left : Element; Right : Element) return Boolean is <>;
    -- Returns True if Left and Right are equal; returns False otherwise.
    -- "=" is often implemented to compare only part of the elements (the Key).
-package PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
-   pragma Preelaborate;
-
-   type Handle is tagged limited private; -- Intial value: Empty
-
-   procedure Assign (To : out Handle; From : in Handle);
-   -- Makes To a copy of From
-   -- May raise Storage_Exhausted
-   -- The state of To is undefined if Storage_Exhausted is raised
-   --
-   -- Time: O(N)
+package PragmARC.Data_Structures.Bags.Unbounded.Unprotected with Preelaborate is
+   type Handle is tagged private; -- Intial value: Empty
 
    procedure Clear (Bag : in out Handle) with
       Post => Bag.Empty;
@@ -102,7 +95,7 @@ package PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
 private -- PragmARC.Bag_Unbounded_Unprotected
    package Implementation is new Ada.Containers.Doubly_Linked_Lists (Element_Type => Element);
 
-   type Handle is tagged limited record
+   type Handle is tagged record
       List : Implementation.List;
    end record;
 end PragmARC.Data_Structures.Bags.Unbounded.Unprotected;

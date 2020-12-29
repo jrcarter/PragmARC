@@ -6,8 +6,9 @@
 -- Root of the Data_Structures.Skip_Lists hierarchy
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V1.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V1.0--Initial Ada-12 version
 --
-package PragmARC.Data_Structures.Skip_Lists is
-   pragma Pure;
+package PragmARC.Data_Structures.Skip_Lists with Pure is
+   -- Empty
 end PragmARC.Data_Structures.Skip_Lists;

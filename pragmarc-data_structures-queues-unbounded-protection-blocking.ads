@@ -8,6 +8,7 @@
 -- Implements a single-instantiation form of Ada.Containers.Unbounded_Synchronized_Queues
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
@@ -27,9 +28,7 @@ with Ada.Containers.Unbounded_Synchronized_Queues;
 
 generic -- PragmARC.Data_Structures.Queues.Unbounded.Protection.Blocking
    type Element is private;
-package PragmARC.Data_Structures.Queues.Unbounded.Protection.Blocking is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Queues.Unbounded.Protection.Blocking with Preelaborate is
    package Interfaces is new Ada.Containers.Synchronized_Queue_Interfaces (Element_Type => Element);
 
    package Queues is new Ada.Containers.Unbounded_Synchronized_Queues (Queue_Interfaces => Interfaces);

@@ -10,6 +10,7 @@
 -- Implements a single-instantiation form of Ada.Containers.Bounded_Synchronized_Queues
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2013 Mar 01     J. Carter          V1.0--Initial Ada-07 version
@@ -27,9 +28,7 @@ with Ada.Containers.Bounded_Synchronized_Queues;
 
 generic -- PragmARC.Data_Structures.Queues.Bounded.Protection.Blocking
    type Element is private;
-package PragmARC.Data_Structures.Queues.Bounded.Protection.Blocking is
-   pragma Preelaborate;
-
+package PragmARC.Data_Structures.Queues.Bounded.Protection.Blocking with Preelaborate is
    package Interfaces is new Ada.Containers.Synchronized_Queue_Interfaces (Element_Type => Element);
 
    package Queues is new Ada.Containers.Bounded_Synchronized_Queues (Queue_Interfaces => Interfaces, Default_Capacity => 1000);

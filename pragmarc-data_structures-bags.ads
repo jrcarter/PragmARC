@@ -8,6 +8,6 @@
 -- History:
 -- 2020 Nov 01     J. Carter          V1.0--Initial Ada-12 version
 --
-package PragmARC.Data_Structures.Bags is
-   pragma Pure;
+package PragmARC.Data_Structures.Bags with Pure is
+   -- Empty
 end PragmARC.Data_Structures.Bags;

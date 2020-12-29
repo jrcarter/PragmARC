@@ -6,6 +6,7 @@
 -- Binary semaphore for controlling concurrent access not suitable for a concurrent form or a monitor
 --
 -- History:
+-- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2001 Dec 01     J. Carter          V1.1--Added Ceiling_Priority to type
@@ -16,9 +17,7 @@ pragma Unsuppress (All_Checks);
 
 with System;
 
-package PragmARC.Binary_Semaphore_Handler is
-   pragma Pure;
-
+package PragmARC.Binary_Semaphore_Handler with Pure is
    protected type Binary_Semaphore (Ceiling_Priority : System.Any_Priority := System.Default_Priority) with
       Priority => Ceiling_Priority
    is
