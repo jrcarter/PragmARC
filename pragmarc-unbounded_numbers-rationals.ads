@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Rational numbers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Aug 15     J. Carter          V1.3--Apply Base to non-fractional images; improve Sqrt convergence
@@ -71,11 +72,6 @@ package PragmARC.Unbounded_Numbers.Rationals is
    -- if Image is in a base other than 10, Image must be decorated
    -- Letters may be upper or lower case
    -- Raises Constraint_Error if Image is invalid
-
-   function Sqrt (Right : Rational; Accuracy : Rational) return Rational with
-      Pre => Right >= Zero or else raise Constraint_Error;
-   -- Square root of non-negative value
-   -- Square of result will be within abs Accuracy of Right
 private -- PragmARC.Unbounded_Numbers.Rationals
    use PragmARC.Unbounded_Numbers.Integers;
 

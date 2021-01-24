@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Aug 15     J. Carter          V1.1--Make use of improved accuracy in Rational_Numbers.Sqrt
@@ -27,8 +28,6 @@ function PragmARC.Rational_Postfix_Calculator return PragmARC.Unbounded_Numbers.
    subtype Real is Rational;
 
    package Real_Stack is new Data_Structures.Stacks.Unbounded.Unprotected (Element => Real);
-
-   Accuracy_Factor : constant Real := Value ("0.00001");
 
    Display_Line : constant Positive :=  5;
    Input_Line   : constant Positive := 10;
@@ -70,14 +69,14 @@ begin -- PragmARC.Rational_Postfix_Calculator
    Text_IO.Put (Item => Ansi.Clear_Screen & "PragmAda Postfix Calculator");
    Process_Result (Stack => Stack, Result => Zero);
    Text_IO.Put (Item => Ansi.Position (16, 1) );
-   Text_IO.Put_Line (Item => "Q:  Quit (exit calculator)                  SQRT:   square root");
+   Text_IO.Put_Line (Item => "Q:  Quit (exit calculator)");
    Text_IO.Put_Line (Item => "C:  Clear                                   FRAC:   display as fraction");
-   Text_IO.Put_Line (Item => "S:  change Sign                             **:     exponentiation to small integer value");
-   Text_IO.Put_Line (Item => "+:  add");
+   Text_IO.Put_Line (Item => "S:  change Sign                             **:     exponentiation to small");
+   Text_IO.Put_Line (Item => "+:  add                                             integer value");
    Text_IO.Put_Line (Item => "-:  subtract");
    Text_IO.Put_Line (Item => "*:  multiply");
    Text_IO.Put_Line (Item => "/:  divide");
-   Text_IO.Put_Line (Item => "Numbers are put on the stack");
+   Text_IO.Put_Line (Item => "Numbers are put on the stack (nust begin with a digit)");
    Text_IO.Put      (Item => "Any other input is an error");
 
    All_Ops       : loop
@@ -130,12 +129,12 @@ begin -- PragmARC.Rational_Postfix_Calculator
                   Result := Left ** Pow;
                   Process_Result (Stack => Stack, Result => Result);
                end Power;
-            elsif Com_Str = "SQRT" then -- Square root
-               Get_Unary_Operand (Stack => Stack, Left => Left);
-               Text_IO.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line &
-                                    "Processing SQRT; this can take a while");
-               Result := Sqrt (Left, Accuracy_Factor);
-               Process_Result (Stack => Stack, Result => Result);
+--              elsif Com_Str = "SQRT" then -- Square root
+--                 Get_Unary_Operand (Stack => Stack, Left => Left);
+--                 Text_IO.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line &
+--                                      "Processing SQRT; this can take a while");
+--                 Result := Sqrt (Left);
+--                 Process_Result (Stack => Stack, Result => Result);
             elsif Com_Str = "FRAC" then -- Redisplay as fraction
                Get_Unary_Operand (Stack => Stack, Left => Result);
                Process_Result (Stack => Stack, Result => Result, As_Fraction => True);
