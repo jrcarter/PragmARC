@@ -25,6 +25,7 @@ with PragmARC.Data_Structures.Skip_Lists.Unbounded;
 with PragmARC.Data_Structures.Stacks.Unbounded.Protection;
 with PragmARC.Data_Structures.Stacks.Unbounded.Unprotected;
 with PragmARC.Date_Handler;
+with PragmARC.Encryption.Simple_XOR;
 with PragmARC.Encryption.Threefish;
 with PragmARC.Genetic_Algorithm;
 with PragmARC.Hash_Fast_Variable_Length;
