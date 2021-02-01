@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 Feb 01     J. Carter          V2.1--Make Float_Image work if Ada.Text_IO.Field'Last is very large
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Aug 15     J. Carter          V1.3--Added Base to Float_Image
@@ -106,7 +107,7 @@ package body PragmARC.Images is
       use Conversions.Unbounded_Strings;
 
       function Base_10_Image return String is
-         Image : String (1 .. 3 * Field'Last + 3);
+         Image : String (1 .. 3 * 255 + 3);
          Start : Natural;
          Width : Field := Fore + Aft + 1;
       begin -- Base_10_Image
@@ -126,7 +127,7 @@ package body PragmARC.Images is
              else Character'Val (Character'Pos ('A') + Value - 10) );
 
          Work  : Number := abs Value;
-         Image : String (1 .. 12 * Field'Last + 3);
+         Image : String (1 .. 12 * 255 + 3);
          Start : Natural;
          Dot   : Natural;
          Col   : Number := 1.0 / Number (Base);

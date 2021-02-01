@@ -6,6 +6,7 @@
 -- General purpose queue for sequential use
 --
 -- History:
+-- 2021 Feb 01     J. Carter          V2.3--Added postcondition to Get
 -- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -40,8 +41,8 @@ package PragmARC.Data_Structures.Queues.Unbounded.Unprotected with Preelaborate 
    -- Nothing is changed if Storage_Exhausted is raised
 
    procedure Get (From : in out Handle; Item : out Element) with
-      Pre  => not From.Is_Empty or else raise Empty;
-   -- Post => From.Length = From'Old.Length + 1
+      Pre  => not From.Is_Empty or else raise Empty,
+      Post => From.Length = From'Old.Length - 1;
    -- Removes the Element at the head of From and assigns it to Item
 
    function Length (Queue : Handle) return Natural;
