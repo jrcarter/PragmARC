@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2021 Mar 15     J. Carter          V2.1--Adapt to changes to quick sort
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.3--Cleanup compiler warnings
@@ -43,7 +44,7 @@ is
       (Left.Fitness > Right.Fitness); -- Sort in descending order of fitness.
 
    package Quick_Sort is new PragmARC.Sorting.Quick (Element => Member, Index => Positive, Sort_Set => Population_List);
-   procedure Sort (Set : in out Population_List; Max_Tasks : in Natural := Num_Tasks - 1) renames Quick_Sort.Sort_Parallel;
+   procedure Sort (Set : in out Population_List) renames Quick_Sort.Sort_Sequential;
 
    procedure Reproduce (List : in out Population_List) is
       New_Pop : Population_List (List'range);
