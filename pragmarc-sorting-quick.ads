@@ -6,6 +6,7 @@
 -- Generic quick sort
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Mar 15     J. Carter          V2.1--Removed parallel version
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -25,7 +26,7 @@ generic -- PragmARC.Sorting.Quick
    type Index    is range <>; -- Lower bound of 1; see pragma Assert below
    type Sort_Set is array (Index range <>) of Element;
 
-   with function "<" (Left : Element; Right : Element) return Boolean is <>;
+   with function "<" (Left : in Element; Right : in Element) return Boolean is <>;
 package PragmARC.Sorting.Quick is
    pragma Assert (Index'First = 1);
 

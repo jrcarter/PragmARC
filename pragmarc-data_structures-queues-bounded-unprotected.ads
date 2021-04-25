@@ -7,6 +7,7 @@
 -- Each queue has a preset maximum size
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.3--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -47,16 +48,16 @@ package PragmARC.Data_Structures.Queues.Bounded.Unprotected with Preelaborate is
       Post => not From.Is_Full;
    -- Removes the next Element from From and puts it in Item
 
-   function Is_Full (Queue : Handle) return Boolean;
+   function Is_Full (Queue : in Handle) return Boolean;
    -- Returns True if Queue is full; False otherwise
 
-   function Is_Empty (Queue : Handle) return Boolean;
+   function Is_Empty (Queue : in Handle) return Boolean;
    -- Returns True if Queue is empty; False otherwise
 
-   function Length (Queue : Handle) return Natural;
+   function Length (Queue : in Handle) return Natural;
    -- Returns the number of Elements in Queue
 
-   function Peek (Queue : Handle) return Element with
+   function Peek (Queue : in Handle) return Element with
       Pre => not Queue.Is_Empty or else raise Empty;
    -- Returnss the Element at the head of Queue without altering Queue
 

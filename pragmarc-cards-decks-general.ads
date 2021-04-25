@@ -6,6 +6,7 @@
 -- A simplified cross between a list and a queue to be used as a deck of cards in card games
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.1--Removed limited and Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -23,12 +24,12 @@ package PragmARC.Cards.Decks.General is
    -- A Handle can hold at most Max_Cards cards
    -- A Handle is initially empty
 
-   function Is_Empty (Item : Handle) return Boolean; -- Returns True if Item is empty; False otherwise
-   function Is_Full  (Item : Handle) return Boolean; -- Returns True if Item is full;  False otherwise
+   function Is_Empty (Item : in Handle) return Boolean; -- Returns True if Item is empty; False otherwise
+   function Is_Full  (Item : in Handle) return Boolean; -- Returns True if Item is full;  False otherwise
    --
    -- Time: O(1)
 
-   function Size (Item : Handle) return Natural;
+   function Size (Item : in Handle) return Natural;
    -- Returns the number of cards in Item
    --
    -- Time: O(1)
@@ -75,7 +76,7 @@ package PragmARC.Cards.Decks.General is
    --
    -- Time: O(N)
 
-   function Value (From : Handle; Position : Positive) return Card with
+   function Value (From : in Handle; Position : in Positive) return Card with
       Pre  => Position in 1 .. From.Size or else raise Constraint_Error;
    -- Provides the value of the card at Position in From, without removing it
    -- Position 1 is the top of the deck
@@ -83,7 +84,7 @@ package PragmARC.Cards.Decks.General is
    --
    -- Time: O(1)
 
-   function "=" (Left : Handle; Right : Handle) return Boolean;
+   function "=" (Left : in Handle; Right : in Handle) return Boolean;
    -- Returns True if Left and Right contain the same deck; False otherwise
    --
    -- Time: O(N)

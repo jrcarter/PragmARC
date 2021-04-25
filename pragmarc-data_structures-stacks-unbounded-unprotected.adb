@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.1--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -27,7 +28,7 @@ package body PragmARC.Data_Structures.Stacks.Unbounded.Unprotected is
       Stack.List.Clear;
    end Clear;
 
-   function Is_Empty (Stack : Handle) return Boolean is
+   function Is_Empty (Stack : in Handle) return Boolean is
       (Stack.List.Is_Empty);
 
    procedure Iterate (Over : in out Handle) is
@@ -40,10 +41,10 @@ package body PragmARC.Data_Structures.Stacks.Unbounded.Unprotected is
       Over.List.Iterate (Process => Action'Access);
    end Iterate;
 
-   function Length (Stack : Handle) return Natural is
+   function Length (Stack : in Handle) return Natural is
       (Integer (Stack.List.Length) );
 
-   function Peek (Stack : Handle) return Element is
+   function Peek (Stack : in Handle) return Element is
       (Stack.List.First_Element);
 
    procedure Pop (From : in out Handle; Item : out Element) is

@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2020 Mar 15     J. Carter          V1.2--Make List_Unbounded_Unprotected's Next and Prev Object.Operation friendly
@@ -30,7 +31,7 @@ package body PragmARC.Data_Structures.Lists.Unbounded.Protection is
       function Last return Position is
          (Position (List.Last) );
 
-      function Next (Pos : Position) return Position is
+      function Next (Pos : in Position) return Position is
          -- Empty
       begin -- Next
          return Position (Implementation.Next (Implementation.Cursor (Pos) ) );
@@ -39,7 +40,7 @@ package body PragmARC.Data_Structures.Lists.Unbounded.Protection is
          raise Invalid_Position;
       end Next;
 
-      function Prev (Pos : Position) return Position is
+      function Prev (Pos : in Position) return Position is
          -- Empty
       begin -- Prev
          return Position (Implementation.Previous (Implementation.Cursor (Pos) ) );
@@ -79,7 +80,7 @@ package body PragmARC.Data_Structures.Lists.Unbounded.Protection is
          raise Invalid_Position;
       end Delete;
 
-      function Get (Pos : Position) return Element is
+      function Get (Pos : in Position) return Element is
          -- Empty
       begin -- Get
          return Implementation.Element (Implementation.Cursor (Pos) );
@@ -113,7 +114,7 @@ package body PragmARC.Data_Structures.Lists.Unbounded.Protection is
          List.Iterate (Process => Local_Action'Access);
       end Iterate;
 
-      procedure Sort (Less_Than : access function (Left : Element; Right : Element) return Boolean) is
+      procedure Sort (Less_Than : access function (Left : in Element; Right : in Element) return Boolean) is
          package Sorting is new Implementation.Generic_Sorting ("<" => Less_Than.all);
       begin -- Sort
          Sorting.Sort (Container => List);

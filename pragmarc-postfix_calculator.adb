@@ -41,6 +41,15 @@ package body PragmARC.Postfix_Calculator is
 
       package Ansi renames Ansi_Tty_Control;
 
+      procedure Process_Result (Stack : in out Real_Stack.Handle; Result : in Real);
+      -- Puts Result on Stack and displays it
+
+      procedure Get_Unary_Operand (Stack : in out Real_Stack.Handle; Left : out Real);
+      -- Gets the top of Stack into Left
+
+      procedure Get_Binary_Operands (Stack : in out Real_Stack.Handle; Left : out Real; Right : out Real);
+      -- Gets the top two Reals from Stack into Left and Right
+
       procedure Process_Result (Stack : in out Real_Stack.Handle; Result : in Real) is
          -- Empty
       begin -- Process_Result

@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Extended image functions for integer and floating-point types
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Aug 15     J. Carter          V1.2--Added Base to Float_Image
@@ -26,22 +27,22 @@ package PragmARC.Images is
 
    generic -- Signed_Image
       type Number is range <>;
-   function Signed_Image (Value : Number; Width : Field := 0; Zero_Filled : Boolean := False; Base : Number_Base := 10)
+   function Signed_Image (Value : in Number; Width : in Field := 0; Zero_Filled : in Boolean := False; Base : in Number_Base := 10)
    return String;
 
    generic -- Modular_Image
       type Number is mod <>;
-   function Modular_Image (Value : Number; Width : Field := 0; Zero_Filled : Boolean := False; Base : Number_Base := 10)
+   function Modular_Image (Value : in Number; Width : in Field := 0; Zero_Filled : in Boolean := False; Base : in Number_Base := 10)
    return String;
 
    generic -- Float_Image
       type Number is digits <>;
-   function Float_Image (Value       : Number;
-                         Fore        : Field       := 2;
-                         Aft         : Field       := Number'Digits - 1;
-                         Exp         : Field       := 3;
-                         Zero_Filled : Boolean     := False;
-                         Base        : Number_Base := 10)
+   function Float_Image (Value       : in Number;
+                         Fore        : in Field       := 2;
+                         Aft         : in Field       := Number'Digits - 1;
+                         Exp         : in Field       := 3;
+                         Zero_Filled : in Boolean     := False;
+                         Base        : in Number_Base := 10)
    return String;
    -- If Base = 10, returns an image of Value with at least Fore digits before the decimal point, padded with blanks or zeroes,
    -- accordingto Zero_Filled. Fore, Aft, and Exp have the same meanings as in Ada.Text_IO.Float_IO

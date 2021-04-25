@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Mar 15     J. Carter          V2.1--Removed parallel version
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -22,15 +23,28 @@ with System;
 
 package body PragmARC.Sorting.Quick is
    procedure Exchange (Left : in out Element; Right : in out Element) with Inline,
-      Post => Left = Right'Old and Right = Left'Old
-   is
+      Post => Left = Right'Old and Right = Left'Old;
+   -- Swaps Left and Right
+
+   procedure Get_Pivot (Set : in out Sort_Set; Pivot : in out Element);
+   -- Median of 3 pivot selection
+
+   function ">=" (Left : in Element; Right : in Element) return Boolean is
+      (not (Left < Right) ) with Inline;
+
+   procedure Partition (Set : in out Sort_Set; Front : in out Index; Back : in out Index; Pivot : in Element);
+   -- Partitions Set (Front .. Back)
+
+   procedure Easy_Cases (Set : in out Sort_Set; Finished : out Boolean);
+   -- Handle short sets; Finished is True if Set is sorted
+
+   procedure Exchange (Left : in out Element; Right : in out Element) is
       Temp : constant Element := Left;
    begin -- Exchange
       Left := Right;
       Right := Temp;
    end Exchange;
 
-   -- Median of 3 pivot selection
    procedure Get_Pivot (Set : in out Sort_Set; Pivot : in out Element) is
       type Big is range System.Min_Int .. System.Max_Int;
 
@@ -70,10 +84,6 @@ package body PragmARC.Sorting.Quick is
 
    procedure Insertion_Sort is new PragmARC.Sorting.Insertion (Element, Index, Sort_Set);
 
-   function ">=" (Left : Element; Right : Element) return Boolean is
-      (not (Left < Right) ) with Inline;
-
-   -- Partitions Set (Front .. Back)
    procedure Partition (Set : in out Sort_Set; Front : in out Index; Back : in out Index; Pivot : in Element) is
       -- Empty
    begin -- Partition

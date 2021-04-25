@@ -1,9 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.0--Adhere to coding standard for Ada-12
+-----------------------------------------------------------------------------
 -- 2016 Jun 01     J. Carter          V1.1--Changed comment for empty declarative part
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
@@ -14,8 +16,10 @@ package body PragmARC.Word_Input is
 
    White : constant Character := ' ';
 
+   function Get (File : in Text_IO.File_Type) return Character;
    -- Help function to return White for end of line and for horizontal tab
-   function Get (File : Text_IO.File_Type) return Character is
+
+   function Get (File : in Text_IO.File_Type) return Character is
       Char : Character;
    begin -- Get
       if Text_IO.End_Of_Line (File) then -- Convert end of line to White

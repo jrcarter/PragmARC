@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Binary search of an ordered list
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Jun 01     J. Carter          V1.1--Require Index'First = 1
@@ -46,7 +47,7 @@ package PragmARC.Binary_Searcher with Pure is
       end case;
    end record;
 
-   function Search (Item : Element; Within : List) return Result_Info with
+   function Search (Item : in Element; Within : in List) return Result_Info with
       Pre => (Within'Length > 0 and then
               (for all I in Within'First .. Within'Last - 1 =>
                   Compare (Within (I), Within (I + 1) ) in Three_Way.Less .. Three_Way.Equal) ) or else

@@ -70,7 +70,7 @@ with PragmARC.Word_Input;
 with PragmARC.Wrapping;
 
 procedure Compile_All is
-   -- null;
+   -- Empty
 begin -- Compile_All
    null;
 end Compile_All;

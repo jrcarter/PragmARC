@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -9,6 +9,7 @@
 -- This is based on Ada.Containers.Bounded_Doubly_Linked_Lists and all the restrictions of that apply
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -53,8 +54,8 @@ package PragmARC.Data_Structures.Lists.Bounded.Protection with Preelaborate is
       -- If List is empty, No_Element = List.First = List.Last
 
       -- Operations to obtain valid positions from valid positions:
-      function Next (Pos : Position) return Position; -- raise Invalid_Position
-      function Prev (Pos : Position) return Position; -- raise Invalid_Position
+      function Next (Pos : in Position) return Position; -- raise Invalid_Position
+      function Prev (Pos : in Position) return Position; -- raise Invalid_Position
       -- Next and Prev raise Invalid_Position if Pos is invalid
 
       -- Operations to manipulate lists
@@ -78,7 +79,7 @@ package PragmARC.Data_Structures.Lists.Bounded.Protection with Preelaborate is
       -- Raises Invalid_Position if Pos is invalid or is No_Element
       -- Nothing is changed if Invalid_Position is raised
 
-      function Get (Pos : Position) return Element; -- raise Invalid_Position
+      function Get (Pos : in Position) return Element; -- raise Invalid_Position
       -- Returns the item at Pos
       -- Raises Invalid_Position if Pos is invalid or No_Element
 

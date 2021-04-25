@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Generic insertion sort
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Apr 15     J. Carter          V1.1--Sequences indexed by integers
@@ -21,7 +22,7 @@ generic -- PragmARC.Sorting.Insertion
    type Index    is range <>; -- Lower bound should be 1
    type Sort_Set is array (Index range <>) of Element;
 
-   with function "<" (Left : Element; Right : Element) return Boolean is <>;
+   with function "<" (Left : in Element; Right : in Element) return Boolean is <>;
 procedure PragmARC.Sorting.Insertion (Set : in out Sort_Set) with Pure,
    Post => (for all I in Set'First .. Set'Last - 1 => not (Set (I + 1) < Set (I) ) );
 -- Input:  Set to sort

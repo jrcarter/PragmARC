@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.1--Corrected handling of Ending item
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -151,10 +152,17 @@ package body PragmARC.Matching.Regular_Expression is
       raise Illegal_Pattern;
    end Process;
 
-   function Location (Pattern : Processed_Pattern; Source : Item_Set) return Result is
+   function Location (Pattern : in Processed_Pattern; Source : in Item_Set) return Result is
       Local : Result;
 
-      function Match (P_Index : Positive; S_Index : Index) return Boolean is -- Matches one Pattern element with one Item
+      function Match (P_Index : in Positive; S_Index : in Index) return Boolean;
+      -- Matches one Pattern element with one Item
+
+      function Locate (P_First : in Positive; P_Last : in Positive; S_First : in Index) return Result;
+      -- Matches the pattern given by Pattern.List (P_First .. P_Last) to the "string" given by
+      -- Source (S_First .. S_Last).  Match is "anchored;" that is, it must match starting at S_First in Source
+
+      function Match (P_Index : in Positive; S_Index : in Index) return Boolean is
          Pattern_Item : constant Expanded_Pattern_Item := Pattern.List.Element (P_Index);
       begin -- Match
          case Pattern_Item.Kind is
@@ -179,9 +187,7 @@ package body PragmARC.Matching.Regular_Expression is
          end case;
       end Match;
 
-      function Locate (P_First : Positive; P_Last : Positive; S_First : Index) return Result is
-      -- Matches the pattern given by Pattern.list (P_First .. P_Last) to the "string" given by
-      -- Source (S_First .. S_Last).  Match is "anchored;" that is, it must match starting at S_First in Source
+      function Locate (P_First : in Positive; P_Last : in Positive; S_First : in Index) return Result is
          S_Last : constant Index'Base := Source'Last;
 
          Source_Index  : Index    := S_First;
@@ -304,7 +310,7 @@ package body PragmARC.Matching.Regular_Expression is
       return Result'(Found => False);
    end Location;
 
-   function Location (Pattern : Item_Set; Source : Item_Set) return Result is
+   function Location (Pattern : in Item_Set; Source : in Item_Set) return Result is
       Processed : Processed_Pattern;
    begin -- Location
       Process (Pattern => Pattern, Processed => Processed);

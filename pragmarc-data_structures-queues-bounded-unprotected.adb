@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.1--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -38,16 +39,16 @@ package body PragmARC.Data_Structures.Queues.Bounded.Unprotected is
 
    use type Ada.Containers.Count_Type;
 
-   function Is_Full (Queue : Handle) return Boolean is
+   function Is_Full (Queue : in Handle) return Boolean is
       (Queue.List.Length = Queue.List.Capacity);
 
-   function Is_Empty (Queue : Handle) return Boolean is
+   function Is_Empty (Queue : in Handle) return Boolean is
       (Queue.List.Is_Empty);
 
-   function Length (Queue : Handle) return Natural is
+   function Length (Queue : in Handle) return Natural is
       (Integer (Queue.List.Length) );
 
-   function Peek (Queue : Handle) return Element is
+   function Peek (Queue : in Handle) return Element is
       (Queue.List.First_Element);
 
    procedure Iterate (Over : in out Handle) is

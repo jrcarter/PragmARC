@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -40,6 +41,15 @@ function PragmARC.Rational_Postfix_Calculator return PragmARC.Unbounded_Numbers.
    Command      : Input.Word;
 
    package Ansi renames Ansi_Tty_Control;
+
+   procedure Process_Result (Stack : in out Real_Stack.Handle; Result : in Real; As_Fraction : in Boolean := False);
+   -- Push Result on Stack and display it
+
+   procedure Get_Unary_Operand (Stack : in out Real_Stack.Handle; Left : out Real);
+   -- Get the top of Stack in Left
+
+   procedure Get_Binary_Operands (Stack : in out Real_Stack.Handle; Left : out Real; Right : out Real);
+   -- Get the top two values from Stack into Left and Right
 
    procedure Process_Result (Stack : in out Real_Stack.Handle; Result : in Real; As_Fraction : in Boolean := False) is
     -- Empty

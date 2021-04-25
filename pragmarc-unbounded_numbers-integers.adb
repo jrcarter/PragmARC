@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Sep 01     J. Carter          V1.5--Improve division
@@ -22,7 +23,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
 
    use type Digit_List;
 
-   function El_Or_0 (List : Digit_List; Index : Positive) return Digit_Value;
+   function El_Or_0 (List : in Digit_List; Index : in Positive) return Digit_Value;
    -- If Index is a valid index into List, returns the value stored there; otherwise, returns 0
 
    procedure Insert (List : in out Digit_List; Index : in Positive; Value : in Digit_Value);
@@ -38,7 +39,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
                      Remainder :    out Unbounded_Integer);
    -- Left > 0, Right > 0.
 
-   function El_Or_0 (List : Digit_List; Index : Positive) return Digit_Value is
+   function El_Or_0 (List : in Digit_List; Index : in Positive) return Digit_Value is
       (if Index <= List.Last_Index Then List.Element (Index) else 0);
 
    procedure Insert (List : in out Digit_List; Index : in Positive; Value : in Digit_Value) is
@@ -75,7 +76,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
 
    type Big is range System.Min_Int .. System.Max_Int;
 
-   function To_Unbounded_Integer (Value : Convertible_Integer) return Unbounded_Integer is
+   function To_Unbounded_Integer (Value : in Convertible_Integer) return Unbounded_Integer is
       Abs_Value : constant Calculation_Value := Calculation_Value (abs Big (Value) );
 
       Result : Unbounded_Integer;
@@ -91,7 +92,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end To_Unbounded_Integer;
 
-   function To_Integer (Value : Unbounded_Integer) return Integer is
+   function To_Integer (Value : in Unbounded_Integer) return Integer is
       Result : Calculation_Value := Calculation_Value (Value.Digit.First_Element);
    begin -- To_Integer
       if Value.Digit.Last_Index > 2 then
@@ -112,10 +113,10 @@ package body PragmARC.Unbounded_Numbers.Integers is
    Zip : constant Unbounded_Integer := To_Unbounded_Integer (0);
    One : constant Unbounded_Integer := To_Unbounded_Integer (1);
 
-   function "+" (Right : Unbounded_Integer) return Unbounded_Integer is
+   function "+" (Right : in Unbounded_Integer) return Unbounded_Integer is
       (Right);
 
-   function "-" (Right : Unbounded_Integer) return Unbounded_Integer is
+   function "-" (Right : in Unbounded_Integer) return Unbounded_Integer is
       Result : Unbounded_Integer := Right;
    begin -- "-"
       Result.Negative := not Result.Negative;
@@ -123,7 +124,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end "-";
 
-   function "abs" (Right : Unbounded_Integer) return Unbounded_Integer is
+   function "abs" (Right : in Unbounded_Integer) return Unbounded_Integer is
       Result : Unbounded_Integer := Right;
    begin -- "abs"
       Result.Negative := False;
@@ -131,7 +132,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end "abs";
 
-   function "+" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "+" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Max_MSD : constant Natural := Integer'Max (Left.Digit.Last_Index, Right.Digit.Last_Index);
 
       Result : Unbounded_Integer;
@@ -161,7 +162,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end "+";
 
-   function "-" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "-" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Max_MSD : constant Natural := Integer'Max (Left.Digit.Last_Index, Right.Digit.Last_Index);
 
       Work_Left   : Unbounded_Integer;
@@ -222,7 +223,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end "-";
 
-   function "*" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "*" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       L_Max : constant Positive := Left.Digit.Last_Index;
       R_Max : constant Positive := Right.Digit.Last_Index;
 
@@ -233,8 +234,13 @@ package body PragmARC.Unbounded_Numbers.Integers is
       L_Start  : Natural           := 0;
       L_Stop   : Natural           := 0;
 
-      function Get (From : Unbounded_Integer; Column : Natural) return Calculation_Value is
+      -- A column is the power of Radix that a particular digit is multiplied by (start with zero)
+
+      function Get (From : in Unbounded_Integer; Column : in Natural) return Calculation_Value is
          (Calculation_Value (From.Digit.Element (Column + 1) ) );
+
+      procedure Set (Into : in out Unbounded_Integer; Column : Natural; Value : Calculation_Value);
+      -- Sets the Column digit to Value rem Radix
 
       procedure Set (Into : in out Unbounded_Integer; Column : Natural; Value : Calculation_Value) is
          -- Empty declarative part
@@ -488,7 +494,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       Quotient.Digit.Append (New_Item => Quotient_P.Digit);
    end Divide;
 
-   function "/" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "/" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Quotient  : Unbounded_Integer;
       Remainder : Unbounded_Integer;
    begin -- "/"
@@ -499,7 +505,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Quotient;
    end "/";
 
-   function "rem" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "rem" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Quotient  : Unbounded_Integer;
       Remainder : Unbounded_Integer;
    begin -- "rem"
@@ -510,7 +516,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Remainder;
    end "rem";
 
-   function "mod" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function "mod" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Remainder : constant Unbounded_Integer := Left rem Right;
    begin -- "mod"
       if Remainder = Zip or Right.Negative = Remainder.Negative then
@@ -520,7 +526,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Right + Remainder;
    end "mod";
 
-   function "**" (Left : Unbounded_Integer; Right : Natural) return Unbounded_Integer is
+   function "**" (Left : in Unbounded_Integer; Right : in Natural) return Unbounded_Integer is
       Result : Unbounded_Integer := Left;
       Work   : Unbounded_Integer := Left;
    begin -- "**"
@@ -555,7 +561,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end "**";
 
-   function "=" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Boolean is
+   function "=" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Boolean is
       -- Empty declarative part
    begin -- "="
       if Left.Digit.Last_Index = 1 and then Left.Digit.Element (1) = 0 then
@@ -569,7 +575,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Left.Digit = Right.Digit;
    end "=";
 
-   function ">" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Boolean is
+   function ">" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Boolean is
       -- Empty declarative part
    begin -- ">"
       if Left.Negative then
@@ -627,21 +633,21 @@ package body PragmARC.Unbounded_Numbers.Integers is
       end Compare_Digits;
    end ">";
 
-   function "<" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Boolean is
+   function "<" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Boolean is
       (Right > Left);
 
-   function ">=" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Boolean is
+   function ">=" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Boolean is
       (not (Right > Left) );
 
-   function "<=" (Left : Unbounded_Integer; Right : Unbounded_Integer) return Boolean is
+   function "<=" (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Boolean is
       (not (Left > Right) );
 
-   function Image (Value : Unbounded_Integer; Base : Base_Number := 10; Decorated : Boolean := False) return String is
-      function Decoration (Result : Ada.Strings.Unbounded.Unbounded_String; Negative : Boolean; Base : Base_Number)
+   function Image (Value : in Unbounded_Integer; Base : Base_Number := 10; Decorated : Boolean := False) return String is
+      function Decoration (Result : in Ada.Strings.Unbounded.Unbounded_String; Negative : in Boolean; Base : in Base_Number)
       return String;
       -- Returns Result with decorations for Negative and Base
 
-      function Decoration (Result : Ada.Strings.Unbounded.Unbounded_String; Negative : Boolean; Base : Base_Number)
+      function Decoration (Result : in Ada.Strings.Unbounded.Unbounded_String; Negative : in Boolean; Base : in Base_Number)
       return String is
          Base_Image : constant String := Base_Number'Image (Base);
       begin -- Decoration
@@ -703,7 +709,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Ada.Strings.Unbounded.To_String (Result);
    end Image;
 
-   function Value (Image : String) return Unbounded_Integer is
+   function Value (Image : in String) return Unbounded_Integer is
       Work : constant String := Ada.Characters.Handling.To_Upper (Ada.Strings.Fixed.Trim (Image, Ada.Strings.Both) );
 
       subtype Digit_Range is Character range '0' .. '9';
@@ -761,7 +767,7 @@ package body PragmARC.Unbounded_Numbers.Integers is
       return Result;
    end Value;
 
-   function GCD (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function GCD (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       Min       : Unbounded_Integer := abs Left;
       Max       : Unbounded_Integer := abs Right;
       Remainder : Unbounded_Integer;
@@ -791,6 +797,6 @@ package body PragmARC.Unbounded_Numbers.Integers is
       end loop Reduce;
    end GCD;
 
-   function LCM (Left : Unbounded_Integer; Right : Unbounded_Integer) return Unbounded_Integer is
+   function LCM (Left : in Unbounded_Integer; Right : in Unbounded_Integer) return Unbounded_Integer is
       ( (Left * Right) / GCD (Left, Right) );
 end PragmARC.Unbounded_Numbers.Integers;
