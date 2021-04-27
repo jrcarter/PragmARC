@@ -108,8 +108,6 @@ package PragmARC.Data_Structures.Skip_Lists.Unbounded is
    procedure Iterate (List : in out Skip_List);
    -- Applies Action to each value in List in order
 private -- PragmARC.Skip_List_Unbounded
-   use Ada;
-
    Max_Level : constant := 5;
 
    subtype Level_Id is Positive range 1 .. Max_Level;
@@ -130,7 +128,7 @@ private -- PragmARC.Skip_List_Unbounded
       end case;
    end record;
 
-   type Skip_List is new Finalization.Limited_Controlled with record
+   type Skip_List is new Ada.Finalization.Limited_Controlled with record
       Level  : Level_Id := Level_Id'First;
       Header : Link     := new Node (Has_Data => False, Level => Max_Level);
       Last   : Link     := null;

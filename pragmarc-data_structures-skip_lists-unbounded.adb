@@ -25,7 +25,7 @@ package body PragmARC.Data_Structures.Skip_Lists.Unbounded is
 
    Gen : Float_Random.Generator;
 
-   procedure Dispose is new Unchecked_Deallocation (Object => Node, Name => Link);
+   procedure Dispose is new Ada.Unchecked_Deallocation (Object => Node, Name => Link);
 
    procedure Clear (List : in out Skip_List) is
       Ptr : Link;
