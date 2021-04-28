@@ -7,6 +7,8 @@
 -- This is based on Ada.Containers.Doubly_Linked_Lists and all the restrictions of that apply
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.4--Adhere to coding standard
+-- 2021 Feb 01     J. Carter          V2.3--Added postcondition to Pop
 -- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -41,17 +43,17 @@ package PragmARC.Data_Structures.Stacks.Unbounded.Unprotected with Preelaborate 
    -- Nothing is changed if Storage_Exhausted is raised
 
    procedure Pop (From : in out Handle; Item : out Element) with
-      Pre  => not From.Is_Empty or else raise Empty;
-   -- Post => From.Length = From'Old'Length + 1;
+      Pre  => not From.Is_Empty or else raise Empty,
+      Post => From.Length = From'Old.Length - 1;
    -- Removes the Element at the top of From and assigns it to Item
 
-   function Length (Stack : Handle) return Natural;
+   function Length (Stack : in Handle) return Natural;
    -- Returns the number of Elements in Stack
 
-   function Is_Empty (Stack : Handle) return Boolean;
+   function Is_Empty (Stack : in Handle) return Boolean;
    -- Returns True if Stack is empty; False otherwise
 
-   function Peek (Stack : Handle) return Element with
+   function Peek (Stack : in Handle) return Element with
       Pre => not Stack.Is_Empty or else raise Empty;
    -- Returns the Element on the top of Stack without altering Stack
 

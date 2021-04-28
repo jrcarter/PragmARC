@@ -40,11 +40,14 @@ is
       Count      : Natural := 0;
    end record;
 
-   function "<" (Left : Member; Right : Member) return Boolean is
+   function "<" (Left : in Member; Right : in Member) return Boolean is
       (Left.Fitness > Right.Fitness); -- Sort in descending order of fitness.
 
    package Quick_Sort is new PragmARC.Sorting.Quick (Element => Member, Index => Positive, Sort_Set => Population_List);
    procedure Sort (Set : in out Population_List) renames Quick_Sort.Sort_Sequential;
+
+   procedure Reproduce (List : in out Population_List);
+   -- Does one generation of reproduction of the population in List
 
    procedure Reproduce (List : in out Population_List) is
       New_Pop : Population_List (List'range);
@@ -53,6 +56,9 @@ is
       -- Only the top half of the population get to mate.
 
       Last_Task : Natural := 0;
+
+      function Task_Num return Positive;
+      -- Increments Last_Task and returns it
 
       function Task_Num return Positive is
         -- Empty
@@ -70,7 +76,13 @@ is
       task body Breeder is
          Prob_Gen : Ada.Numerics.Float_Random.Generator;
 
-         function Choose_Index return Index is -- Pick an Index based on probability of mating.
+         function Choose_Index return Index;
+         -- Pick an Index based on probability of mating.
+
+         function Choose_Index return Index is
+            function Probability (I : Index) return Float;
+            -- Calculates the probability that individual I will get to reproduce
+
             function Probability (I : Index) return Float is
                Total_Chances : constant Float := Float ( (Index'Last * (Index'Last + 1) ) / 2);
                Chances       : constant Float := Float (Index'Last - I + 1);

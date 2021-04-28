@@ -1,9 +1,11 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2018 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.0--Adhere to coding standard
+---------------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.3--Make Length O(1)
 -- 2016 Jun 01     J. Carter          V1.2--Changed comment for empty declarative part
 -- 2013 Oct 01     J. Carter          V1.1--Added exception handler to Finalize
@@ -63,7 +65,7 @@ package body PragmARC.Data_Structures.Skip_Lists.Unbounded is
       end loop Copy;
    end Assign;
 
-   function Search (List : Skip_List; Item : Element) return Result is
+   function Search (List : in Skip_List; Item : in Element) return Result is
       Ptr : Link := List.Header;
    begin -- Search
       All_Levels : for I in reverse Level_Id'First .. List.Level loop
@@ -88,7 +90,10 @@ package body PragmARC.Data_Structures.Skip_Lists.Unbounded is
       Update    : Forward_Set (Level_Id) := Forward_Set'(Level_Id => List.Header);
       Ptr       : Link                   := List.Header;
 
-      function Random_Level (List_Level : Level_Id) return Level_Id is
+      function Random_Level (List_Level : in Level_Id) return Level_Id;
+      -- Obtain a random level for the new node, possibly increasing the level of List by 1
+
+      function Random_Level (List_Level : in Level_Id) return Level_Id is
          Probability : constant := 0.25;
 
          New_Level : Level_Id := Level_Id'First;
@@ -183,16 +188,16 @@ package body PragmARC.Data_Structures.Skip_Lists.Unbounded is
       end if;
    end Delete;
 
-   function Get_First (List : Skip_List) return Element is
+   function Get_First (List : in Skip_List) return Element is
       (List.Header.Forward (Level_Id'First).Value);
 
-   function Get_Last (List : Skip_List) return Element is
+   function Get_Last (List : in Skip_List) return Element is
       (List.Last.Value);
 
-   function Is_Empty (List : Skip_List) return Boolean is
+   function Is_Empty (List : in Skip_List) return Boolean is
       (List.Last = null);
 
-   function Length (List : Skip_List) return Natural is
+   function Length (List : in Skip_List) return Natural is
       (List.Length);
 
    procedure Finalize (Object : in out Skip_List) is

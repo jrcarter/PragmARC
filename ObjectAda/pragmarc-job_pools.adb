@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
@@ -18,8 +19,8 @@ package body PragmARC.Job_Pools is
       Job : Job_Info;
    end record;
 
-   function "<" (Left : Queue_Info; Right : Queue_Info) return Boolean;
-   function "=" (Left : Queue_Info; Right : Queue_Info) return Boolean;
+   function "<" (Left : in Queue_Info; Right : in Queue_Info) return Boolean;
+   function "=" (Left : in Queue_Info; Right : in Queue_Info) return Boolean;
 
    package Job_Queues is new PragmARC.Data_Structures.Skip_Lists.Unbounded (Element => Queue_Info);
 
@@ -92,10 +93,10 @@ package body PragmARC.Job_Pools is
       Job_Queue.Get_Statistics (Total => Total, Idle => Idle, Pending => Pending);
    end Get_Statistics;
 
-   function "<" (Left : Queue_Info; Right : Queue_Info) return Boolean is
+   function "<" (Left : in Queue_Info; Right : in Queue_Info) return Boolean is
       (Left.Key < Right.Key);
 
-   function "=" (Left : Queue_Info; Right : Queue_Info) return Boolean is
+   function "=" (Left : in Queue_Info; Right : in Queue_Info) return Boolean is
       (Left.Key = Right.Key);
 
    protected body Job_Queue is

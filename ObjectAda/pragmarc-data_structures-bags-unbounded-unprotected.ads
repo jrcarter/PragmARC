@@ -6,6 +6,7 @@
 -- Generic unbounded-bag ADT for sequential use only.
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.3--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.2--Removed limited and Assign
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -27,7 +28,7 @@ private with Ada.Containers.Doubly_Linked_Lists;
 generic -- PragmARC.Data_Structures.Bags.Unbounded.Unprotected
    type Element is private;
 
-   with function "=" (Left : Element; Right : Element) return Boolean is <>;
+   with function "=" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Returns True if Left and Right are equal; returns False otherwise.
    -- "=" is often implemented to compare only part of the elements (the Key).
 package PragmARC.Data_Structures.Bags.Unbounded.Unprotected with Preelaborate is
@@ -70,7 +71,7 @@ package PragmARC.Data_Structures.Bags.Unbounded.Unprotected with Preelaborate is
       end case;
    end record;
 
-   function Find (Bag : Handle; Key : Element) return Find_Result;
+   function Find (Bag : in Handle; Key : in Element) return Find_Result;
    -- If Bag contains an Element X such that X = Key, returns (Found => True, Item => X);
    -- otherwise, returns (Found => False).
    -- If Bag contains more than one such Element, returns one of these Elements
@@ -78,12 +79,12 @@ package PragmARC.Data_Structures.Bags.Unbounded.Unprotected with Preelaborate is
    --
    -- Time: O(N)
 
-   function Empty (Bag : Handle) return Boolean;
+   function Empty (Bag : in Handle) return Boolean;
    -- Returns True if Bag contains no elements; returns False otherwise
    --
    -- Time: O(1)
 
-   function Size (Bag : Handle) return Natural;
+   function Size (Bag : in Handle) return Natural;
    -- Returns the number of elements stored in Bag
    --
    -- Time: O(1)

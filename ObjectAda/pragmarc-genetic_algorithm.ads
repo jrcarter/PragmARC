@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2017 Jul 15     J. Carter          V1.1--Added tasking
@@ -17,15 +18,15 @@ pragma Unsuppress (All_Checks);
 generic -- PragmARC.Genetic_Algorithm
    type Gene is private;
 
-   with function "=" (Left : Gene; Right : Gene) return Boolean is <>;
+   with function "=" (Left : in Gene; Right : in Gene) return Boolean is <>;
 
    with function Random return Gene;
    -- Returns a random Gene. Used to initialize the population.
 
-   with function Fitness (Individual : Gene) return Float;
+   with function Fitness (Individual : in Gene) return Float;
    -- Returns the fitness of Individual. Larger values indicate greater fitness.
 
-   with function Mate (Left : Gene; Right : Gene) return Gene;
+   with function Mate (Left : in Gene; Right : in Gene) return Gene;
    -- Creates a new Gene by mating Left and Right.
    -- This is often called "crossover".
 
@@ -38,9 +39,9 @@ procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positiv
                                       Num_Elite_Saved           : in     Natural  :=    10;
                                       Num_Tasks                 : in     Positive :=     1;
                                       Best                      :    out Gene;
-                                      Fit                       :    out Float);
---with
---   Pre => Num_Elite_Saved <= Population_Size and Mutation_Probability in 0.0 .. 1.0;
+                                      Fit                       :    out Float)
+with
+   Pre => Num_Elite_Saved <= Population_Size and Mutation_Probability in 0.0 .. 1.0;
 -- Evolves a population of Population_Size individuals for at most Max_Generations generations.
 -- If the best individual remains unchanged for Num_No_Change_Generations, the procedure may return after fewer generations.
 -- Mutation_Probability is the probability that an individual will be mutated.

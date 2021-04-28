@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Make Float_Image work if Ada.Text_IO.Field'Last is very large
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -21,8 +22,10 @@ package body PragmARC.Images is
    use Ada.Strings.Fixed;
    use Ada.Text_IO;
 
-   function Adjust (Image : String; Width : Field; Negative : Boolean; Zero_Filled : Boolean) return String is
+   function Adjust (Image : in String; Width : in Field; Negative : in Boolean; Zero_Filled : in Boolean) return String;
    -- Apply Width, Negative, & Zero_Filled to Image
+
+   function Adjust (Image : in String; Width : in Field; Negative : in Boolean; Zero_Filled : in Boolean) return String is
       Blank : constant Character := ' ';
       Zero  : constant Character := '0';
       Minus : constant Character := '-';
@@ -42,7 +45,7 @@ package body PragmARC.Images is
       end if;
    end Adjust;
 
-   function Signed_Image (Value : Number; Width : Field := 0; Zero_Filled : Boolean := False; Base : Number_Base := 10)
+   function Signed_Image (Value : in Number; Width : in Field := 0; Zero_Filled : in Boolean := False; Base : in Number_Base := 10)
    return String is
       package Number_IO is new Integer_IO (Number);
       use Number_IO;
@@ -71,7 +74,7 @@ package body PragmARC.Images is
       return Adjust (Image (Start .. Stop), Width, Negative, Zero_Filled);
    end Signed_Image;
 
-   function Modular_Image (Value : Number; Width : Field := 0; Zero_Filled : Boolean := False; Base : Number_Base := 10)
+   function Modular_Image (Value : in Number; Width : in Field := 0; Zero_Filled : in Boolean := False; Base : in Number_Base := 10)
    return String is
       package Number_IO is new Modular_IO (Number);
       use Number_IO;
@@ -94,17 +97,23 @@ package body PragmARC.Images is
       return Adjust (Image (Start .. Stop), Width, False, Zero_Filled);
    end Modular_Image;
 
-   function Float_Image (Value       : Number;
-                         Fore        : Field       := 2;
-                         Aft         : Field       := Number'Digits - 1;
-                         Exp         : Field       := 3;
-                         Zero_Filled : Boolean     := False;
-                         Base        : Number_Base := 10)
+   function Float_Image (Value       : in Number;
+                         Fore        : in Field       := 2;
+                         Aft         : in Field       := Number'Digits - 1;
+                         Exp         : in Field       := 3;
+                         Zero_Filled : in Boolean     := False;
+                         Base        : in Number_Base := 10)
    return String is
       package Number_IO is new Float_IO (Number);
 
       use Ada.Strings.Unbounded;
       use Conversions.Unbounded_Strings;
+
+      function Base_10_Image return String;
+      -- Returns the image of Value in base 10
+
+      function Non_10_Image return String;
+      -- Returns the image of Value for Base /= 10
 
       function Base_10_Image return String is
          Image : String (1 .. 3 * 255 + 3);
@@ -122,7 +131,7 @@ package body PragmARC.Images is
       end Base_10_Image;
 
       function Non_10_Image return String is
-         function Hex_Digit (Value : Natural) return Character is
+         function Hex_Digit (Value : in Natural) return Character is
             (if Value < 10 then Character'Val (Character'Pos ('0') + Value)
              else Character'Val (Character'Pos ('A') + Value - 10) );
 

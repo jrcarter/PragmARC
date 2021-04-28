@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -8,6 +8,7 @@
 -- From P. K. Pearson, "Fast Hashing of Variable-Length Text Strings," Comm. ACM, 1990 Jun
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Jun 01     J. Carter          V1.1--Changed formatting
@@ -46,6 +47,6 @@ package PragmARC.Hash_Fast_Variable_Length with Pure is
       type Index is (<>); -- Index type of the string type
       type String is array (Index range <>) of Element;
 
-      with function To_Byte (Item : Element) return Byte;
-   function Hash (Item : String; Table : Permutation_Table := Default_Table) return Byte;
+      with function To_Byte (Item : in Element) return Byte;
+   function Hash (Item : in String; Table : in Permutation_Table := Default_Table) return Byte;
 end PragmARC.Hash_Fast_Variable_Length;

@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -8,6 +8,7 @@
 -- Seconds
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Jun 01     J. Carter          V1.3--Changed some formatting
@@ -49,11 +50,11 @@ package PragmARC.Date_Handler is
    -- If Zero_Fill, these will be '0'; otherwise they will be ' '.
 
    -- Provide the image of any year CE:
-   function Year_Image_Short (Year : Positive; Zero_Fill : Boolean := True) return String with
+   function Year_Image_Short (Year : in Positive; Zero_Fill : in Boolean := True) return String with
       Post => (if Zero_Fill then Year_Image_Short'Result'Length = 2 else Year_Image_Short'Result'Length in 1 .. 2);
    -- Returns the decimal image of Year rem 100.
 
-   function Year_Image_Long  (Year : Positive; Zero_Fill : Boolean := True; Width : Positive := 4) return String;
+   function Year_Image_Long  (Year : in Positive; Zero_Fill : in Boolean := True; Width : in Positive := 4) return String;
    -- Returns the decimal image of Year. Result will be large enough to hold this image, or Width characters long,
    -- whichever is larger.
 
@@ -83,23 +84,24 @@ package PragmARC.Date_Handler is
                                                12 => To_Unbounded_String ("December") );
                                                -- Default "long" month names
 
-   function Month_Image_Numeric (Month : Calendar.Month_Number; Zero_Fill : Boolean := True) return String with
+   function Month_Image_Numeric (Month : in Calendar.Month_Number; Zero_Fill : in Boolean := True) return String with
       Post => (if Zero_Fill then Month_Image_Numeric'Result'Length = 2 else Month_Image_Numeric'Result'Length in 1 .. 2);
    -- Returns the decimal image of Month.
 
-   function Month_Image_Alpha (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List) return String;
+   function Month_Image_Alpha (Month : in Calendar.Month_Number; Casing : in Case_Selection := Mixed; Name : in Name_List)
+   return String;
    -- Returns To_String (Name (Month) ), formatted as directed by Casing.
 
    -- Renamings for default month names:
    function Month_Image_Short
-      (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List := Default_Short_Name)
+      (Month : in Calendar.Month_Number; Casing : in Case_Selection := Mixed; Name : in Name_List := Default_Short_Name)
    return String renames Month_Image_Alpha;
 
    function Month_Image_Long
-      (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List := Default_Long_Name)
+      (Month : in Calendar.Month_Number; Casing : in Case_Selection := Mixed; Name : in Name_List := Default_Long_Name)
    return String renames Month_Image_Alpha;
 
-   function Day_Image (Day : Calendar.Day_Number; Zero_Fill : Boolean := True) return String with
+   function Day_Image (Day : in Calendar.Day_Number; Zero_Fill : in Boolean := True) return String with
       Post => (if Zero_Fill then Day_Image'Result'Length = 2 else Day_Image'Result'Length in 1 .. 2);
    -- Returns the decimal image of Day.
 
@@ -108,21 +110,21 @@ package PragmARC.Date_Handler is
 
    Default_AM_PM_Name : constant AM_PM_List := (AM => To_Unbounded_String (" am"), PM => To_Unbounded_String (" pm") );
 
-   function Hour_Image_12 (Hour : Hour_Number; AM_PM : AM_PM_List := Default_AM_PM_Name; Zero_Fill : Boolean := True)
+   function Hour_Image_12 (Hour : in Hour_Number; AM_PM : in AM_PM_List := Default_AM_PM_Name; Zero_Fill : in Boolean := True)
    return String;
    -- If Hour = 0, Image is "12". If Hour in 1 .. 12, Image is image of Hour. Otherwise, Image is image of Hour - 12.
    -- If Hour < 12, returns Image & To_String (AM_PM (AM) ). Otherwise, returns Image & To_String (AM_PM (PM) ).
    -- If Zero_Fill, Image will always be 2 characters long. Otherwise, Image will be 1 or 2 characters long.
 
-   function Hour_Image_24 (Hour : Hour_Number; Zero_Fill : Boolean := True) return String with
+   function Hour_Image_24 (Hour : in Hour_Number; Zero_Fill : in Boolean := True) return String with
       Post => (if Zero_Fill then Hour_Image_24'Result'Length = 2 else Hour_Image_24'Result'Length in 1 .. 2);
    -- Returns the decimal image of Hour.
 
-   function Minute_Image (Minute : Minute_Number; Zero_Fill : Boolean := True) return String with
+   function Minute_Image (Minute : in Minute_Number; Zero_Fill : in Boolean := True) return String with
       Post => (if Zero_Fill then Minute_Image'Result'Length = 2 else Minute_Image'Result'Length in 1 .. 2);
    -- Returns the decimal image of Minute.
 
-   function Seconds_Image (Seconds : Minute_Duration; Zero_Fill : Boolean := True; Aft : Natural := 0) return String;
+   function Seconds_Image (Seconds : in Minute_Duration; Zero_Fill : in Boolean := True; Aft : in Natural := 0) return String;
    -- Returns the decimal image of Seconds, with Aft digits after the decimal point.
    -- If Aft = 0, result will not contain a decimal point.
    -- If Aft = 0 and Zero_Fill, result will always be 2 characters long.
@@ -131,7 +133,7 @@ package PragmARC.Date_Handler is
    -- Otherwise, the portion of result left of the decimal point may be 1 or 2 characters long.
    -- If Seconds = Minute_Duration'Last, returns the image of 0.0.
 
-   function Image (Date : Calendar.Time) return String;
+   function Image (Date : in Calendar.Time) return String;
    -- Splits Date into Year, Month, Day, Hour, Minute, and Seconds, then
    -- returns the 23-character string resulting from
    --    Year_Image_Long (Year)    & ' ' &
@@ -143,18 +145,18 @@ package PragmARC.Date_Handler is
 
    type Day_Name is (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday);
 
-   function Day_Of_Week (Year : Positive; Month : Calendar.Month_Number; Day : Calendar.Day_Number) return Day_Name;
-   function Day_Of_Week (Date : Calendar.Time) return Day_Name;
+   function Day_Of_Week (Year : in Positive; Month : in Calendar.Month_Number; Day : in Calendar.Day_Number) return Day_Name;
+   function Day_Of_Week (Date : in Calendar.Time) return Day_Name;
    -- These 2 functions provide the day of the week for a given date
    -- Year is interpreted as being in the Common Era
 
-   function Leap_Year (Year : Positive) return Boolean;
-   function Leap_Year (Date : Calendar.Time) return Boolean;
+   function Leap_Year (Year : in Positive) return Boolean;
+   function Leap_Year (Date : in Calendar.Time) return Boolean;
    -- These 2 functions return True if the given year is a leap year; False otherwise
    -- Year is interpreted as being in the Common Era
 
-   function Days_In_Month (Year : Positive; Month : Calendar.Month_Number) return Calendar.Day_Number;
-   function Days_In_Month (Date : Calendar.Time) return Calendar.Day_Number;
+   function Days_In_Month (Year : in Positive; Month : in Calendar.Month_Number) return Calendar.Day_Number;
+   function Days_In_Month (Date : in Calendar.Time) return Calendar.Day_Number;
    -- These 2 functions return the number of days in the given month for the given year
    -- Year is interpreted as being in the Common Era
 end PragmARC.Date_Handler;

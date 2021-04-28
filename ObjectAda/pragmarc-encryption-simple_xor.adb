@@ -39,7 +39,7 @@ package body PragmARC.Encryption.Simple_XOR is
          Pre  => Byte_IO.Is_Open (Input) and then Byte_IO.Mode (Input) in Byte_IO.In_File,
          Post => Last <= List'Last;
       -- Reads bytes from Input until List is filled or End_Of_File (Input)
-      -- Last is the index in List of the last position filled, or zero if Input was alread at EOF
+      -- Last is the index in List of the last position filled, or zero if Input was already at EOF
 
       procedure Put (Output : in Byte_IO.File_Type; List : in Byte_List) with
          Pre => Byte_IO.Is_Open (Output) and then Byte_IO.Mode (Output) in Byte_IO.Out_File;

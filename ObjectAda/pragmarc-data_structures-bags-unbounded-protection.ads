@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Generic unbounded-bag ADT for general use.
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -27,7 +28,7 @@ with System;
 generic -- PragmARC.Data_Structures.Bags.Unbounded.Protection
    type Element is private;
 
-   with function "=" (Left : Element; Right : Element) return Boolean is <>;
+   with function "=" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Returns True if Left and Right are equal; returns False otherwise.
    -- "=" is often implemented to compare only part of the elements (the Key).
 package PragmARC.Data_Structures.Bags.Unbounded.Protection with Preelaborate is
@@ -67,7 +68,7 @@ package PragmARC.Data_Structures.Bags.Unbounded.Protection with Preelaborate is
       -- otherwise, has no effect.
       -- If the bag contains more than one such Element, updates one of these Elements.
 
-      function Find (Key : Element) return Find_Result;
+      function Find (Key : in Element) return Find_Result;
       -- If the bag contains an Element X such that X = Key, returns (Found => True, Item => X);
       -- otherwise, returns (Found => False).
       -- If the bag contains more than one such Element, returns one of these Elements

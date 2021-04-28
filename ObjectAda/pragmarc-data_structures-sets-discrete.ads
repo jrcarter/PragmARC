@@ -6,6 +6,7 @@
 -- Pascal-like set type and operations
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.3--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.2--Corrected comments
 -- 2020 Dec 01     J. Carter          V2.1--Changed elaboration pragmas to aspects
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -25,42 +26,42 @@ package PragmARC.Data_Structures.Sets.Discrete with Pure is
    Empty : constant Set; -- No members
    Full  : constant Set; -- Every possible member
 
-   function "+" (Left : Set; Right : Set) return Set; -- Union
-   function Union (Left : Set; Right : Set) return Set renames "+";
+   function "+" (Left : in Set; Right : in Set) return Set; -- Union
+   function Union (Left : in Set; Right : in Set) return Set renames "+";
 
    -- These two perform the union of the Set and a Set consisting of the Element
-   function "+" (Left : Set;     Right : Element) return Set;
-   function "+" (Left : Element; Right : Set)     return Set;
-   function Union (Left : Set;     Right : Element) return Set renames "+";
-   function Union (Left : Element; Right : Set)     return Set renames "+";
+   function "+" (Left : in Set;     Right : in Element) return Set;
+   function "+" (Left : in Element; Right : in Set)     return Set;
+   function Union (Left : in Set;     Right : in Element) return Set renames "+";
+   function Union (Left : in Element; Right : in Set)     return Set renames "+";
 
-   function "*" (Left : Set; Right : Set) return Set; -- Intersection
-   function Intersection (Left : Set; Right : Set) return Set renames "*";
+   function "*" (Left : in Set; Right : in Set) return Set; -- Intersection
+   function Intersection (Left : in Set; Right : in Set) return Set renames "*";
 
-   function "-" (Left : Set; Right : Set) return Set; -- Difference
-   function Difference (Left : Set; Right : Set) return Set renames "-";
+   function "-" (Left : in Set; Right : in Set) return Set; -- Difference
+   function Difference (Left : in Set; Right : in Set) return Set renames "-";
 
-   function "-" (Left : Set; Right : Element) return Set; -- Performs the difference of Left and a Set consisting of Right
-   function Difference (Left : Set; Right : Element) return Set renames "-";
+   function "-" (Left : in Set; Right : in Element) return Set; -- Performs the difference of Left and a Set consisting of Right
+   function Difference (Left : in Set; Right : in Element) return Set renames "-";
 
-   function "/" (Left : Set; Right : Set) return Set; -- Symmetric difference
-   function Symmetric_Differece (Left : Set; Right : Set) return Set renames "/";
+   function "/" (Left : in Set; Right : in Set) return Set; -- Symmetric difference
+   function Symmetric_Differece (Left : in Set; Right : in Set) return Set renames "/";
 
-   function "<=" (Left : Set; Right : Set) return Boolean; -- Subset
-   function Subset (Left : Set; Right : Set) return Boolean renames "<=";
+   function "<=" (Left : in Set; Right : in Set) return Boolean; -- Subset
+   function Subset (Left : in Set; Right : in Set) return Boolean renames "<=";
 
-   function "<" (Left : Set; Right : Set) return Boolean; -- with
---      Post => "<"'Result = (Left <= Right and Left.Size < Right.Size); -- Proper subset
-   function Proper_Subset (Left : Set; Right : Set) return Boolean renames "<";
+   function "<" (Left : in Set; Right : in Set) return Boolean with
+      Post => "<"'Result = (Left <= Right and Left.Size < Right.Size); -- Proper subset
+   function Proper_Subset (Left : in Set; Right : in Set) return Boolean renames "<";
 
-   function ">=" (Left : Set; Right : Set) return Boolean; -- Superset
-   function Superset (Left : Set; Right : Set) return Boolean renames ">=";
+   function ">=" (Left : in Set; Right : in Set) return Boolean; -- Superset
+   function Superset (Left : in Set; Right : in Set) return Boolean renames ">=";
 
-   function ">" (Left : Set; Right : Set) return Boolean; -- with
---      Post => ">"'Result = (Left >= Right and Left.Size > Right.Size); -- Proper superset
-   function Proper_Superset (Left : Set; Right : Set) return Boolean renames ">";
+   function ">" (Left : in Set; Right : in Set) return Boolean with
+      Post => ">"'Result = (Left >= Right and Left.Size > Right.Size); -- Proper superset
+   function Proper_Superset (Left : in Set; Right : in Set) return Boolean renames ">";
 
-   function Member (Group : Set; Item : Element) return Boolean; -- Membership
+   function Member (Group : in Set; Item : in Element) return Boolean; -- Membership
 
    type Member_List is array (Positive range <>) of Element;
 
@@ -68,7 +69,7 @@ package PragmARC.Data_Structures.Sets.Discrete with Pure is
    -- Allows a sort of Set literal:
    -- My_Set := New_Set ( (An_Element, Another_Element, Yet_A_3rd_Element) );
 
-   function Size (Group : Set) return Natural; -- Number in members
+   function Size (Group : in Set) return Natural; -- Number in members
 private -- PragmARC.Set_Discrete
    type Set_List is array (Element) of Boolean with Component_Size => 1;
 

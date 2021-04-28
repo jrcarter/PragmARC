@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.5--Cleanup compiler warnings
@@ -15,7 +16,7 @@
 --
 with Ada.Characters.Handling;
 with Ada.Strings.Fixed;
-with Ada.Text_Io;
+with Ada.Text_IO;
 
 with PragmARC.Images.Image;
 with PragmARC.Mixed_Case;
@@ -59,32 +60,33 @@ package body PragmARC.Date_Handler is
       Seconds := Secs;
    end Split;
 
-   function Image (Value : Natural; Width : Natural := 0; Zero_Fill : Boolean := True) return String;
+   function Image (Value : in Natural; Width : in Natural := 0; Zero_Fill : in Boolean := True) return String;
    -- Create a decimal image of Value with the specified width and zero-filling.
    -- If Width = 0 or the minimum length of the image >= Width, returns the minimum-length image.
    -- Otherwise, returns a string of length Width containing the image right justified.
    -- If Zero_Fill, the remaining characters of the result are set to '0', otherwise they are set to ' '.
 
-   function Image (Value : Natural; False_Width : Natural; True_Width : Natural; Zero_Fill : Boolean) return String;
+   function Image (Value : in Natural; False_Width : in Natural; True_Width : in Natural; Zero_Fill : in Boolean) return String;
    -- if Zero_Fill, returns Image (Value, True_Width, Zero_Fill).
    -- Otherwise, returns Image (Value, False_Width, Zero_Fill).
 
-   function Image (Value : Natural; Width : Natural := 0; Zero_Fill : Boolean := True) return String is
+   function Image (Value : in Natural; Width : in Natural := 0; Zero_Fill : in Boolean := True) return String is
       (Images.Image (Value, Images.Field (Width), Zero_Fill) );
 
-   function Image (Value : Natural; False_Width : Natural; True_Width : Natural; Zero_Fill : Boolean) return String is
+   function Image (Value : in Natural; False_Width : in Natural; True_Width : in Natural; Zero_Fill : in Boolean) return String is
       (Image (Value, (if Zero_Fill then True_Width else False_Width), Zero_Fill) );
 
-   function Year_Image_Short (Year : Positive; Zero_Fill : Boolean := True) return String is
+   function Year_Image_Short (Year : in Positive; Zero_Fill : in Boolean := True) return String is
       (Image (Year rem 100, 0, 2, Zero_Fill) );
 
-   function Year_Image_Long (Year : Positive; Zero_Fill : Boolean := True; Width : Positive := 4) return String is
+   function Year_Image_Long (Year : in Positive; Zero_Fill : in Boolean := True; Width : in Positive := 4) return String is
       (Image (Year, Width, Zero_Fill) );
 
-   function Month_Image_Numeric (Month : Calendar.Month_Number; Zero_Fill : Boolean := True) return String is
+   function Month_Image_Numeric (Month : in Calendar.Month_Number; Zero_Fill : in Boolean := True) return String is
       (Image (Month, 0, 2, Zero_Fill) );
 
-   function Month_Image_Alpha (Month : Calendar.Month_Number; Casing : Case_Selection := Mixed; Name : Name_List) return String is
+   function Month_Image_Alpha (Month : in Calendar.Month_Number; Casing : in Case_Selection := Mixed; Name : in Name_List)
+   return String is
       Result : constant String := To_String (Name (Month) );
    begin -- Month_Image_Alpha
       case Casing is
@@ -99,10 +101,10 @@ package body PragmARC.Date_Handler is
       end case;
    end Month_Image_Alpha;
 
-   function Day_Image (Day : Calendar.Day_Number; Zero_Fill : Boolean := True) return String is
+   function Day_Image (Day : in Calendar.Day_Number; Zero_Fill : in Boolean := True) return String is
       (Image (Day, 0, 2, Zero_Fill) );
 
-   function Hour_Image_12 (Hour : Hour_Number; AM_PM : AM_PM_List := Default_AM_PM_Name; Zero_Fill : Boolean := True)
+   function Hour_Image_12 (Hour : in Hour_Number; AM_PM : in AM_PM_List := Default_AM_PM_Name; Zero_Fill : in Boolean := True)
    return String is
       AM_PM_Name : constant String := To_String (AM_PM (AM_PM_ID'Val (Boolean'Pos (Hour > 11) ) ) );
 
@@ -119,13 +121,13 @@ package body PragmARC.Date_Handler is
       return Image (Local_Hour, 0, 2, Zero_Fill) & AM_PM_Name;
    end Hour_Image_12;
 
-   function Hour_Image_24 (Hour : Hour_Number; Zero_Fill : Boolean := True) return String is
+   function Hour_Image_24 (Hour : in Hour_Number; Zero_Fill : in Boolean := True) return String is
       (Image (Hour, 0, 2, Zero_Fill) );
 
-   function Minute_Image (Minute : Minute_Number; Zero_Fill : Boolean := True) return String is
+   function Minute_Image (Minute : in Minute_Number; Zero_Fill : in Boolean := True) return String is
       (Image (Minute, 0, 2, Zero_Fill) );
 
-   function Seconds_Image (Seconds : Minute_Duration; Zero_Fill : Boolean := True; Aft : Natural := 0) return String is
+   function Seconds_Image (Seconds : in Minute_Duration; Zero_Fill : in Boolean := True; Aft : in Natural := 0) return String is
       Result : String (1 .. 100 + Aft);
       Start  : Natural;
 
@@ -152,7 +154,7 @@ package body PragmARC.Date_Handler is
       return Result (Start .. Result'Last);
    end Seconds_Image;
 
-   function Image (Date : Calendar.Time) return String is
+   function Image (Date : in Calendar.Time) return String is
       Year    : Calendar.Year_Number;
       Month   : Calendar.Month_Number;
       Day     : Calendar.Day_Number;
@@ -174,7 +176,7 @@ package body PragmARC.Date_Handler is
    end Image;
 
    -- Day of week algorithm by Zeller, ACTA MATHEMATICA #7, Stockholm, 1887 (in German)
-   function Day_Of_Week (Year : Positive; Month : Calendar.Month_Number; Day : Calendar.Day_Number) return Day_Name is
+   function Day_Of_Week (Year : in Positive; Month : in Calendar.Month_Number; Day : in Calendar.Day_Number) return Day_Name is
       Local_Year  : Natural  := Year;
       Local_Month : Positive := Month;
       Century     : Natural;
@@ -199,7 +201,7 @@ package body PragmARC.Date_Handler is
       return Day_Name'Val (Position);
    end Day_Of_Week;
 
-   function Day_Of_Week (Date : Calendar.Time) return Day_Name is
+   function Day_Of_Week (Date : in Calendar.Time) return Day_Name is
       Year    : Calendar.Year_Number;
       Month   : Calendar.Month_Number;
       Day     : Calendar.Day_Number;
@@ -210,13 +212,13 @@ package body PragmARC.Date_Handler is
       return Day_Of_Week (Year => Year, Month => Month, Day => Day);
    end Day_Of_Week;
 
-   function Leap_Year (Year : Positive) return Boolean is
+   function Leap_Year (Year : in Positive) return Boolean is
       ( (Year rem 100 /= 0 and Year rem 4 = 0) or (Year rem 400 = 0) );
 
-   function Leap_Year (Date : Calendar.Time) return Boolean is
+   function Leap_Year (Date : in Calendar.Time) return Boolean is
       (Leap_Year (Calendar.Year (Date) ) );
 
-   function Days_In_Month (Year : Positive; Month : Calendar.Month_Number) return Calendar.Day_Number is
+   function Days_In_Month (Year : in Positive; Month : in Calendar.Month_Number) return Calendar.Day_Number is
       type Day_Set is array (Calendar.Month_Number) of Calendar.Day_Number;
 
       Normal : constant Day_Set := (01 => 31, 02 => 28, 03 => 31, 04 => 30, 05 => 31, 06 => 30,
@@ -231,7 +233,7 @@ package body PragmARC.Date_Handler is
       return Result;
    end Days_In_Month;
 
-   function Days_In_Month (Date : Calendar.Time) return Calendar.Day_Number is
+   function Days_In_Month (Date : in Calendar.Time) return Calendar.Day_Number is
       Year    : Calendar.Year_Number;
       Month   : Calendar.Month_Number;
       Day     : Calendar.Day_Number;

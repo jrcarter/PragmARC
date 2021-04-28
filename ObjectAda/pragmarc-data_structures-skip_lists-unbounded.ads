@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- Described by W. Pugh in "Skip Lists:  A Probabilistic Alternative to Balanced Trees," CACM 1990 Jun
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
@@ -27,11 +28,11 @@ private with Ada.Finalization;
 generic -- PragmARC.Data_Structures.Skip_Lists.Unbounded
    type Element is private; -- Values to store in the list
 
-   with function "<" (Left : Element; Right : Element) return Boolean is <>;
+   with function "<" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Orders Elements; usually will work on a part (the key) of an Element
    -- Elements will be ordered in ascending order according to "<"
 
-   with function "=" (Left : Element; Right : Element) return Boolean is <>;
+   with function "=" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Usually operates on part (the key) of an Element
 package PragmARC.Data_Structures.Skip_Lists.Unbounded is
    type Skip_List is tagged limited private; -- Initial value: empty
@@ -58,7 +59,7 @@ package PragmARC.Data_Structures.Skip_Lists.Unbounded is
       end case;
    end record;
 
-   function Search (List : Skip_List; Item : Element) return Result;
+   function Search (List : in Skip_List; Item : in Element) return Result;
    -- If there exists a value stored in List such that Value = Item, returns (Found => True, Item => Value)
    -- Returns (Found => False) otherwise
    --
@@ -80,24 +81,24 @@ package PragmARC.Data_Structures.Skip_Lists.Unbounded is
    --
    -- Time : approximately O(log N)
 
-   function Get_First (List : Skip_List) return Element with
+   function Get_First (List : in Skip_List) return Element with
       Pre => not List.Is_Empty or else raise Empty;
    -- Returns the first value stored in List (values are ordered by "<")
    --
    -- Time: O(1)
 
-   function Get_Last (List : Skip_List) return Element with
+   function Get_Last (List : in Skip_List) return Element with
       Pre => not List.Is_Empty or else raise Empty;
    -- Similar to Get_First except it returns the last value stored in List
    --
    -- Time: O(1)
 
-   function Is_Empty (List : Skip_List) return Boolean;
+   function Is_Empty (List : in Skip_List) return Boolean;
    -- Returns True if List is empty [List.Length = 0]; returns False otherwise
    --
    -- Time : O(1)
 
-   function Length (List : Skip_List) return Natural;
+   function Length (List : in Skip_List) return Natural;
    -- Returns a count of the number of values stored in List
    --
    -- Time : O(1)
@@ -107,8 +108,6 @@ package PragmARC.Data_Structures.Skip_Lists.Unbounded is
    procedure Iterate (List : in out Skip_List);
    -- Applies Action to each value in List in order
 private -- PragmARC.Skip_List_Unbounded
-   use Ada;
-
    Max_Level : constant := 5;
 
    subtype Level_Id is Positive range 1 .. Max_Level;
@@ -129,7 +128,7 @@ private -- PragmARC.Skip_List_Unbounded
       end case;
    end record;
 
-   type Skip_List is new Finalization.Limited_Controlled with record
+   type Skip_List is new Ada.Finalization.Limited_Controlled with record
       Level  : Level_Id := Level_Id'First;
       Header : Link     := new Node (Has_Data => False, Level => Max_Level);
       Last   : Link     := null;

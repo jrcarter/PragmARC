@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2020 Feb 15     J. Carter          V1.2--Make more Object.Operation friendly
@@ -38,7 +39,7 @@ package body PragmARC.Data_Structures.Bags.Unbounded.Protection is
       function Empty return Boolean is
          (Bag.Empty);
 
-      function Find (Key : Element) return Find_Result is
+      function Find (Key : in Element) return Find_Result is
          Result : Implementation.Find_Result;
       begin -- Find
          Result := Bag.Find (Key);

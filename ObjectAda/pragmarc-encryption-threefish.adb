@@ -3,6 +3,7 @@
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
+-- 2021 May 01     J. Carter     V1.1--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V1.0--Initial PragmARC version
 --
 with Ada.Unchecked_Conversion;
@@ -114,7 +115,7 @@ package body PragmARC.Encryption.Threefish is
 
    Bytes_Per_Block : constant := 32;
 
-   function Encrypt (Key_Schedule : Key_Schedule_Handle; Text : Byte_List) return Block_List is
+   function Encrypt (Key_Schedule : in Key_Schedule_Handle; Text : in Byte_List) return Block_List is
       Num_Blocks : constant Natural := (Text'Length + Bytes_Per_Block - 1) / Bytes_Per_Block;
 
       Slice  : Block;
@@ -136,7 +137,7 @@ package body PragmARC.Encryption.Threefish is
       return Result;
    end Encrypt;
 
-   function Decrypt (Key_Schedule : Key_Schedule_Handle; Text : Block_List) return Byte_List is
+   function Decrypt (Key_Schedule : in Key_Schedule_Handle; Text : in Block_List) return Byte_List is
       Num_Bytes : constant Natural := Text'Length * Bytes_Per_Block;
 
       Slice  : Block;
@@ -158,7 +159,7 @@ package body PragmARC.Encryption.Threefish is
    procedure Reverse_Bytes (List : in out Word_As_Bytes);
    -- Reverses the bytes of List
 
-   function Word_From_Bytes (List : Word_As_Bytes) return Word is
+   function Word_From_Bytes (List : in Word_As_Bytes) return Word is
       function To_Word is new Ada.Unchecked_Conversion (Source => Word_As_Bytes, Target => Word);
 
       Local : Word_As_Bytes := List;
@@ -170,7 +171,7 @@ package body PragmARC.Encryption.Threefish is
       return To_Word (Local);
    end Word_From_Bytes;
 
-   function Bytes_From_Word (Value : Word) return Word_As_Bytes is
+   function Bytes_From_Word (Value : in Word) return Word_As_Bytes is
       function To_Bytes is new Ada.Unchecked_Conversion (Source => Word, Target => Word_As_Bytes);
 
       Result : Word_As_Bytes := To_Bytes (Value);
@@ -182,7 +183,7 @@ package body PragmARC.Encryption.Threefish is
       return Result;
    end Bytes_From_Word;
 
-   function Block_From_Bytes (List : Block_As_Bytes) return Block is
+   function Block_From_Bytes (List : in Block_As_Bytes) return Block is
       Result : Block;
       Start  : Positive := List'First;
    begin -- Block_From_Bytes
@@ -194,7 +195,7 @@ package body PragmARC.Encryption.Threefish is
       return Result;
    end Block_From_Bytes;
 
-   function Bytes_From_Block (Value : Block) return Block_As_Bytes is
+   function Bytes_From_Block (Value : in Block) return Block_As_Bytes is
       Result : Block_As_Bytes;
       Start  : Positive := Result'First;
    begin -- Bytes_From_Block

@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.1--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -17,13 +18,13 @@ with PragmARC.Randomness.Universal;
 with System;
 
 package body PragmARC.Cards.Decks.General is
-   function Is_Empty (Item : Handle) return Boolean is
+   function Is_Empty (Item : in Handle) return Boolean is
       (Item.Count <= 0);
 
-   function Is_Full (Item : Handle) return Boolean is
+   function Is_Full (Item : in Handle) return Boolean is
       (Item.Count >= Item.Max_Cards);
 
-   function Size (Item : Handle) return Natural is
+   function Size (Item : in Handle) return Natural is
       (Item.Count);
 
    procedure Shuffle (Item : in out Handle) is
@@ -94,9 +95,9 @@ package body PragmARC.Cards.Decks.General is
       end if;
    end Remove;
 
-   function Value (From : Handle; Position : Positive) return Card is
+   function Value (From : in Handle; Position : in Positive) return Card is
       (From.Value (Position) );
 
-   function "=" (Left : Handle; Right : Handle) return Boolean is
+   function "=" (Left : in Handle; Right : in Handle) return Boolean is
       (Left.Count = Right.Count and then Left.Value (1 .. Left.Count) = Right.Value (1 .. Right.Count) );
 end PragmARC.Cards.Decks.General;

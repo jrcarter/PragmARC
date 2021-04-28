@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Jan 01     J. Carter          V2.2--Removed Assign
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -31,9 +32,6 @@ package body PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
       Into.List.Prepend (New_Item => Item);
    end Add;
 
-   -- Internal Find function used by Delete, Update, and Find
-   -- Result points to matching Node if found; is null otherwise
-   --
    type Search_Result (Found : Boolean := False) is record
       case Found is
       when False =>
@@ -43,7 +41,11 @@ package body PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
       end case;
    end record;
 
-   function Find (Key : Element; Bag : Handle) return Search_Result is
+   function Find (Key : in Element; Bag : in Handle) return Search_Result;
+   -- Internal Find function used by Delete, Update, and Find
+   -- Result points to matching Node if Found
+
+   function Find (Key : in Element; Bag : in Handle) return Search_Result is
       Pos : constant Implementation.Cursor := Bag.List.Find (Key);
 
       use type Implementation.Cursor;
@@ -71,7 +73,7 @@ package body PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
       end if;
    end Update;
 
-   function Find (Bag : Handle; Key : Element) return Find_Result is
+   function Find (Bag : in Handle; Key : in Element) return Find_Result is
       Temp : constant Search_Result := Find (Key, Bag);
    begin -- Find
       if Temp.Found then
@@ -81,10 +83,10 @@ package body PragmARC.Data_Structures.Bags.Unbounded.Unprotected is
       return (Found => False);
    end Find;
 
-   function Empty (Bag : Handle) return Boolean is
+   function Empty (Bag : in Handle) return Boolean is
       (Bag.List.Is_Empty);
 
-   function Size (Bag : Handle) return Natural is
+   function Size (Bag : in Handle) return Natural is
       (Integer (Bag.List.Length) );
 
    procedure Iterate (Over : in out Handle) is

@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- are performed concurrently, transforming an input into an ultimate output
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Sep 15     J. Carter          V1.0--Initial release
@@ -19,7 +20,7 @@ package PragmARC.Concurrent_Pipeline is
       type Input  (<>) is private;
       type Output (<>) is private;
 
-      with function Transform (Value : Input) return Output;
+      with function Transform (Value : in Input) return Output;
       with procedure Put (Item : in Output);
    package Transformers is
       procedure Put (Item : in Input);
