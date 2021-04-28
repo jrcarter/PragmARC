@@ -1,24 +1,25 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Apr 15     J. Carter          V1.0--Provide ranges in classes
 --
 package body PragmARC.Matching.Character_Regular_Expression is
-   function Expanded_Ranges (Pattern : String) return String is
-      function Expanded_Ranges (Start : Positive; In_Class : Boolean := False) return String;
+   function Expanded_Ranges (Pattern : in String) return String is
+      function Expanded_Ranges (Start : in Positive; In_Class : in Boolean := False) return String;
       -- Expands any ranges in Pattern (Start .. Pattern'Last)
       -- Calls itself after expanding a range
 
-      function Expanded_Ranges (Start : Positive; In_Class : Boolean := False) return String is
-         function Expanded (Low : Character; High : Character) return String;
+      function Expanded_Ranges (Start : in Positive; In_Class : in Boolean := False) return String is
+         function Expanded (Low : in Character; High : in Character) return String;
          -- Returns all Characters in Low .. High in order
 
-         function Expanded (Low : Character; High : Character) return String is
+         function Expanded (Low : in Character; High : in Character) return String is
             Result : String (1 .. Character'Pos (High) - Character'Pos (Low) + 1);
             Index  : Positive := 1;
          begin -- Expanded
@@ -72,7 +73,7 @@ package body PragmARC.Matching.Character_Regular_Expression is
       Regexp.Process (Pattern => Expanded_Ranges (Pattern), Processed => Processed);
    end Process;
 
-   function Location (Pattern : String; Source : String) return Result is
+   function Location (Pattern : in String; Source : in String) return Result is
       -- Empty
    begin -- Location
       return Regexp.Location (Expanded_Ranges (Pattern), Source);

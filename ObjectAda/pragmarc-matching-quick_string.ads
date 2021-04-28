@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- From Sunday, David, "A very fast substring search algorithm", COMMUNICATIONS OF THE ACM, 1990 Aug
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -24,7 +25,7 @@ package PragmARC.Matching.Quick_String with Pure is
       end case;
    end record;
 
-   function Location (Pattern : String; Source : String) return Result;
+   function Location (Pattern : in String; Source : in String) return Result;
    -- If Pattern occurs in Source, returns (Found => True, Index => index of first position of Pattern in Source)
    -- Returns (Found => False) otherwise
 end PragmARC.Matching.Quick_String;

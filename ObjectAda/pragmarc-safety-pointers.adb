@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Jun 01     J. Carter          V1.3--Changed comment for empty declarative part
@@ -19,7 +20,7 @@ package body PragmARC.Safety.Pointers is
       Count : Natural := 1;
    end record;
 
-   function "=" (Left : Safe_Pointer; Right : Safe_Pointer) return Boolean is
+   function "=" (Left : in Safe_Pointer; Right : in Safe_Pointer) return Boolean is
       (Left.Ptr = Right.Ptr);
 
    procedure Adjust (Item : in out Safe_Pointer) is
@@ -55,7 +56,7 @@ package body PragmARC.Safety.Pointers is
       null;
    end Finalize;
 
-   function Get (Pointer : Safe_Pointer) return Object is
+   function Get (Pointer : in Safe_Pointer) return Object is
       (Pointer.Ptr.Data);
 
    procedure Put (Pointer : in Safe_Pointer; Value : in Object) is

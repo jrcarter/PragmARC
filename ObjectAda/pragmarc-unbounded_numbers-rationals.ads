@@ -6,6 +6,7 @@
 -- Rational numbers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -26,35 +27,36 @@ package PragmARC.Unbounded_Numbers.Rationals is
    Zero : constant Rational;
    One  : constant Rational;
 
-   function Compose (Numerator : Integers.Unbounded_Integer; Denominator : Integers.Unbounded_Integer) return Rational;
+   function Compose (Numerator : in Integers.Unbounded_Integer; Denominator : in Integers.Unbounded_Integer) return Rational;
    -- Creates the value Numerator / Denominator
-   function "/" (Left : Integers.Unbounded_Integer; Right : Integers.Unbounded_Integer) return Rational renames Compose;
+   function "/" (Left : in Integers.Unbounded_Integer; Right : in Integers.Unbounded_Integer) return Rational renames Compose;
 
    procedure Decompose
       (Value : in Rational; Numerator : out Integers.Unbounded_Integer; Denominator : out Integers.Unbounded_Integer);
    -- Returns the Numerator and Denominator that make up Value
    -- The sign of Value will be in Numerator; Denominator will be positive
 
-   function "+" (Right : Rational) return Rational;
-   function "-" (Right : Rational) return Rational;
+   function "+" (Right : in Rational) return Rational;
+   function "-" (Right : in Rational) return Rational;
 
-   function "abs" (Right : Rational) return Rational;
+   function "abs" (Right : in Rational) return Rational;
 
-   function "+" (Left : Rational; Right : Rational) return Rational;
-   function "-" (Left : Rational; Right : Rational) return Rational;
-   function "*" (Left : Rational; Right : Rational) return Rational;
-   function "/" (Left : Rational; Right : Rational) return Rational;
+   function "+" (Left : in Rational; Right : in Rational) return Rational;
+   function "-" (Left : in Rational; Right : in Rational) return Rational;
+   function "*" (Left : in Rational; Right : in Rational) return Rational;
+   function "/" (Left : in Rational; Right : in Rational) return Rational;
 
-   function "**" (Left : Rational; Right : Integer) return Rational;
+   function "**" (Left : in Rational; Right : in Integer) return Rational;
 
-   function ">"  (Left : Rational; Right : Rational) return Boolean;
-   function "<"  (Left : Rational; Right : Rational) return Boolean;
-   function ">=" (Left : Rational; Right : Rational) return Boolean;
-   function "<=" (Left : Rational; Right : Rational) return Boolean;
+   function ">"  (Left : in Rational; Right : in Rational) return Boolean;
+   function "<"  (Left : in Rational; Right : in Rational) return Boolean;
+   function ">=" (Left : in Rational; Right : in Rational) return Boolean;
+   function "<=" (Left : in Rational; Right : in Rational) return Boolean;
 
    type Base_Number is range 2 .. 36;
 
-   function Image (Value : Rational; As_Fraction : Boolean := False; Base : Base_Number := 10; Decorated : Boolean := False)
+   function Image
+      (Value : in Rational; As_Fraction : in Boolean := False; Base : in Base_Number := 10; Decorated : in Boolean := False)
    return String;
    -- Returns the image of Value
    -- If As_Fraction, result is in the format Numerator/Denominator; otherwise, result is in the format of a real literal
@@ -64,7 +66,7 @@ package PragmARC.Unbounded_Numbers.Rationals is
    --    if abs Value < 1.0, result will have at most 1,000 significant digits
    --    otherwise, result will have at most 1,000 digits to the right of the radix point
 
-   function Value (Image : String) return Rational;
+   function Value (Image : in String) return Rational;
    -- Image must be one of:
    --    Equivalent to a result of calling function Image, possibly with leading or trailing spaces
    --    The image of an integer literal (9876543210)

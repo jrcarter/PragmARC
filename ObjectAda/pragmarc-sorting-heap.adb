@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Generic heap sort
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Apr 15     J. Carter          V1.3--Sequences indexed by integers
@@ -17,28 +18,37 @@
 --
 procedure PragmARC.Sorting.Heap (Set : in out Sort_Set) is
    procedure Swap (Left : in out Element; Right : in out Element) with Inline,
-      Post => Left = Right'Old and Right = Left'Old
-   is
+      Post => Left = Right'Old and Right = Left'Old;
+   -- Swaps Left and Right
+
+   function "=" (Left : in Element; Right : in Element) return Boolean is
+      (not (Left < Right) and not (Right < Left) ) with Inline;
+
+   function "<=" (Left : in Element; Right : in Element) return Boolean is
+      (Left < Right or Left = Right) with Inline;
+
+   procedure Make_Heap (Set : in out Sort_Set);
+   -- Turn Set into a heap
+
+   procedure Sort (Set : in out Sort_Set);
+   -- Sorts Set, which is a heap
+
+   procedure Swap (Left : in out Element; Right : in out Element) is
       Temp : constant Element := Left;
    begin -- Swap
       Left := Right;
       Right := Temp;
    end Swap;
 
-   function "=" (Left : Element; Right : Element) return Boolean is
-      (not (Left < Right) and not (Right < Left) ) with Inline;
-
-   function "<=" (Left : Element; Right : Element) return Boolean is
-      (Left < Right or Left = Right) with Inline;
-
    -- We adjust by Set'First to obtain zero-based indexing.
    -- Node I's children are at 2 * I + 1 and 2 * I + 2. Its parent is at (I - 1) / 2.
 
    procedure Make_Heap (Set : in out Sort_Set) is
-   -- Turn Set into a heap.
-      procedure Extend_Heap (Set : in out Sort_Set) is
+      procedure Extend_Heap (Set : in out Sort_Set);
       -- Assumes Set (Set'First .. Set'Last - 1) is a heap.
       -- Adds Set (Set'Last) to this heap.
+
+      procedure Extend_Heap (Set : in out Sort_Set) is
          Child  : Index := Set'Last;
          Parent : Index := (Child - Set'First - 1) / 2 + Set'First;
       begin -- Extend_Heap
@@ -60,9 +70,10 @@ procedure PragmARC.Sorting.Heap (Set : in out Sort_Set) is
    end Make_Heap;
 
    procedure Sort (Set : in out Sort_Set) is
-   -- Sorts Set, which is a heap
-      procedure Reheap (Set : in out Sort_Set) is
+      procedure Reheap (Set : in out Sort_Set);
       -- Converts the almost-heap in Set to a heap
+
+      procedure Reheap (Set : in out Sort_Set) is
          Parent : Index := Set'First;
          Child  : Index := Parent + 1;
       begin -- Reheap
@@ -88,7 +99,7 @@ procedure PragmARC.Sorting.Heap (Set : in out Sort_Set) is
          Reheap (Set => Set (Set'First .. I - 1) );
       end loop Move_Biggest;
    end Sort;
-begin -- PragmARC.Sort_Heap
+begin -- PragmARC.Sorting.Heap
    if Set'Length <= 1 then -- Already sorted
       return;
    end if;

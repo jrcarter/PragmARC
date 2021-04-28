@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Oct 15     J. Carter          V1.1--Correct an error when opening an existing list with Write_On_Modify True
@@ -62,7 +63,7 @@ package body PragmARC.Persistent_Skip_List_Unbounded is
       end if;
    end Clear;
 
-   function Search (List : Persistent_Skip_List; Item : Element) return Result is
+   function Search (List : in Persistent_Skip_List; Item : in Element) return Result is
       function Convert is new Ada.Unchecked_Conversion (Source => Lists.Result, Target => Result);
    begin -- Search
       return Convert (List.List.Search (Item) );
@@ -88,16 +89,16 @@ package body PragmARC.Persistent_Skip_List_Unbounded is
       end if;
    end Delete;
 
-   function Get_First (List : Persistent_Skip_List) return Element is
+   function Get_First (List : in Persistent_Skip_List) return Element is
       (List.List.Get_First);
 
-   function Get_Last (List : Persistent_Skip_List) return Element is
+   function Get_Last (List : in Persistent_Skip_List) return Element is
       (List.List.Get_Last);
 
-   function Is_Empty (List : Persistent_Skip_List) return Boolean is
+   function Is_Empty (List : in Persistent_Skip_List) return Boolean is
       (List.List.Is_Empty);
 
-   function Length (List : Persistent_Skip_List) return Natural is
+   function Length (List : in Persistent_Skip_List) return Natural is
       (List.List.Length);
 
    procedure Iterate (List : in out Persistent_Skip_List) is

@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Skip lists that are stored in files
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.1--Make Length O(1)
@@ -21,11 +22,11 @@ private with PragmARC.Data_Structures.Skip_Lists.Unbounded;
 generic -- PragmARC.Persistent_Skip_List_Unbounded
    type Element is private; -- Values to store in the list
 
-   with function "<" (Left : Element; Right : Element) return Boolean is <>;
+   with function "<" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Orders Elements; usually will work on a part (the key) of an Element
    -- Elements will be ordered in ascending order according to "<"
 
-   with function "=" (Left : Element; Right : Element) return Boolean is <>;
+   with function "=" (Left : in Element; Right : in Element) return Boolean is <>;
    -- Usually operates on part (the key) of an Element
 package PragmARC.Persistent_Skip_List_Unbounded is
    type Persistent_Skip_List (<>) is tagged limited private;
@@ -54,7 +55,7 @@ package PragmARC.Persistent_Skip_List_Unbounded is
       end case;
    end record;
 
-   function Search (List : Persistent_Skip_List; Item : Element) return Result;
+   function Search (List : in Persistent_Skip_List; Item : in Element) return Result;
    -- If there exists a value stored in List such that Value = Item, returns (Found => True, Item => Value)
    -- Returns (Found => False) otherwise
    --
@@ -76,24 +77,24 @@ package PragmARC.Persistent_Skip_List_Unbounded is
    --
    -- Time : approximately O(log N)
 
-   function Get_First (List : Persistent_Skip_List) return Element with
+   function Get_First (List : in Persistent_Skip_List) return Element with
       Pre => not List.Is_Empty or else raise Empty;
    -- Returns the first value stored in List (values are ordered by "<")
    --
    -- Time: O(1)
 
-   function Get_Last (List : Persistent_Skip_List) return Element with
+   function Get_Last (List : in Persistent_Skip_List) return Element with
       Pre => not List.Is_Empty or else raise Empty;
    -- Similar to Get_First except it returns the last value stored in List
    --
    -- Time: O(1)
 
-   function Is_Empty (List : Persistent_Skip_List) return Boolean;
+   function Is_Empty (List : in Persistent_Skip_List) return Boolean;
    -- Returns True if List is empty [Length (List) = 0]; returns False otherwise
    --
    -- Time : O(1)
 
-   function Length (List : Persistent_Skip_List) return Natural;
+   function Length (List : in Persistent_Skip_List) return Natural;
    -- Returns a count of the number of values stored in List
    --
    -- Time : O(1)

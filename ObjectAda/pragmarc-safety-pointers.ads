@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- when they go out of scope and the designated object has no more references.
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2005 Jul 01     J. Carter          V1.0--Initial release
@@ -27,11 +28,11 @@ package PragmARC.Safety.Pointers is
    -- Equivalent to "new Object".
    -- May raise Storage_Error.
 
-   function Allocate (Data : Object) return Safe_Pointer;
+   function Allocate (Data : in Object) return Safe_Pointer;
    -- Equivalent to "new Object'(Data)".
    -- May raise Storage_Error.
 
-   function Get (Pointer : Safe_Pointer) return Object with
+   function Get (Pointer : in Safe_Pointer) return Object with
       Pre => Pointer /= Null_Pointer or else raise Constraint_Error;
    -- Equivalent to "Pointer.all".
 
@@ -40,7 +41,7 @@ package PragmARC.Safety.Pointers is
       Post => Get (Pointer) = Value;
    -- Equivalent to "Pointer.all := Value;".
 
-   function "=" (Left : Safe_Pointer; Right : Safe_Pointer) return Boolean;
+   function "=" (Left : in Safe_Pointer; Right : in Safe_Pointer) return Boolean;
    -- Returns True if Left and Right have the same access value; False otherwise.
 private -- PragmARC.Safety.Pointers
    type Safe_Group;

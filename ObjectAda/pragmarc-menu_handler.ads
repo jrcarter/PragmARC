@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Straightforward text menus for ANSI-standard terminals
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2000 May 01     J. Carter          V1.0--Initial release
@@ -19,12 +20,10 @@ generic -- PragmARC.Menu_Handler
    Num_Columns : Positive := 80; -- Size of screen
    Num_Lines   : Positive := 25; -- Defaults for standard 25-line by 80 column screen
 package PragmARC.Menu_Handler is
-   use Ada;
-
    Max_Choices : constant Positive := Num_Lines - 5;   -- Maximum # of choices which can be displayed to user
    Max_Length  : constant Positive := Num_Columns - 5; -- Maximum length of each choice
 
-   package V_String is new Strings.Bounded.Generic_Bounded_Length (Max => Max_Length);
+   package V_String is new Ada.Strings.Bounded.Generic_Bounded_Length (Max => Max_Length);
    subtype Choice_String is V_String.Bounded_String;
 
    subtype Choice_Id is Positive range 1 .. Max_Choices;
@@ -42,6 +41,7 @@ package PragmARC.Menu_Handler is
       end case;
    end record; -- If Default_Exists then entry of a null string by user is the same as selecting default choice
 
-   function Process (Menu : Menu_Info) return Choice_Id with
-      Post => Process'Result in 1 .. Menu.Num_Items; -- Displays Menu and obtains valid user selection
+   function Process (Menu : in Menu_Info) return Choice_Id with
+      Post => Process'Result in 1 .. Menu.Num_Items;
+   -- Displays Menu and obtains valid user selection
 end PragmARC.Menu_Handler;

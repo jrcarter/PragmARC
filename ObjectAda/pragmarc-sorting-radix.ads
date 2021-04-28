@@ -18,8 +18,8 @@ generic -- PragmARC.Sorting.Radix
    type Element  is mod <>;
    type Index    is range <>; -- Lower bound should be 1
    type Sort_Set is array (Index range <>) of Element;
-procedure PragmARC.Sorting.Radix (Set : in out Sort_Set); -- with Pure,
---  Post => (for all I in Set'First .. Set'Last - 1 => not (Set (I + 1) < Set (I) ) );
+procedure PragmARC.Sorting.Radix (Set : in out Sort_Set) with Pure,
+      Post => (for all I in Set'First .. Set'Last - 1 => not (Set (I + 1) < Set (I) ) );
 -- Input:  Set to sort
 -- Output: Sorted set
 --

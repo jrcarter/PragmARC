@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2018 Aug 01     J. Carter          V1.2--Cleanup compiler warnings
@@ -14,9 +15,7 @@ with Ada.Text_IO;
 with PragmARC.Ansi_Tty_Control;
 
 package body PragmARC.Menu_Handler is
-   use ada;
-
-   function Process (Menu : Menu_Info) return Choice_Id is
+   function Process (Menu : in Menu_Info) return Choice_Id is
       Choice_Column_Place  : constant := 20; -- Column for user's choice entry
       Choice_Line_Entry    : constant := 23; -- Line for user's choice entry
       Choice_Width_Default : constant :=  2; -- Width of displayed numbers
@@ -29,7 +28,12 @@ package body PragmARC.Menu_Handler is
       Selection            : Choice_Id;
       Longest_Line         : Natural;
 
+      use Ada;
+
       package Choice_IO is new Text_IO.Integer_IO (Num => Choice_Id);
+
+      procedure Error_Message;
+      -- Outputs an "invalid choice" message
 
       procedure Error_Message is
          -- Empty

@@ -4,6 +4,7 @@
 -- **************************************************************************
 
 -- History:
+-- 2021 May 01     J. Carter     V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V2.1--Use PragmARC.Encryption.Threefish
 -- 2020 Nov 01     J. Carter     V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -125,8 +126,9 @@ package body PragmARC.Randomness.Threefry is
       Encrypt (State => State);
    end Advance;
 
-   function Random (Key : PragmARC.Encryption.Threefish.Block; State : PragmARC.Encryption.Threefish.Block) return Unsigned_32 is
-      Gen    : Generator;
+   function Random (Key : in PragmARC.Encryption.Threefish.Block; State : in PragmARC.Encryption.Threefish.Block)
+   return Unsigned_32 is
+      Gen : Generator;
    begin -- Random
       Threefish.Create_Key_Schedule (Key => Key, Tweak => (0, 0), Key_Schedule => Gen.KS);
       Gen.State := State;

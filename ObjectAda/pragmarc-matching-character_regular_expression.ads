@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Instantiation of PragmARC.Regular_Expression_Matcher for strings
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Apr 15     J. Carter          V1.2--Provide ranges in classes
@@ -39,7 +40,7 @@ package PragmARC.Matching.Character_Regular_Expression is
                                                                Begin_Set_Item   => Begin_Set_Item,
                                                                End_Set_Item     => End_Set_Item);
 
-   function Expanded_Ranges (Pattern : String) return String;
+   function Expanded_Ranges (Pattern : in String) return String;
    -- If Pattern contains classes with an unescaped hyphen ('-') that is not the first or last member of the class,
    -- replaces the 3 characters starting with the character before the hyphen and ending with the character after with the sequence
    -- of characters from the preceding character to the following
@@ -55,8 +56,8 @@ package PragmARC.Matching.Character_Regular_Expression is
 
    subtype Result is Regexp.Result;
 
-   function Location (Pattern : Processed_Pattern; Source : String) return Result renames Regexp.Location;
+   function Location (Pattern : in Processed_Pattern; Source : in String) return Result renames Regexp.Location;
 
-   function Location (Pattern : String; Source : String) return Result;
+   function Location (Pattern : in String; Source : in String) return Result;
    -- Returns Regexp.Location (Expanded_Ranges (Pattern), Source);
 end PragmARC.Matching.Character_Regular_Expression;

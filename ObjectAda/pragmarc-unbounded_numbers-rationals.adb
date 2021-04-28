@@ -4,6 +4,7 @@
 -- **************************************************************************
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.3--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.2--Removed Sqrt
 -- 2021 Jan 01     J. Carter          V2.1--Further Sqrt improvement
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -20,7 +21,7 @@ package body PragmARC.Unbounded_Numbers.Rationals is
    -- Changes Value to have the smallest (absolute) values that represent the same rational number
    -- 2/4 becomes 1/2
 
-   function Compose (Numerator : Integers.Unbounded_Integer; Denominator : Integers.Unbounded_Integer) return Rational is
+   function Compose (Numerator : in Integers.Unbounded_Integer; Denominator : in Integers.Unbounded_Integer) return Rational is
       Result : Rational := (Numerator => Numerator, Denominator => Denominator);
    begin -- Compose
       if Numerator < UI0 then
@@ -51,16 +52,16 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       Denominator := Value.Denominator;
    end Decompose;
 
-   function "+" (Right : Rational) return Rational is
+   function "+" (Right : in Rational) return Rational is
       (Right);
 
-   function "-" (Right : Rational) return Rational is
+   function "-" (Right : in Rational) return Rational is
       (Numerator => -Right.Numerator, Denominator => Right.Denominator);
 
-   function "abs" (Right : Rational) return Rational is
+   function "abs" (Right : in Rational) return Rational is
       (Numerator => abs Right.Numerator, Denominator => Right.Denominator);
 
-   function "+" (Left : Rational; Right : Rational) return Rational is
+   function "+" (Left : in Rational; Right : in Rational) return Rational is
       M  : Unbounded_Integer;
       LN : Unbounded_Integer;
       RN : Unbounded_Integer;
@@ -94,13 +95,13 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       return Compose (LN + RN, M);
    end "+";
 
-   function "-" (Left : Rational; Right : Rational) return Rational is
+   function "-" (Left : in Rational; Right : in Rational) return Rational is
      (Left + (-Right) );
 
-   function "*" (Left : Rational; Right : Rational) return Rational is
+   function "*" (Left : in Rational; Right : in Rational) return Rational is
       (Compose (Left.Numerator * Right.Numerator, Left.Denominator * Right.Denominator) );
 
-   function "/" (Left : Rational; Right : Rational) return Rational is
+   function "/" (Left : in Rational; Right : in Rational) return Rational is
       -- Empty declarative part
    begin -- "/"
       if Right = Zero then
@@ -114,7 +115,7 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       return Compose (Left.Numerator * Right.Denominator, Left.Denominator * Right.Numerator);
    end "/";
 
-   function "**" (Left : Rational; Right : Integer) return Rational is
+   function "**" (Left : in Rational; Right : in Integer) return Rational is
       Result : Rational := Left;
       Work   : Rational := Left;
    begin -- "**"`
@@ -153,7 +154,7 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       return Result;
    end "**";
 
-   function ">"  (Left : Rational; Right : Rational) return Boolean is
+   function ">"  (Left : in Rational; Right : in Rational) return Boolean is
       M : Unbounded_Integer;
    begin -- ">"
       if Left.Denominator = Right.Denominator then
@@ -177,16 +178,17 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       return Unbounded_Integer'(Left.Numerator * M / Left.Denominator) > Right.Numerator * M / Right.Denominator;
    end ">";
 
-   function "<"  (Left : Rational; Right : Rational) return Boolean is
+   function "<"  (Left : in Rational; Right : in Rational) return Boolean is
       (Right > Left);
 
-   function ">=" (Left : Rational; Right : Rational) return Boolean is
+   function ">=" (Left : in Rational; Right : in Rational) return Boolean is
       (not (Right > Left) );
 
-   function "<=" (Left : Rational; Right : Rational) return Boolean is
+   function "<=" (Left : in Rational; Right : in Rational) return Boolean is
       (not (Left > Right) );
 
-   function Image (Value : Rational; As_Fraction : Boolean := False; Base : Base_Number := 10; Decorated : Boolean := False)
+   function Image
+      (Value : in Rational; As_Fraction : in Boolean := False; Base : in Base_Number := 10; Decorated : in Boolean := False)
    return String is
       Radix    : constant Unbounded_Integer    := To_Unbounded_Integer (Integer (Base) );
       Int_Base : constant Integers.Base_Number := Integers.Base_Number (Base);
@@ -250,7 +252,7 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       return To_String (Result);
    end Image;
 
-   function Value (Image : String) return Rational is
+   function Value (Image : in String) return Rational is
       Slash : constant Natural := Ada.Strings.Fixed.Index (Image, "/");
       Dot   : constant Natural := Ada.Strings.Fixed.Index (Image, ".");
       Hash  : constant Natural := Ada.Strings.Fixed.Index (Image, "#");

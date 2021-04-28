@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -31,6 +31,7 @@
 --                        ceded by Closure_Item
 --
 -- History:
+-- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2019 Jun 01     J. Carter          V1.3--Require Index'First = 1
@@ -57,7 +58,7 @@ generic -- PragmARC.Matching.Regular_Expression
    Begin_Set_Item   : Item;
    End_Set_Item     : Item;
 
-   with function "=" (Left : Item; Right : Item) return Boolean is <>;
+   with function "=" (Left : in Item; Right : in Item) return Boolean is <>;
 package PragmARC.Matching.Regular_Expression is
    pragma Assert (Index'First = 1);
 
@@ -80,21 +81,19 @@ package PragmARC.Matching.Regular_Expression is
       end case;
    end record;
 
-   function Location (Pattern : Processed_Pattern; Source : Item_Set) return Result;
+   function Location (Pattern : in Processed_Pattern; Source : in Item_Set) return Result;
    -- Returns Result'(Found => False) if Pattern is not in Source
    -- Returned record has Found => True, Start => location in Source at which Pattern begins,
    -- and Length => # of Items matched by Pattern in Source, otherwise
 
-   function Location (Pattern : Item_Set; Source : Item_Set) return Result; -- raise Illegal_Pattern
+   function Location (Pattern : in Item_Set; Source : in Item_Set) return Result; -- raise Illegal_Pattern
    -- Raises Illegal_Pattern if Pattern is not a valid pattern
    -- Applies Process to Pattern, passes the result to Location (Processed_Pattern), and Destroys the processed pattern
    -- Returns the result of calling Location (Processed_Pattern)
 private -- PragmARC.Matching.Regular_Expression
-   use Ada;
-
    type Kind_Id is (Literal, Class, Any, Stop, Beginning, Ending); -- Kind of pattern element
 
-   package Item_Lists is new Containers.Vectors (Index_Type => Positive, Element_Type => Item);
+   package Item_Lists is new Ada.Containers.Vectors (Index_Type => Positive, Element_Type => Item);
 
    subtype Class_Info is Item_Lists.Vector; -- Holds the items of a class
 

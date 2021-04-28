@@ -23,6 +23,6 @@ generic -- PragmARC.Randomness.U32_Ranges
 
    with function Random (G : in out Generator) return Interfaces.Unsigned_32;
 function PragmARC.Randomness.U32_Ranges (G : in out Generator; Min : in Interfaces.Unsigned_32; Max : in Interfaces.Unsigned_32)
-return Interfaces.Unsigned_32; -- with
---  Pre  => Min < Max,
---  Post => PragmARC.Randomness.U32_Ranges'Result in Min .. Max;
+return Interfaces.Unsigned_32 with
+   Pre  => Min < Max,
+   Post => PragmARC.Randomness.U32_Ranges'Result in Min .. Max;
