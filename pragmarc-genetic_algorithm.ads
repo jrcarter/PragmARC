@@ -6,6 +6,7 @@
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2021 Jun 01     J. Carter          V2.2--Added Max_Fitness
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -38,6 +39,7 @@ procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positiv
                                       Mutation_Probability      : in     Float    :=     0.1;
                                       Num_Elite_Saved           : in     Natural  :=    10;
                                       Num_Tasks                 : in     Positive :=     1;
+                                      Max_Fitness               : in     Float    := Float'Last;
                                       Best                      :    out Gene;
                                       Fit                       :    out Float)
 with
@@ -47,4 +49,6 @@ with
 -- Mutation_Probability is the probability that an individual will be mutated.
 -- Num_Elite_Saved is the number of the most fit individuals that survive from one generation to the next.
 -- Uses Num_Tasks tasks for generating each generation.
+-- Max_Fitness may be used to identify a "perfect" solution, if that value exists, in which case the procedure returns when an
+--    individual achieves that fitness; the default means no such check is made
 -- Upon return, Best contains the most fit individual in the final generation and Fit is its fitness.

@@ -6,6 +6,7 @@
 -- A generic framework for genetic programming.
 --
 -- History:
+-- 2021 Jun 01     J. Carter          V2.2--Added Max_Fitness, use vectors, and prevent uninitialized individuals
 -- 2021 Mar 15     J. Carter          V2.1--Adapt to changes to quick sort
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -16,8 +17,8 @@
 ---------------------------------------------------------------------------------------------------
 -- 2006 May 01     J. Carter          V1.0--Initial version
 --
+with Ada.Containers.Vectors;
 with Ada.Numerics.Float_Random;
-with PragmARC.Sorting.Quick;
 
 procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positive :=   100;
                                       Max_Generations           : in     Positive := 1_000;
@@ -25,6 +26,7 @@ procedure PragmARC.Genetic_Algorithm (Population_Size           : in     Positiv
                                       Mutation_Probability      : in     Float    :=     0.1;
                                       Num_Elite_Saved           : in     Natural  :=    10;
                                       Num_Tasks                 : in     Positive :=     1;
+                                      Max_Fitness               : in     Float    := Float'Last;
                                       Best                      :    out Gene;
                                       Fit                       :    out Float)
 is
@@ -33,7 +35,8 @@ is
       Fitness    : Float;
    end record;
 
-   type Population_List is array (Positive range <>) of Member;
+   package Population_Lists is new Ada.Containers.Vectors (Index_Type => Positive, Element_Type => Member);
+   subtype Population_List is Population_Lists.Vector;
 
    type Best_State is record
       Individual : Gene;
@@ -43,16 +46,16 @@ is
    function "<" (Left : in Member; Right : in Member) return Boolean is
       (Left.Fitness > Right.Fitness); -- Sort in descending order of fitness.
 
-   package Quick_Sort is new PragmARC.Sorting.Quick (Element => Member, Index => Positive, Sort_Set => Population_List);
-   procedure Sort (Set : in out Population_List) renames Quick_Sort.Sort_Sequential;
+   package Sorting is new Population_Lists.Generic_Sorting;
+   procedure Sort (Set : in out Population_List) renames Sorting.Sort;
 
    procedure Reproduce (List : in out Population_List);
    -- Does one generation of reproduction of the population in List
 
    procedure Reproduce (List : in out Population_List) is
-      New_Pop : Population_List (List'range);
+      New_Pop : Population_List;
 
-      subtype Index is Positive range List'First .. List'First + List'Length / 2 - 1;
+      subtype Index is Positive range 1 .. Population_Size / 2;
       -- Only the top half of the population get to mate.
 
       Last_Task : Natural := 0;
@@ -71,7 +74,8 @@ is
       task type Breeder (Num : Positive := Task_Num);
       type Breeder_List is array (1 .. Num_Tasks) of Breeder;
 
-      Genes_Per_Task : constant Positive := (Index'Last - Index'First + 1) / Num_Tasks;
+      Num_New      : constant Positive := List.Last_Index - Num_Elite_Saved;
+      New_Per_Task : constant Positive := Num_New / Num_Tasks;
 
       task body Breeder is
          Prob_Gen : Ada.Numerics.Float_Random.Generator;
@@ -105,9 +109,9 @@ is
             return Index'Last; -- If Random returns 1.0, which means use the last value.
          end Choose_Index;
 
-         First : constant Positive := (Num - 1) * Genes_Per_Task + 1;
+         First : constant Positive := (Num - 1) * New_Per_Task + 1;
 
-         Last    : Positive := Num * Genes_Per_Task;
+         Last    : Positive := Num * New_Per_Task;
          Left    : Index;
          Right   : Index;
          New_Guy : Member;
@@ -115,7 +119,7 @@ is
          Ada.Numerics.Float_Random.Reset (Gen => Prob_Gen);
 
          if Num = Num_Tasks then
-            Last := Index'Last;
+            Last := Num_New;
          end if;
 
          All_Pairs : for I in First .. Last loop
@@ -134,10 +138,14 @@ is
             end if;
 
             New_Guy.Fitness := Fitness (New_Guy.Individual);
-            New_Pop (I) := New_Guy;
+            New_Pop.Replace_Element (Index => I, New_Item => New_Guy);
          end loop All_Pairs;
       end Breeder;
+
+      Elite : Positive := 1;
    begin -- Reproduce
+      New_Pop.Append (New_Item => (others => <>), Count => Ada.Containers.Count_Type (Population_Size) );
+
       Breed : declare
          Breeders : Breeder_List;
          pragma Unreferenced (Breeders);
@@ -145,34 +153,42 @@ is
          null;
       end Breed;
 
-      New_Pop (New_Pop'Last - Num_Elite_Saved + 1 .. New_Pop'Last) := List (List'First .. List'First + Num_Elite_Saved - 1);
+      Set_Elite : for I in Population_Size - Num_Elite_Saved + 1 .. Population_Size loop
+         New_Pop.Replace_Element (Index => I, New_Item => List.Element (Elite) );
+         Elite := Elite + 1;
+      end loop Set_Elite;
+
       Sort (Set => New_Pop);
       List := New_Pop;
    end Reproduce;
 
-   List    : Population_List (1 .. Population_Size);
+   Guy     : Member;
+   List    : Population_List;
    Current : Best_State;
 begin -- PragmARC.Genetic_Algorithm
-   Fill : for I in List'range loop
-      List (I).Individual := Random;
-      List (I).Fitness    := Fitness (List (I).Individual);
+   Fill : for I in 1 .. Population_Size loop
+      Guy.Individual := Random;
+      Guy.Fitness    := Fitness (Guy.Individual);
+      List.Append (New_Item => Guy);
    end loop Fill;
 
    Sort (Set => List);
-   Current := Best_State'(Individual => List (List'First).Individual, Count => 1);
+   Current := Best_State'(Individual => List.Element (1).Individual, Count => 1);
 
    All_Generations : for I in 1 .. Max_Generations loop
       Reproduce (List => List);
 
-      if Current.Individual = List (List'First).Individual then
+      if Current.Individual = List.Element (1).Individual then
          Current.Count := Current.Count + 1;
       else
-         Current := Best_State'(Individual => List (List'First).Individual, Count => 1);
+         Current := Best_State'(Individual => List.Element (1).Individual, Count => 1);
       end if;
 
-      exit All_Generations when Current.Count >= Num_No_Change_Generations;
+      exit All_Generations when Current.Count >= Num_No_Change_Generations or
+                                (Max_Fitness < Float'Last and List.Element (1).Fitness >= Max_Fitness);
    end loop All_Generations;
 
-   Best := List (List'First).Individual;
-   Fit  := List (List'First).Fitness;
+   Best := List.Element (1).Individual;
+   Fit  := List.Element (1).Fitness;
 end PragmARC.Genetic_Algorithm;
+
