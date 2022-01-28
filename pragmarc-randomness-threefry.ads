@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -19,6 +19,7 @@
 -- independent streams of values without worrying about synchronization or overlapping seqeunces of values
 
 -- History:
+-- 2022 Feb 01     J. Carter     V2.3--Adapt to changed Threefish naming
 -- 2021 May 01     J. Carter     V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V2.1--Use PragmARC.Encryption.Threefish
 -- 2020 Nov 01     J. Carter     V2.0--Initial Ada-12 version
@@ -32,7 +33,7 @@ pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
 with Interfaces;
-with PragmARC.Encryption.Threefish;
+with PragmARC.Encryption.Threefish.Block_256;
 
 private with Ada.Finalization;
 
@@ -49,11 +50,11 @@ package PragmARC.Randomness.Threefry is
    procedure Randomize (State : in out Generator);
    -- Seeds State with a value derived from the clock
 
-   procedure Set_Key (State : in out Generator; Key : in PragmARC.Encryption.Threefish.Block);
+   procedure Set_Key (State : in out Generator; Key : in PragmARC.Encryption.Threefish.Block_256.Block);
    -- Seeds State with a key of Key
    -- Resets the counter of State to zero
 
-   procedure Set_State (State : in out Generator; New_State : in PragmARC.Encryption.Threefish.Block);
+   procedure Set_State (State : in out Generator; New_State : in PragmARC.Encryption.Threefish.Block_256.Block);
    -- Seeds State with a state (counter) of New_State
    -- The key of State is unchanged
 
@@ -63,18 +64,19 @@ package PragmARC.Randomness.Threefry is
    procedure Advance (State : in out Generator; By : in Unsigned_64);
    -- Advances the state of State by By; equivalent to exhausting the random values for By - 1 values of the counter
 
-   function Random (Key : in PragmARC.Encryption.Threefish.Block; State : in PragmARC.Encryption.Threefish.Block)
+   function Random
+      (Key : in PragmARC.Encryption.Threefish.Block_256.Block; State : in PragmARC.Encryption.Threefish.Block_256.Block)
    return Unsigned_32;
    -- Declares a Generator, calls Set_Key and Set_State with the given Key and State, and returns a call to Random on it
    -- This function is pure; it will return the same result for the same values of Key and State
 private -- PragmARC.Randomness.Threefry
    use PragmARC.Encryption;
 
-   type Output_List is array (1 .. 2 * Threefish.Num_Words) of Unsigned_32;
+   type Output_List is array (1 .. 2 * Threefish.Block_256.Num_Words) of Unsigned_32;
 
    type Generator is new Ada.Finalization.Limited_Controlled with record
-      KS      : Threefish.Key_Schedule_Handle;
-      State   : Threefish.Block;
+      KS      : Threefish.Block_256.Key_Schedule_Handle;
+      State   : Threefish.Block_256.Block;
       Output  : Output_List;
       Next    : Positive := 1; -- Output (Next) will be the next value returned by Random
    end record;

@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 
 -- History:
+-- 2022 Feb 01     J. Carter     V2.3--Adapt to changed Threefish naming
 -- 2021 May 01     J. Carter     V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V2.1--Use PragmARC.Encryption.Threefish
 -- 2020 Nov 01     J. Carter     V2.0--Initial Ada-12 version
@@ -24,14 +25,14 @@ package body PragmARC.Randomness.Threefry is
       Post => State.Next = 1;
    -- Encrypts State.State with State.KS giving State.Output
 
-   function To_Output is new Ada.Unchecked_Conversion (Source => Threefish.Block, Target => Output_List);
+   function To_Output is new Ada.Unchecked_Conversion (Source => Threefish.Block_256.Block, Target => Output_List);
 
    procedure Set_Seed (State : in out Generator; Seed : in Unsigned_32 := 0) is
       -- Empty
    begin -- Set_Seed
       State.State := (others => 0);
       State.Next  := 1;
-      Threefish.Create_Key_Schedule (Key => (Unsigned_64 (Seed), 0, 0, 0), Tweak => (0, 0), Key_Schedule => State.KS);
+      Threefish.Block_256.Create_Key_Schedule (Key => (Unsigned_64 (Seed), 0, 0, 0), Tweak => (0, 0), Key_Schedule => State.KS);
 
       if Seed > 0 then
          Encrypt (State => State);
@@ -56,7 +57,7 @@ package body PragmARC.Randomness.Threefry is
       Minute      : Natural;
       Seconds     : Natural;
       Hundredths  : Natural;
-      Key         : Threefish.Block;
+      Key         : Threefish.Block_256.Block;
    begin -- Randomize
       PragmARC.Date_Handler.Split (Date    => Ada.Calendar.Clock,
                                    Year    => Year,
@@ -86,21 +87,21 @@ package body PragmARC.Randomness.Threefry is
       State.Set_Key (Key => Key);
    end Randomize;
 
-   procedure Set_Key (State : in out Generator; Key : in PragmARC.Encryption.Threefish.Block) is
+   procedure Set_Key (State : in out Generator; Key : in PragmARC.Encryption.Threefish.Block_256.Block) is
       -- Empty
    begin -- Set_Key
-      Threefish.Create_Key_Schedule (Key => Key, Tweak => (0, 0), Key_Schedule => State.KS);
+      Threefish.Block_256.Create_Key_Schedule (Key => Key, Tweak => (0, 0), Key_Schedule => State.KS);
       Encrypt (State => State);
    end Set_Key;
 
-   procedure Set_State (State : in out Generator; New_State : in PragmARC.Encryption.Threefish.Block) is
+   procedure Set_State (State : in out Generator; New_State : in PragmARC.Encryption.Threefish.Block_256.Block) is
       -- Empty
    begin -- Set_State
       State.State := New_State;
       Encrypt (State => State);
    end Set_State;
 
-   procedure Increment (Value : in out Threefish.Block; By : in Unsigned_64 := 1);
+   procedure Increment (Value : in out Threefish.Block_256.Block; By : in Unsigned_64 := 1);
    -- Adds By to Value
 
    function Random (State : in out Generator) return Unsigned_32 is
@@ -126,11 +127,12 @@ package body PragmARC.Randomness.Threefry is
       Encrypt (State => State);
    end Advance;
 
-   function Random (Key : in PragmARC.Encryption.Threefish.Block; State : in PragmARC.Encryption.Threefish.Block)
+   function Random
+      (Key : in PragmARC.Encryption.Threefish.Block_256.Block; State : in PragmARC.Encryption.Threefish.Block_256.Block)
    return Unsigned_32 is
       Gen : Generator;
    begin -- Random
-      Threefish.Create_Key_Schedule (Key => Key, Tweak => (0, 0), Key_Schedule => Gen.KS);
+      Threefish.Block_256.Create_Key_Schedule (Key => Key, Tweak => (0, 0), Key_Schedule => Gen.KS);
       Gen.State := State;
       Encrypt (State => Gen);
 
@@ -146,14 +148,14 @@ package body PragmARC.Randomness.Threefry is
    procedure Encrypt (State : in out Generator) is
       Last_Round : constant := 19;
 
-      Result : Threefish.Block := State.State;
+      Result : Threefish.Block_256.Block := State.State;
    begin -- Encrypt
       State.Next := 1;
-      Threefish.Encrypt (Key_Schedule => State.KS, Text => Result, Last_Round => Last_Round);
+      Threefish.Block_256.Encrypt (Key_Schedule => State.KS, Text => Result, Last_Round => Last_Round);
       State.Output := To_Output (Result);
    end Encrypt;
 
-   procedure Increment (Value : in out Threefish.Block; By : in Unsigned_64 := 1) is
+   procedure Increment (Value : in out Threefish.Block_256.Block; By : in Unsigned_64 := 1) is
       -- Empty declarative part
    begin -- Increment
       Value (0) := Value (0) + By;
