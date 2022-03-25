@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2022 Apr 01     J. Carter          V2.2--Allow pointers to indefinite types
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -15,13 +16,12 @@
 with Ada.Unchecked_Deallocation;
 
 package body PragmARC.Safety.Pointers is
+   type Object_Ptr is access Object;
+
    type Safe_Group is record
-      Data  : Object;
+      Data  : Object_Ptr;
       Count : Natural := 1;
    end record;
-
-   function "=" (Left : in Safe_Pointer; Right : in Safe_Pointer) return Boolean is
-      (Left.Ptr = Right.Ptr);
 
    procedure Adjust (Item : in out Safe_Pointer) is
       -- Empty
@@ -31,13 +31,11 @@ package body PragmARC.Safety.Pointers is
       end if;
    end Adjust;
 
-   function Allocate return Safe_Pointer is
-      (Ada.Finalization.Controlled with Ptr => new Safe_Group);
-
    function Allocate (Data : Object) return Safe_Pointer is
-      (Ada.Finalization.Controlled with Ptr => new Safe_Group'(Data => Data, Count => 1) );
+      (Ada.Finalization.Controlled with Ptr => new Safe_Group'(Data => new Object'(Data), Count => 1) );
 
    procedure Finalize (Item : in out Safe_Pointer) is
+      procedure Free is new Ada.Unchecked_Deallocation (Object => Object, Name => Object_Ptr);
       procedure Free is new Ada.Unchecked_Deallocation (Object => Safe_Group, Name => Name);
    begin -- Finalize
       if Item.Ptr /= null then
@@ -46,6 +44,7 @@ package body PragmARC.Safety.Pointers is
          end if;
 
          if Item.Ptr.Count = 0 then
+            Free (Item.Ptr.Data);
             Free (Item.Ptr);
          end if;
 
@@ -57,11 +56,11 @@ package body PragmARC.Safety.Pointers is
    end Finalize;
 
    function Get (Pointer : in Safe_Pointer) return Object is
-      (Pointer.Ptr.Data);
+      (Pointer.Ptr.Data.all);
 
    procedure Put (Pointer : in Safe_Pointer; Value : in Object) is
       -- Empty
    begin -- Put
-      Pointer.Ptr.Data := Value;
+      Pointer.Ptr.Data.all := Value;
    end Put;
 end PragmARC.Safety.Pointers;

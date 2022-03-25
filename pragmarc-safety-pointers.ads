@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- when they go out of scope and the designated object has no more references.
 --
 -- History:
+-- 2022 Apr 01     J. Carter          V2.2--Allow pointers to indefinite types
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -18,17 +19,14 @@ pragma Unsuppress (All_Checks);
 private with Ada.Finalization;
 
 generic -- PragmARC.Safety.Pointers
-   type Object is private;
+   type Object (<>) is private;
 package PragmARC.Safety.Pointers is
    type Safe_Pointer is tagged private;
 
    Null_Pointer : constant Safe_Pointer;
 
-   function Allocate return Safe_Pointer;
-   -- Equivalent to "new Object".
-   -- May raise Storage_Error.
-
-   function Allocate (Data : in Object) return Safe_Pointer;
+   function Allocate (Data : in Object) return Safe_Pointer with
+      Post => Allocate'Result.Get = Data;
    -- Equivalent to "new Object'(Data)".
    -- May raise Storage_Error.
 
@@ -38,7 +36,7 @@ package PragmARC.Safety.Pointers is
 
    procedure Put (Pointer : in Safe_Pointer; Value : in Object) with
       Pre  => Pointer /= Null_Pointer or else raise Constraint_Error,
-      Post => Get (Pointer) = Value;
+      Post => Pointer.Get = Value;
    -- Equivalent to "Pointer.all := Value;".
 
    function "=" (Left : in Safe_Pointer; Right : in Safe_Pointer) return Boolean;
@@ -52,8 +50,11 @@ private -- PragmARC.Safety.Pointers
       Ptr : Name;
    end record;
 
-   procedure Adjust   (Item : in out Safe_Pointer);
-   procedure Finalize (Item : in out Safe_Pointer);
+   overriding procedure Adjust   (Item : in out Safe_Pointer);
+   overriding procedure Finalize (Item : in out Safe_Pointer);
 
    Null_Pointer : constant Safe_Pointer := Safe_Pointer'(Ada.Finalization.Controlled with Ptr => null);
+
+   function "=" (Left : in Safe_Pointer; Right : in Safe_Pointer) return Boolean is
+      (Left.Ptr = Right.Ptr);
 end PragmARC.Safety.Pointers;
