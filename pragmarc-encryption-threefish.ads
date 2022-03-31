@@ -23,7 +23,7 @@ package PragmARC.Encryption.Threefish is
 
    type Byte_List  is array (Positive range <>) of Byte;
 
-   subtype Word_As_Bytes  is Byte_List (1 ..  8); -- 1 => LSB, 8 => MSB
+   subtype Word_As_Bytes is Byte_List (1 ..  8); -- 1 => LSB, 8 => MSB
 
    function Word_From_Bytes (List : in Word_As_Bytes) return Word;
    function Bytes_From_Word (Value : in Word) return Word_As_Bytes;

@@ -30,6 +30,7 @@ with PragmARC.Encryption.Threefish.Block_256;
 with PragmARC.Encryption.Threefish.Block_512;
 with PragmARC.Encryption.Threefish.Block_1024;
 with PragmARC.Genetic_Algorithm;
+with PragmARC.Hash;
 with PragmARC.Hash_Fast_Variable_Length;
 with PragmARC.Images.Image;
 with PragmARC.Job_Pools;
