@@ -35,6 +35,7 @@ with PragmARC.Hash_Fast_Variable_Length;
 with PragmARC.Images.Image;
 with PragmARC.Job_Pools;
 with PragmARC.Least_Squares_Fitting;
+with PragmARC.Luhn_Generation;
 with PragmARC.Matching.Character_Regular_Expression;
 with PragmARC.Matching.Quick_String;
 with PragmARC.Matching.Regular_Expression;
