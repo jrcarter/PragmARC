@@ -5,11 +5,12 @@
 --
 -- Implementeation of the Threefish cipher for blocks of 256 bits (Threefish-256)
 --
+-- 2022 Aug 15     J. Carter     V1.3--Add "with Preelaborate"
 -- 2022 Feb 01     J. Carter     V1.2--Reorganization for 512- and 1024-bit versions
 -- 2021 May 01     J. Carter     V1.1--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V1.0--Initial PragmARC version
 --
-package PragmARC.Encryption.Threefish.Block_256 is
+package PragmARC.Encryption.Threefish.Block_256 with Preelaborate is
    Num_Words : constant := 4; -- A block is Num_Words words
 
    subtype Block  is Word_List (0 .. Num_Words - 1);

@@ -5,13 +5,14 @@
 --
 -- Root of the Threefish cipher hierarchy
 --
+-- 2022 Aug 15     J. Carter     V1.3--Add "with Preelaborate"
 -- 2022 Feb 01     J. Carter     V1.2--Reorganization for 512- and 1024-bit versions
 -- 2021 May 01     J. Carter     V1.1--Adhere to coding standard
 -- 2021 Feb 01     J. Carter     V1.0--Initial PragmARC version
 --
 with Interfaces;
 
-package PragmARC.Encryption.Threefish is
+package PragmARC.Encryption.Threefish with Preelaborate is
    subtype Word is Interfaces.Unsigned_64;
 
    type Word_List is array (Natural range <>) of Word;
