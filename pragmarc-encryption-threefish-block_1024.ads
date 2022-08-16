@@ -5,10 +5,10 @@
 --
 -- Implementeation of the Threefish cipher for blocks of 1024 bits (Threefish-1024)
 --
--- 2022 Aug 15     J. Carter              V1.1--Add "with Preelaborate"
+-- 2022 Aug 15     J. Carter              V1.1--Make Pure
 -- 2022 Feb 01     D. Norte de Moraes     V1.0--Initial 1024-bit version derived from 256-bit version
 --
-package PragmARC.Encryption.Threefish.Block_1024 with Preelaborate is
+package PragmARC.Encryption.Threefish.Block_1024 with Pure is
    Num_Words : constant := 16; -- A block is Num_Words words
 
    subtype Block  is Word_List (0 .. Num_Words - 1);
