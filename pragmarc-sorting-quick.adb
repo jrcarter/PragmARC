@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2023 Mar 01     J. Carter          V2.3--Use PragmAda.Comparisons
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Mar 15     J. Carter          V2.1--Removed parallel version
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -18,6 +19,7 @@
 -- 2001 Feb 01     J. Carter          V1.1--Increased size of sets that are insertion sorted
 -- 2000 May 01     J. Carter          V1.0--Initial release
 --
+with PragmARC.Comparisons;
 with PragmARC.Sorting.Insertion;
 with System;
 
@@ -29,8 +31,8 @@ package body PragmARC.Sorting.Quick is
    procedure Get_Pivot (Set : in out Sort_Set; Pivot : in out Element);
    -- Median of 3 pivot selection
 
-   function ">=" (Left : in Element; Right : in Element) return Boolean is
-      (not (Left < Right) ) with Inline;
+   package Comparisons is new PragmARC.Comparisons (T => Element);
+   use Comparisons;
 
    procedure Partition (Set : in out Sort_Set; Front : in out Index; Back : in out Index; Pivot : in Element);
    -- Partitions Set (Front .. Back)

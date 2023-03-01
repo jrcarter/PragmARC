@@ -7,6 +7,7 @@ with PragmARC.Binary_Semaphore_Handler;
 with PragmARC.Cards.Decks.General;
 with PragmARC.Cards.Decks.US;
 with PragmARC.Cards.US;
+with PragmARC.Comparisons;
 with PragmARC.Concurrent_Pipeline;
 with PragmARC.Conversions.Unbounded_Strings;
 with PragmARC.Conversions.Vectors;
