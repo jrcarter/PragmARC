@@ -4,7 +4,7 @@
 -- **************************************************************************
 --
 -- History:
--- 2023 Mar 01     J. Carter          V2.3--Use PragmAda.Comparisons
+-- 2023 Mar 01     J. Carter          V2.3--Use PragmARC.Comparisons
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Mar 15     J. Carter          V2.1--Removed parallel version
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
