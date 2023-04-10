@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2023 Apr 15     J. Carter          V2.3--Correct Float_Image
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Make Float_Image work if Ada.Text_IO.Field'Last is very large
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -144,7 +145,7 @@ package body PragmARC.Images is
 
          use Unbounded_Numbers;
       begin -- Non_10_Image
-         Number_IO.Put (To => Image, Item => Work, Aft => Aft, Exp => Exp);
+         Number_IO.Put (To => Image, Item => Work, Aft => 40, Exp => 0);
          Start := Index_Non_Blank (Image);
          Dot := Index (Image, ".");
 
@@ -167,7 +168,7 @@ package body PragmARC.Images is
                Append (Source => Full_Image, New_Item => '0');
             end if;
 
-            return Adjust (+Full_Image, Fore + Aft + 1, Value < 0.0, Zero_Filled);
+            return Adjust (+Full_Image, Integer'Max (Length (Full_Image), Fore + Aft + 1), Value < 0.0, Zero_Filled);
          end Integer_Part;
       end Non_10_Image;
    begin -- Float_Image
