@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -7,6 +7,7 @@
 -- (equivalent to To_String and To_Unbounded_String for unbounded strings)
 --
 -- History
+-- 2023 Jul 15     J. Carter          V2.2--Import "=" explicitly
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -21,6 +22,8 @@ generic -- PragmaRC.Conversions.Vectors
    type Index is range <>;
    type Element is private;
    type Fixed is array (Index range <>) of Element;
+
+   with function "=" (Left : in Element; Right : in Element) return Boolean is <>;
 
    with package Unbounded is new Ada.Containers.Vectors (Index_Type => Index, Element_Type => Element);
 package PragmARC.Conversions.Vectors is
