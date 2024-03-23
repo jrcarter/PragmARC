@@ -1,9 +1,10 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2024 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- History:
+-- 2024 Apr 01     J. Carter          V2.4--Improved parallel version
 -- 2023 Mar 01     J. Carter          V2.3--Use PragmARC.Comparisons
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Mar 15     J. Carter          V2.1--Removed parallel version
@@ -164,12 +165,91 @@ package body PragmARC.Sorting.Quick is
 
       Partition (Set => Set, Front => Front, Back => Back, Pivot => Pivot);
 
-      if Front - Set'First < Set'Last - Front then       -- Sort shorter set first
-         Sort_Sequential (Set => Set (Set'First .. Front - 1) );
-         Sort_Sequential (Set => Set (Front + 1 .. Set'Last) );
-      else
-         Sort_Sequential (Set => Set (Front + 1 .. Set'Last) );
-         Sort_Sequential (Set => Set (Set'First .. Front - 1) );
-      end if;
+      Sort_Sequential (Set => Set (Set'First .. Front - 1) );
+      Sort_Sequential (Set => Set (Front + 1 .. Set'Last) );
    end Sort_Sequential;
+
+   procedure Sort_Parallel (Set : in out Sort_Set; Max_Tasks : in Positive := 2) is
+      protected Task_Control is
+         procedure Reserve (Reserved : out Boolean);
+         -- Reserves a task for the calling task, if one is available
+         -- Reserved is True if a task was available; False otherwise
+
+         procedure Release;
+         -- Releases an unused reserved task
+      private -- Task_Control
+         In_Use : Positive := 1; -- Number of tasks that have been reserved
+      end Task_Control;
+
+      procedure Sort (Set : in out Sort_Set);
+      -- Performs the parallel sorting
+
+      protected body Task_Control is
+         procedure Reserve (Reserved : out Boolean) is
+            -- Empty
+         begin -- Reserve
+            Reserved := In_Use < Max_Tasks;
+
+            if Reserved then
+               In_Use := In_Use + 1;
+            end if;
+         end Reserve;
+
+         procedure Release is
+            -- Empty
+         begin -- Release
+            if In_Use > 1 then
+               In_Use := In_Use - 1;
+            end if;
+         end Release;
+      end Task_Control;
+
+      procedure Sort (Set : in out Sort_Set) is
+         task type Sort_Agent (Low : Index; High : Index);
+         -- Sorts Set (Low .. High);
+
+         task body Sort_Agent is
+            -- Empty
+         begin -- Sort_Agent
+            Sort (Set => Set (Low .. High) );
+         end Sort_Agent;
+
+         Reserved : Boolean;
+         Finished : Boolean;
+         Front    : Index;
+         Back     : Index;
+         Pivot    : Element;
+      begin -- Sort
+         Task_Control.Reserve (Reserved => Reserved);
+
+         if not Reserved then
+            Task_Control.Release;
+            Sort_Sequential (Set => Set);
+
+            return;
+         end if;
+
+         Easy_Cases (Set => Set, Finished => Finished);
+
+         if Finished then
+            Task_Control.Release;
+
+            return;
+         end if;
+
+         Get_Pivot (Set => Set, Pivot => Pivot);
+         Front := Set'First + 1;  -- Set (Set'First) is known to be <= Pivot
+         Back  := Set'Last - 2;   -- Set (Set'Last)  is known to be >= Pivot & Set (Set'Last - 1) is the Pivot
+
+         Partition (Set => Set, Front => Front, Back => Back, Pivot => Pivot);
+
+         Create_Sorter : declare
+            Sorter : Sort_Agent (Low => Set'First, High => Front - 1);
+         begin -- Create_Sorter
+            Sort (Set => Set (Front + 1 .. Set'Last) );
+         end Create_Sorter;
+      end Sort;
+   begin -- Sort_Parallel
+      Sort (Set => Set);
+   end Sort_Parallel;
 end PragmARC.Sorting.Quick;
