@@ -1,5 +1,5 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2024 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
@@ -31,6 +31,7 @@
 --                        ceded by Closure_Item
 --
 -- History:
+-- 2024 Aug 15     J. Carter          V2.2--Added Preelaborate
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -59,7 +60,7 @@ generic -- PragmARC.Matching.Regular_Expression
    End_Set_Item     : Item;
 
    with function "=" (Left : in Item; Right : in Item) return Boolean is <>;
-package PragmARC.Matching.Regular_Expression is
+package PragmARC.Matching.Regular_Expression with Preelaborate is
    pragma Assert (Index'First = 1);
 
    Illegal_Pattern : exception; -- Raised when an invalid pattern is processed

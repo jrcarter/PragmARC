@@ -1,11 +1,12 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
+-- Copyright (C) 2024 by PragmAda Software Engineering.  All rights reserved.
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
 -- Parse a String into fields based on a separator Character
 --
 -- History:
+-- 2024 Aug 15     J. Carter          V1.1--Eliminated Raw
 -- 2022 Aug 01     J. Carter          V1.0--Initial version
 --
 with Ada.Strings.Fixed;
@@ -15,7 +16,7 @@ package body PragmARC.Line_Fields is
    use Ada.Strings.Unbounded;
    use PragmARC.Conversions.Unbounded_Strings;
 
-   function Parsed (Line : String; Separator : Character := ' ') return Line_Field_Info is
+   function Parsed (Line : String; Separator : Character := ' ') return Field_List is
       function Quote_Reduced (Line : in String) return String;
       -- Converts double quotes (Charles ""Buddy"" Holley) to single (Charles "Buddy" Holley)
 
@@ -33,8 +34,8 @@ package body PragmARC.Line_Fields is
          return Line (Line'First .. Pos) & Quote_Reduced (Line (Pos + 2 .. Line'Last) );
       end Quote_Reduced;
 
-      Result : Line_Field_Info := (Raw => +Line, Field => <>);
-      Start  : Natural         := Line'First;
+      Result : Field_List;
+      Start  : Natural := Line'First;
       Stop   : Positive;
    begin -- Parsed
       All_Fields : loop
@@ -61,9 +62,9 @@ package body PragmARC.Line_Fields is
          end loop Find_Separator;
 
          if Line (Start) = '"' then
-            Result.Field.Append (New_Item => +Quote_Reduced (Line (Start + 1 .. Stop - 2) ) );
+            Result.Append (New_Item => +Quote_Reduced (Line (Start + 1 .. Stop - 2) ) );
          else
-            Result.Field.Append (New_Item => +Line (Start .. Stop - 1) );
+            Result.Append (New_Item => +Line (Start .. Stop - 1) );
          end if;
 
          Start := Stop + 1;
