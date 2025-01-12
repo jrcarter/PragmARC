@@ -20,7 +20,7 @@
 pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
-package PragmARC.B_Strings is
+package PragmARC.B_Strings with Pure is
    type B_String (Max_Length : Positive := 1024) is tagged limited private;
    -- Default initial value is Null_B_String
 
