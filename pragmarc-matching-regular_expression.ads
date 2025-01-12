@@ -74,11 +74,11 @@ package PragmARC.Matching.Regular_Expression with Preelaborate is
 
    type Result (Found : Boolean := False) is record
       case Found is
-      when False =>
-         null;
-      when True =>
-         Start  : Index;
-         Length : Natural;
+         when False =>
+            null;
+         when True =>
+            Start  : Index;
+            Length : Natural;
       end case;
    end record;
 
@@ -96,19 +96,24 @@ private -- PragmARC.Matching.Regular_Expression
 
    package Item_Lists is new Ada.Containers.Vectors (Index_Type => Positive, Element_Type => Item);
 
+   use Item_Lists;
+
    subtype Class_Info is Item_Lists.Vector; -- Holds the items of a class
 
    type Expanded_Pattern_Item is record -- A pattern element
       Kind       : Kind_Id := Stop;
       Un_Negated : Boolean := True;
       Closure    : Boolean := False;
-      Value      : Item;
+      Value      : Item; -- Fixed in Body: 'Value' need individual initialization.
       Class_Data : Class_Info;
    end record;
 
    package Expanded_Lists is new Ada.Containers.Vectors (Index_Type => Positive, Element_Type => Expanded_Pattern_Item);
 
+   use Expanded_Lists;
+
    type Processed_Pattern is record
       List : Expanded_Lists.Vector;
    end record;
+
 end PragmARC.Matching.Regular_Expression;

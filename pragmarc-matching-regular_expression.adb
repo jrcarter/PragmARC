@@ -27,7 +27,8 @@ package body PragmARC.Matching.Regular_Expression is
       Pattern_Item   : Expanded_Pattern_Item;
    begin -- Process
       Processed.List.Clear;
-      Processed.List.Append (New_Item => (others => <>), Count => Ada.Containers.Count_Type (Pattern'Length + 1) );
+      Processed.List.Append (New_Item => Expanded_Pattern_Item'(Value => <>, others => <>),
+         Count => Ada.Containers.Count_Type (Pattern'Length + 1) );
 
       Build : loop
          case State is

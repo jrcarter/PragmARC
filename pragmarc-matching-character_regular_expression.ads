@@ -18,7 +18,7 @@ pragma Unsuppress (All_Checks);
 
 with PragmARC.Matching.Regular_Expression;
 
-package PragmARC.Matching.Character_Regular_Expression is
+package PragmARC.Matching.Character_Regular_Expression with Preelaborate is
    Any_Item         : constant Character := '?';
    Escape_Item      : constant Character := '&';
    Not_Item         : constant Character := '~';
@@ -38,26 +38,7 @@ package PragmARC.Matching.Character_Regular_Expression is
                                                                Start_Class_Item => Start_Class_Item,
                                                                Stop_Class_Item  => Stop_Class_Item,
                                                                Begin_Set_Item   => Begin_Set_Item,
-                                                               End_Set_Item     => End_Set_Item);
+                                                               End_Set_Item     => End_Set_Item,
+                                                               "=" => "=");
 
-   function Expanded_Ranges (Pattern : in String) return String;
-   -- If Pattern contains classes with an unescaped hyphen ('-') that is not the first or last member of the class,
-   -- replaces the 3 characters starting with the character before the hyphen and ending with the character after with the sequence
-   -- of characters from the preceding character to the following
-   -- For example, replaces "[0-9]" with "[0123456789]"
-   -- If the first character follows the second in Character, the replacement is the null string
-
-   Illegal_Pattern : exception renames Regexp.Illegal_Pattern;
-
-   subtype Processed_Pattern is Regexp.Processed_Pattern;
-
-   procedure Process (Pattern : in String; Processed : in out Processed_Pattern);
-   -- Calls Regexp.Process (Pattern => Expanded_Ranges (Pattern), Processed => Processed);
-
-   subtype Result is Regexp.Result;
-
-   function Location (Pattern : in Processed_Pattern; Source : in String) return Result renames Regexp.Location;
-
-   function Location (Pattern : in String; Source : in String) return Result;
-   -- Returns Regexp.Location (Expanded_Ranges (Pattern), Source);
 end PragmARC.Matching.Character_Regular_Expression;
