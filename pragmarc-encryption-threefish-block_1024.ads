@@ -3,7 +3,7 @@
 -- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
 -- **************************************************************************
 --
--- Implementeation of the Threefish cipher for blocks of 1024 bits (Threefish-1024)
+-- Implementation of the Threefish cipher for blocks of 1024 bits (Threefish-1024)
 --
 -- 2022 Aug 15     J. Carter              V1.1--Make Pure
 -- 2022 Feb 01     D. Norte de Moraes     V1.0--Initial 1024-bit version derived from 256-bit version
@@ -11,7 +11,7 @@
 package PragmARC.Encryption.Threefish.Block_1024 with Pure is
    Num_Words : constant := 16; -- A block is Num_Words words
 
-   subtype Block  is Word_List (0 .. Num_Words - 1);
+   subtype Block is Word_List (0 .. Num_Words - 1);
 
    type Key_Schedule_Handle is limited private; -- Initial value: not Valid
 
@@ -47,7 +47,7 @@ package PragmARC.Encryption.Threefish.Block_1024 with Pure is
    function Decrypt (Key_Schedule : in Key_Schedule_Handle; Text : in Block_List) return Byte_List with
       Pre => Valid (Key_Schedule);
    -- Decrypts the blocks of Text and converts the results to a Byte_List using Bytes_From_Block
-   -- Results includes any padding added by Encrypt
+   -- Result includes any padding added by Encrypt
 
    subtype Block_As_Bytes is Byte_List (1 .. 128); -- 16 consecutive Word_As_Bytes
 

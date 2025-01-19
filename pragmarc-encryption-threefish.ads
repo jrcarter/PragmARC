@@ -16,15 +16,15 @@ package PragmARC.Encryption.Threefish with Pure is
    subtype Word is Interfaces.Unsigned_64;
 
    type Word_List is array (Natural range <>) of Word;
-   -- The Threefixh specification uses zeor-based indexing
+   -- The Threefish specification uses zero-based indexing
 
    subtype Couple is Word_List (0 .. 1);
 
    subtype Byte is Interfaces.Unsigned_8;
 
-   type Byte_List  is array (Positive range <>) of Byte;
+   type Byte_List is array (Positive range <>) of Byte;
 
-   subtype Word_As_Bytes is Byte_List (1 ..  8); -- 1 => LSB, 8 => MSB
+   subtype Word_As_Bytes is Byte_List (1 .. 8); -- 1 => LSB, 8 => MSB
 
    function Word_From_Bytes (List : in Word_As_Bytes) return Word;
    function Bytes_From_Word (Value : in Word) return Word_As_Bytes;

@@ -1,0 +1,28 @@
+-- PragmAda Reusable Component (PragmARC)
+-- Copyright (C) 2025 by PragmAda Software Engineering.  All rights reserved.
+-- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- **************************************************************************
+--
+-- Skein is a family of hash functions with three different internal state sizes: 256, 512, and 1024 bits
+--
+-- 2025 Feb 01     J. Carter     V1.0--Initial version
+
+with PragmARC.UBI;
+
+package PragmARC.Skein is
+   subtype Byte_List is UBI.Byte_List;
+
+   Bytes_For_256_Bits  : constant := 32; -- Number of output bytes for common hash lengths in bits
+   Bytes_For_512_Bits  : constant := 2 * Bytes_For_256_Bits;
+   Bytes_For_1024_Bits : constant := 2 * Bytes_For_512_Bits;
+
+   type Block_Size_ID is (Size_256, Size_512, Size_1024);
+
+   function Hash (Message : in Byte_List; Num_Bytes : in Positive; Block_Size : in Block_Size_ID) return Byte_List with
+      Post => Hash'Result'Length = Num_Bytes;
+private -- PragmARC.Skein
+   use type Byte_List; -- Subtypes for children
+   subtype Word is UBI.Word;
+   use type Word;
+   subtype Couple is UBI.Couple;
+end PragmARC.Skein;
