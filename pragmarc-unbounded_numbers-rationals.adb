@@ -1,9 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.5--Use SPDX license format
+-- 2023 May 01     J. Carter          V2.4--Added Max_Places and Extract_One_Digit to Image
 -- 2021 May 01     J. Carter          V2.3--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.2--Removed Sqrt
 -- 2021 Jan 01     J. Carter          V2.1--Further Sqrt improvement
@@ -187,17 +192,35 @@ package body PragmARC.Unbounded_Numbers.Rationals is
    function "<=" (Left : in Rational; Right : in Rational) return Boolean is
       (not (Left > Right) );
 
-   function Image
-      (Value : in Rational; As_Fraction : in Boolean := False; Base : in Base_Number := 10; Decorated : in Boolean := False)
+   function Image (Value       : in Rational;
+                   As_Fraction : in Boolean     := False;
+                   Base        : in Base_Number := 10;
+                   Decorated   : in Boolean     := False;
+                   Max_Places  : in Positive    := 1_000)
    return String is
+      procedure Extract_One_Digit
+         (Result : in out Ada.Strings.Unbounded.Unbounded_String; Work : in out Unbounded_Integer; Q : out Unbounded_Integer);
+      -- Extracts the next fractional digit from Work into Q and appends it to Result, updating Work
+
       Radix    : constant Unbounded_Integer    := To_Unbounded_Integer (Integer (Base) );
       Int_Base : constant Integers.Base_Number := Integers.Base_Number (Base);
+
+      use Ada.Strings.Unbounded;
+
+      procedure Extract_One_Digit
+         (Result : in out Ada.Strings.Unbounded.Unbounded_String; Work : in out Unbounded_Integer; Q : out Unbounded_Integer)
+      is
+         -- Empty
+      begin -- Extract_One_Digit
+         Work := Radix * Work;
+         Q := Work / Value.Denominator;
+         Append (Source => Result, New_Item => Image (Q, Base => Int_Base) );
+         Work := Work - Q * Value.Denominator;
+      end Extract_One_Digit;
 
       Work   : Unbounded_Integer := abs Value.Numerator;
       Q      : Unbounded_Integer;
       Result : Ada.Strings.Unbounded.Unbounded_String;
-
-      use Ada.Strings.Unbounded;
    begin -- Image
       if As_Fraction then
          return Image (Value.Numerator, Int_Base, Decorated) & '/' & Image (Value.Denominator, Int_Base, Decorated);
@@ -230,19 +253,13 @@ package body PragmARC.Unbounded_Numbers.Rationals is
       Zeros : loop
          exit Zeros when Q /= UI0;
 
-         Work := Radix * Work;
-         Q := Work / Value.Denominator;
-         Append (Source => Result, New_Item => Image (Q, Base => Int_Base) );
-         Work := Work - Q * Value.Denominator;
+         Extract_One_Digit (Result => Result, Work => Work, Q => Q);
       end loop Zeros;
 
-      Count : for I in 1 .. 1_000 loop
+      Count : for I in 1 .. Max_Places loop
          exit Count when Work = UI0;
 
-         Work := Radix * Work;
-         Q := Work / Value.Denominator;
-         Append (Source => Result, New_Item => Image (Q, Base => Int_Base) );
-         Work := Work - Q * Value.Denominator;
+         Extract_One_Digit (Result => Result, Work => Work, Q => Q);
       end loop Count;
 
       if Decorated then

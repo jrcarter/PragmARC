@@ -1,10 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2025 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Implementation of UBI for blocks of 512 bits (UBI-512)
 --
+-- History:
+-- 2025 Jul 01     J. Carter     V1.1--Use SPDX license format
 -- 2025 Feb 01     J. Carter     V1.0--Initial version
 
 with PragmARC.Encryption.Threefish.Block_512;

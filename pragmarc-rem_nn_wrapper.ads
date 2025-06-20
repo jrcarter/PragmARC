@@ -1,6 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- A Recursive Error Minimization (REM) neural network
@@ -11,6 +14,8 @@
 -- Default values for all other parameters should be satisfactory
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
+-- 2025 Apr 01     J. Carter          V2.1--Clarify use of Respond and Train
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Mar 15     J. Carter          V2.2--Added Random_Weights
@@ -129,6 +134,23 @@ package PragmARC.REM_NN_Wrapper is
       -- Calls Get_Input for this pattern #, and propagates the input through the network to obtain the network's response
 
       procedure Train (Num_Tasks : in Positive := 1);
-      -- Propagates error & derivative backward through the network, & updates the network's weights
+      -- Propagates error & derivative from the last call to Respond backward through the network, & updates the network's weights
+
+      -- Typically, an instance NN of this package is used as
+      --
+      -- Training := True; -- Get_Input will return values from the training set
+      -- Train : loop
+      --    exit Train when ...;
+      --    NN.Respond (...);
+      --    NN.Train[(...)];
+      -- end loop Train;
+      -- Training := False; -- Get_Input will return values from the test set
+      -- Test : loop
+      --    exit Test when ...;
+      --    NN.Respond (...);
+      --    -- Use Output
+      -- end loop Test;
+      --
+      -- Once trained, a network is used as in the Test loop
    end REM_NN;
 end PragmARC.REM_NN_Wrapper;

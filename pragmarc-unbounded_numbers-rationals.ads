@@ -1,11 +1,16 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Rational numbers bounded only by Integer'Last and available memory
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.4--Use SPDX license format
+-- 2023 May 01     J. Carter          V2.3--Added Max_Places to Image
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -55,16 +60,19 @@ package PragmARC.Unbounded_Numbers.Rationals is
 
    type Base_Number is range 2 .. 36;
 
-   function Image
-      (Value : in Rational; As_Fraction : in Boolean := False; Base : in Base_Number := 10; Decorated : in Boolean := False)
+   function Image (Value       : in Rational;
+                   As_Fraction : in Boolean     := False;
+                   Base        : in Base_Number := 10;
+                   Decorated   : in Boolean     := False;
+                   Max_Places  : in Positive    := 1_000)
    return String;
    -- Returns the image of Value
    -- If As_Fraction, result is in the format Numerator/Denominator; otherwise, result is in the format of a real literal
    -- No initial blank for non-negative values
    -- If Decorated, the image includes the base in numeric-literal format: 16#FFFFFFFFFFFFFFFFFFFFFFFF#/16#7#, 2#1.1#
    -- If not As_Fraction
-   --    if abs Value < 1.0, result will have at most 1,000 significant digits
-   --    otherwise, result will have at most 1,000 digits to the right of the radix point
+   --    if abs Value < 1.0, result will have at most Max_Places significant digits
+   --    otherwise, result will have at most Max_Places digits to the right of the radix point
 
    function Value (Image : in String) return Rational;
    -- Image must be one of:

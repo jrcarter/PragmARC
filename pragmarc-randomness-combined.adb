@@ -1,9 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.1--Use SPDX license format
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Oct 01     J. Carter     V1.2--Removed Random_Range, Random_Int, and Normal, replaced by PragmARC.Real_Random_Ranges
@@ -22,10 +26,10 @@ package body PragmARC.Randomness.Combined is
    List       : Number_List := (others => Universal.Random);
    KISS_State : PragmARC.Randomness.KISS.Generator;
 
-   procedure Set_Seed (New_I : in Seed_Range_1                      := Default_I;
-                       New_J : in Seed_Range_1                      := Default_J;
-                       New_K : in Seed_Range_1                      := Default_K;
-                       New_L : in Seed_Range_2                      := Default_L;
+   procedure Set_Seed (New_I : in Seed_Range_1                          := Default_I;
+                       New_J : in Seed_Range_1                          := Default_J;
+                       New_K : in Seed_Range_1                          := Default_K;
+                       New_L : in Seed_Range_2                          := Default_L;
                        New_W : in PragmARC.Randomness.KISS.Raw_Value    := PragmARC.Randomness.KISS.Default_W;
                        New_X : in PragmARC.Randomness.KISS.Positive_Raw := PragmARC.Randomness.KISS.Default_X;
                        New_Y : in PragmARC.Randomness.KISS.Positive_Raw := PragmARC.Randomness.KISS.Default_Y;

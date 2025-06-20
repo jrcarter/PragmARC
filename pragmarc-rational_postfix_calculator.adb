@@ -1,9 +1,14 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.4--Use SPDX license format
+-- 2024 Jan 15     J. Carter          V2.3--Improved output
 -- 2021 May 01     J. Carter          V2.2--Adhere to coding standard
 -- 2021 Feb 01     J. Carter          V2.1--Removed Sqrt
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -32,7 +37,7 @@ function PragmARC.Rational_Postfix_Calculator return PragmARC.Unbounded_Numbers.
 
    Display_Line : constant Positive :=  5;
    Input_Line   : constant Positive := 10;
-   Error_Line   : constant Positive := 15;
+   Error_Line   : constant Positive := 12;
 
    Stack        : Real_Stack.Handle;
    Left         : Real;
@@ -60,7 +65,8 @@ function PragmARC.Rational_Postfix_Calculator return PragmARC.Unbounded_Numbers.
          Text_IO.Put (Item => Ansi.Position (Line, 1) & Ansi.Clear_End_Of_Line);
       end loop Clear;
 
-      Text_IO.Put (Item => Ansi.Position (Display_Line, 1) & Ansi.Clear_End_Of_Line & Image (Result, As_Fraction => As_Fraction) );
+      Text_IO.Put (Item => Ansi.Position (Display_Line, 1) & Ansi.Clear_End_Of_Line &
+                           Image (Result, As_Fraction => As_Fraction, Max_Places => 398) );
    end Process_Result;
 
    procedure Get_Unary_Operand (Stack : in out Real_Stack.Handle; Left : out Real) is
@@ -86,7 +92,7 @@ begin -- PragmARC.Rational_Postfix_Calculator
    Text_IO.Put_Line (Item => "-:  subtract");
    Text_IO.Put_Line (Item => "*:  multiply");
    Text_IO.Put_Line (Item => "/:  divide");
-   Text_IO.Put_Line (Item => "Numbers are put on the stack (nust begin with a digit)");
+   Text_IO.Put_Line (Item => "Numbers are put on the stack (must begin with a digit)");
    Text_IO.Put      (Item => "Any other input is an error");
 
    All_Ops       : loop
@@ -103,6 +109,7 @@ begin -- PragmARC.Rational_Postfix_Calculator
          begin -- Convert
             if Com_Str = "Q" then -- Quit
                Get_Unary_Operand (Stack => Stack, Left => Left);
+               Text_IO.Put (Item => Ansi.Clear_Screen);
 
                return Left;
             elsif Com_Str = "C" then -- Clear
@@ -139,12 +146,12 @@ begin -- PragmARC.Rational_Postfix_Calculator
                   Result := Left ** Pow;
                   Process_Result (Stack => Stack, Result => Result);
                end Power;
---              elsif Com_Str = "SQRT" then -- Square root
---                 Get_Unary_Operand (Stack => Stack, Left => Left);
---                 Text_IO.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line &
---                                      "Processing SQRT; this can take a while");
---                 Result := Sqrt (Left);
---                 Process_Result (Stack => Stack, Result => Result);
+            --  elsif Com_Str = "SQRT" then -- Square root
+            --     Get_Unary_Operand (Stack => Stack, Left => Left);
+            --     Text_IO.Put (Item => Ansi.Position (Input_Line, 1) & Ansi.Clear_End_Of_Line &
+            --                          "Processing SQRT; this can take a while");
+            --     Result := Sqrt (Left, 10);
+            --     Process_Result (Stack => Stack, Result => Result);
             elsif Com_Str = "FRAC" then -- Redisplay as fraction
                Get_Unary_Operand (Stack => Stack, Left => Result);
                Process_Result (Stack => Stack, Result => Result, As_Fraction => True);
@@ -155,7 +162,8 @@ begin -- PragmARC.Rational_Postfix_Calculator
                raise Unidentified;
             end if;
 
-            Text_IO.Put (Item => Ansi.Position (Error_Line, 1) & Ansi.Clear_End_Of_Line);
+            Text_IO.Put (Item => Ansi.Position (Error_Line,     1) & Ansi.Clear_End_Of_Line &
+                                 Ansi.Position (Error_Line + 1, 1) & Ansi.Clear_End_Of_Line);
          exception -- Convert
          when Unidentified =>
             Text_IO.Put (Item => Ansi.Position (Error_Line, 1) & Ansi.Clear_End_Of_Line & "Error:  Invalid input:  " & Com_Str);

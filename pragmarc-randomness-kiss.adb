@@ -1,9 +1,13 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2020 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- History:
+-- 2025 Jul 01     J. Carter     V2.1--Use SPDX license format
 -- 2020 Nov 01     J. Carter     V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
 -- 2016 Oct 01     J. Carter     V1.3--Pulled out Random_Range into PragmARC.Random_Ranges

@@ -1,19 +1,23 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2023 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Generate permutations of a sequence
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V1.1--Use SPDX license format
 -- 2023 Nov 01     J. Carter          V1.0--Initial version
 --
 package body PragmARC.Permutations is
    procedure Generate (Initial : in Sequence; Process : access procedure (Seq : in Sequence; Stop : in out Boolean) ) is
       procedure Generate (Seq : in out Sequence; Last : in Positive) with
          Pre => Seq'First = Initial'First and Seq'Last = Initial'Last and Last in Seq'Range;
-      -- Heap's algorithm for generating PragmARC.Permutations
-      -- Generates the PragmARC.Permutations of Seq (1 .. Last), keeping Seq (Last + 1 .. Seq'Last) unchanged, and passes them to Process
+      -- Heap's algorithm for generating permutations
+      -- Generates the permutations of Seq (1 .. Last), keeping Seq (Last + 1 .. Seq'Last) unchanged, and passes them to Process
 
       Early_Exit : exception; -- Raised if Process sets Stop to True
 
