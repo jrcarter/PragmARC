@@ -1,11 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Extended image functions for integer and floating-point types
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -45,7 +49,7 @@ package PragmARC.Images is
                          Base        : in Number_Base := 10)
    return String;
    -- If Base = 10, returns an image of Value with at least Fore digits before the decimal point, padded with blanks or zeroes,
-   -- accordingto Zero_Filled. Fore, Aft, and Exp have the same meanings as in Ada.Text_IO.Float_IO
+   -- according to Zero_Filled. Fore, Aft, and Exp have the same meanings as in Ada.Text_IO.Float_IO
    -- If Base /= 10, Fore, Aft, and Exp are ignored, except that the result's length will be at least Fore + Aft + 1, and the image
    -- of Value in base Base will be as many digits as needed for the integer part, and no more than 1,000 digits for the fractional
    -- part

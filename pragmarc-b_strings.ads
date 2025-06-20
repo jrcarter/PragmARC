@@ -1,6 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Bounded, variable-length strings that are hopefully more usable than
@@ -8,6 +11,8 @@
 -- Modified from an idea by Robert Duff presented on comp.lang.ada
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.3--Use SPDX license format
+-- 2025 Feb 01     J. Carter          V2.2--Make pure
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -20,7 +25,7 @@
 pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
-package PragmARC.B_Strings is
+package PragmARC.B_Strings with Pure is
    type B_String (Max_Length : Positive := 1024) is tagged limited private;
    -- Default initial value is Null_B_String
 

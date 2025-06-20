@@ -1,12 +1,16 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Divides Key into Bytes_Per_Hash substrings and hashes each with Hash_Fast_Variable_Length,
 -- combining the results into a Hash_Type
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V1.1--Use SPDX license format
 -- 2022 Apr 01     J. Carter          V1.0--Initial version
 --
 with Ada.Unchecked_Conversion;

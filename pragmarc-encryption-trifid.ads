@@ -1,10 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2024 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Implementation of the Trifid cipher
 --
+-- History:
+-- 2025 Jul 01     J. Carter     V1.2--Use SPDX license format
 -- 2024 Jun 15     J. Carter     V1.0--Initial version
 --
 package PragmARC.Encryption.Trifid is

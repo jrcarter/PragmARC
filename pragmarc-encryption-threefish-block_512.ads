@@ -1,10 +1,15 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2022 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Implementation of the Threefish cipher for blocks of 512 bits (Threefish-512)
 --
+-- History:
+-- 2025 Jul 01     J. Carter              V1.2--Use SPDX license format
 -- 2022 Aug 15     J. Carter              V1.1--Make Pure
 -- 2022 Feb 01     D. Norte de Moraes     V1.0--Initial 512-bit version derived from 256-bit version
 --

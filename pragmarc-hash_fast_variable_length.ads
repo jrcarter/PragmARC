@@ -1,6 +1,9 @@
 -- PragmAda Reusable Component (PragmARC)
--- Copyright (C) 2021 by PragmAda Software Engineering.  All rights reserved.
--- Released under the terms of the BSD 3-Clause license; see https://opensource.org/licenses
+-- Copyright (C) by PragmAda Software Engineering
+-- SPDX-License-Identifier: BSD-3-Clause
+-- See https://spdx.org/licenses/
+-- If you find this software useful, please let me know, either through
+-- github.com/jrcarter or directly to pragmada@pragmada.x10hosting.com
 -- **************************************************************************
 --
 -- Fast "hashing function specifically tailored to variable-length text strings."
@@ -8,6 +11,7 @@
 -- From P. K. Pearson, "Fast Hashing of Variable-Length Text Strings," Comm. ACM, 1990 Jun
 --
 -- History:
+-- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
 ----------------------------------------------------------------------------
@@ -24,7 +28,7 @@ package PragmARC.Hash_Fast_Variable_Length with Pure is
    -- A permutation table should contain a random permutation of the values 0 .. 255
 
    Default_Table : constant Permutation_Table :=
-      Permutation_Table'(001, 087, 049, 012, 176, 178, 102, 166, 121, 193, 006, 084, 249, 230, 044,163,
+      Permutation_Table'(001, 087, 049, 012, 176, 178, 102, 166, 121, 193, 006, 084, 249, 230, 044, 163,
                          014, 197, 213, 181, 161, 085, 218, 080, 064, 239, 024, 226, 236, 142, 038, 200,
                          110, 177, 104, 103, 141, 253, 255, 050, 077, 101, 081, 018, 045, 096, 031, 222,
                          025, 107, 190, 070, 086, 237, 240, 034, 072, 242, 020, 214, 244, 227, 149, 235,
