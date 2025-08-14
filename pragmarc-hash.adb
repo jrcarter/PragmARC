@@ -10,6 +10,7 @@
 -- combining the results into a Hash_Type
 --
 -- History:
+-- 2025 Aug 15     J. Carter          V1.2--Common definition of a byte
 -- 2025 Jul 01     J. Carter          V1.1--Use SPDX license format
 -- 2022 Apr 01     J. Carter          V1.0--Initial version
 --
@@ -18,7 +19,6 @@ with PragmARC.Hash_Fast_Variable_Length;
 with System;
 
 function PragmARC.Hash (Key : in String) return Ada.Containers.Hash_Type is
-   subtype Byte      is PragmARC.Hash_Fast_Variable_Length.Byte;
    subtype Hash_Type is Ada.Containers.Hash_Type;
 
    Bytes_Per_Hash : constant := Hash_Type'Size / Byte'Size;

@@ -9,6 +9,7 @@
 -- Root package for PragmAda Reusable Components
 --
 -- History:
+-- 2025 Aug 15     J. Carter          V2.3--Common definition of a byte
 -- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
 -- 2022 May 15     J. Carter          V2.1--Activated checks
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -19,7 +20,14 @@
 pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
+with Interfaces;
+
 package PragmARC with Pure is
+   subtype Byte is Interfaces.Unsigned_8;
+   use type Byte;
+
+   type Byte_List is array (Positive range <>) of Byte;
+
    Empty : exception; -- Raised by components when an attempt is made to access data in an empty structure
 
    Full : exception; -- Raised by bounded components when an attempt is made to add data to a full structure

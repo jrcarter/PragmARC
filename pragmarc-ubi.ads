@@ -12,15 +12,14 @@
 -- Root of the UBI hierarchy
 --
 -- History:
+-- 2025 Aug 15     J. Carter     V1.2--Common definition of a byte
 -- 2025 Jul 01     J. Carter     V1.1--Use SPDX license format
 -- 2025 Feb 01     J. Carter     V1.0--Initial version
 
 with PragmARC.Encryption.Threefish;
 
 package PragmARC.UBI is
-   subtype Byte_List is Encryption.Threefish.Byte_List; -- Subtypes for children
-   use type Byte_List;
-   subtype Couple is Encryption.Threefish.Couple;
+   subtype Couple is Encryption.Threefish.Couple; -- Subtypes for children
    subtype Word is Encryption.Threefish.Word;
    use type Word;
 end PragmARC.UBI;

@@ -9,14 +9,11 @@
 -- Implementation of the XOR cipher
 --
 -- History:
+-- 2025 Aug 15     J. Carter     V1.2--Common definition of a byte
 -- 2025 Jul 01     J. Carter     V1.1--Use SPDX license format
 -- 2021 Feb 01     J. Carter     V1.0--Initial version
 --
 package PragmARC.Encryption.Simple_XOR is
-   type Byte_Value is mod 2 ** 8;
-
-   type Byte_List is array (Positive range <>) of Byte_Value;
-
    function Crypt (Text : in Byte_List; Key : in Byte_List) return Byte_List with
       Post => Crypt'Result'First = Text'First and Crypt'Result'Last = Text'Last;
    -- If Text is plaintext, encrypts Text with Key

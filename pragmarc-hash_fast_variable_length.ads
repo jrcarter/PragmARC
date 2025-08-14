@@ -11,6 +11,7 @@
 -- From P. K. Pearson, "Fast Hashing of Variable-Length Text Strings," Comm. ACM, 1990 Jun
 --
 -- History:
+-- 2025 Aug 15     J. Carter          V2.3--Common definition of a byte
 -- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -22,8 +23,6 @@ pragma Assertion_Policy (Check);
 pragma Unsuppress (All_Checks);
 
 package PragmARC.Hash_Fast_Variable_Length with Pure is
-   type Byte is mod 2 ** 8 with Size => 8; -- The hashing function returns a Byte
-
    type Permutation_Table is array (Byte) of Byte;
    -- A permutation table should contain a random permutation of the values 0 .. 255
 

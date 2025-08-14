@@ -9,6 +9,7 @@
 -- Root of the Threefish cipher hierarchy
 --
 -- History:
+-- 2025 Aug 15     J. Carter     V1.5--Common definition of a byte
 -- 2025 Jul 01     J. Carter     V1.4--Use SPDX license format
 -- 2022 Aug 15     J. Carter     V1.3--Make Pure
 -- 2022 Feb 01     J. Carter     V1.2--Reorganization for 512- and 1024-bit versions
@@ -24,10 +25,6 @@ package PragmARC.Encryption.Threefish with Pure is
    -- The Threefish specification uses zero-based indexing
 
    subtype Couple is Word_List (0 .. 1);
-
-   subtype Byte is Interfaces.Unsigned_8;
-
-   type Byte_List is array (Positive range <>) of Byte;
 
    subtype Word_As_Bytes is Byte_List (1 .. 8); -- 1 => LSB, 8 => MSB
 
