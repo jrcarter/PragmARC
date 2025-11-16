@@ -9,6 +9,7 @@
 -- Provides useful constants and functions not provided by Ada.Numerics
 --
 -- History:
+-- 2025 Nov 15     J. Carter          V2.3--Added Sqrt
 -- 2025 Jul 01     J. Carter          V2.2--Use SPDX license format
 -- 2021 May 01     J. Carter          V2.1--Adhere to coding standard
 -- 2020 Nov 01     J. Carter          V2.0--Initial Ada-12 version
@@ -32,4 +33,7 @@ package PragmARC.Math with Pure is
       ( (Left * Right) / GCD (Left, Right) ) with
       Pre => Natural'Last / Left >= Right or else raise Constraint_Error;
    -- Least Common Multiple
+
+   function Sqrt (Right : in Natural) return Natural;
+   -- Integer square root; Sqrt (N) ** 2 <= N < (Sqrt (N) + 1) ** 2
 end PragmARC.Math;
