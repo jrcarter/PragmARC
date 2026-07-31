@@ -23,6 +23,7 @@ with PragmARC.Data_Structures.Queues.Unbounded.Protection.Non_Blocking;
 with PragmARC.Data_Structures.Queues.Unbounded.Unprotected;
 with PragmARC.Data_Structures.Sets.Discrete;
 with PragmARC.Data_Structures.Skip_Lists.Unbounded;
+with PragmARC.Data_Structures.Skip_Lists.Bounded;
 with PragmARC.Data_Structures.Stacks.Unbounded.Protection;
 with PragmARC.Data_Structures.Stacks.Unbounded.Unprotected;
 with PragmARC.Date_Handler;
